@@ -103,10 +103,10 @@ public class GomokuController {
 	 * set play's strategy, computer or human role.
 	 */
 	private void setPlayerStrategy() {
-		Class<? extends GomokuAI> blackPlayerStrategyClass = UIConstant.COMPUTER_PLAYER
-				.equals(this.blackPlayerChoiceBox.getSelectionModel().getSelectedItem()) ? GomokuMCTS.class : null;
-		Class<? extends GomokuAI> whitePlayerStrategyClass = UIConstant.COMPUTER_PLAYER
-				.equals(this.whitePlayerChoiceBox.getSelectionModel().getSelectedItem()) ? GomokuMCTS.class : null;
+		Class<? extends GomokuAI> blackPlayerStrategyClass = UIConstant.COMPUTER_PLAYER.equals(
+				this.blackPlayerChoiceBox.getSelectionModel().getSelectedItem()) ? GomokuAlphaBetaPruning.class : null;
+		Class<? extends GomokuAI> whitePlayerStrategyClass = UIConstant.COMPUTER_PLAYER.equals(
+				this.whitePlayerChoiceBox.getSelectionModel().getSelectedItem()) ? GomokuAlphaBetaPruning.class : null;
 		this.gomokuManager.setBlackPlayerStrategyClass(blackPlayerStrategyClass);
 		this.gomokuManager.setWhitePlayerStrategyClass(whitePlayerStrategyClass);
 		this.gomokuManager.getCurrentPlayerProperty().set(blackPlayerStrategyClass);

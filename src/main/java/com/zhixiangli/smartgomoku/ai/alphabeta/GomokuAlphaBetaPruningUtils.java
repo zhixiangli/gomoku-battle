@@ -33,36 +33,26 @@ public class GomokuAlphaBetaPruningUtils {
 		List<Point> pointList = new ArrayList<>();
 		int size = chessboard.getSize();
 
-		// find the edge of chessboard which has be places chess.
-		int minRowIndex = Integer.MAX_VALUE;
-		int maxRowIndex = 0;
-		int minColumnIndex = Integer.MAX_VALUE;
-		int maxColumnIndex = 0;
+		int deltaRange = 2;
+		boolean[][] canPut = new boolean[size][size];
 		for (int row = 0; row < size; ++row) {
 			for (int column = 0; column < size; ++column) {
-				if (ChessType.EMPTY != chessboard.getChess(row, column)) {
-					minRowIndex = Math.min(minRowIndex, row);
-					maxRowIndex = Math.max(maxRowIndex, row);
-					minColumnIndex = Math.min(minColumnIndex, column);
-					maxColumnIndex = Math.max(maxColumnIndex, column);
+				if (ChessType.EMPTY == chessboard.getChess(row, column)) {
+					continue;
+				}
+				for (int i = Math.max(0, row - deltaRange); i < Math.min(size, row + deltaRange); ++i) {
+					for (int j = Math.max(0, column - deltaRange); j < Math.min(size, column + deltaRange); ++j) {
+						if (ChessType.EMPTY == chessboard.getChess(i, j)) {
+							canPut[i][j] = true;
+						}
+					}
 				}
 			}
 		}
 
-		if (minRowIndex > size) { // the chessboard is empty.
-			minRowIndex = maxRowIndex = minColumnIndex = maxColumnIndex = size >> 1;
-		} else { // extend the range.
-			int deltaRange = 2;
-			minRowIndex = Math.max(minRowIndex - deltaRange, 0);
-			maxRowIndex = Math.min(maxRowIndex + deltaRange, size - 1);
-			minColumnIndex = Math.max(minColumnIndex - deltaRange, 0);
-			maxColumnIndex = Math.min(maxColumnIndex + deltaRange, size - 1);
-		}
-
-		// collect empty point.
-		for (int row = minRowIndex; row <= maxRowIndex; ++row) {
-			for (int column = minColumnIndex; column <= maxColumnIndex; ++column) {
-				if (ChessType.EMPTY == chessboard.getChess(row, column)) {
+		for (int row = 0; row < size; ++row) {
+			for (int column = 0; column < size; ++column) {
+				if (canPut[row][column]) {
 					pointList.add(new Point(row, column));
 				}
 			}
@@ -89,7 +79,7 @@ public class GomokuAlphaBetaPruningUtils {
 				if (ChessType.EMPTY != chessboard.getChess(row, column)) {
 					Point point = new Point(row, column);
 					for (int i = 0; i < GomokuConstant.DIRECTIONS.length; ++i) {
-						int estimate = getSingleEstimate(chessboard, point, GomokuConstant.DIRECTIONS[i]);
+						double estimate = getSingleEstimate(chessboard, point, GomokuConstant.DIRECTIONS[i]);
 						if (ChessType.BLACK == chessboard.getChess(row, column)) {
 							blackEstimate += estimate;
 						} else {
@@ -99,7 +89,7 @@ public class GomokuAlphaBetaPruningUtils {
 				}
 			}
 		}
-		return ChessType.BLACK == chessType ? blackEstimate / whiteEstimate : whiteEstimate / blackEstimate;
+		return ChessType.BLACK == chessType ? blackEstimate - whiteEstimate : whiteEstimate - blackEstimate;
 	}
 
 	/**
@@ -114,13 +104,13 @@ public class GomokuAlphaBetaPruningUtils {
 	 *            direction.
 	 * @return estimate.
 	 */
-	public static int getSingleEstimate(Chessboard chessboard, Point point, Point delta) {
+	public static double getSingleEstimate(Chessboard chessboard, Point point, Point delta) {
 		Pair<Integer, Integer> pair = GomokuReferee.getContinuousCount(chessboard, point, delta);
 		int type = Math.min(pair.getFirst() * 3 + pair.getSecond(), 5 * 3 + 0);
 		switch (type) {
 
 		case 15: // ooooo
-			return 17280013;
+			return 1e9;
 
 		case 14: // .oooo.
 			return 1728017;

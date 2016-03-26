@@ -24,17 +24,17 @@ public class GomokuAlphaBetaPruning implements GomokuAI {
 	/**
 	 * each level, find best number of point to next level.
 	 */
-	private static final int SEARCH_WIDTH = 16;
+	private static final int SEARCH_WIDTH = 12;
 
 	/**
 	 * the depth of search level.
 	 */
-	private static final int SEARCH_DEPTH = 3;
+	private static final int SEARCH_DEPTH = 5;
 
 	/**
 	 * the score when win.
 	 */
-	private static final int MAX_SCORE = (int) 1e9;
+	private static final double MAX_SCORE = 1e10;
 
 	/*
 	 * (non-Javadoc)
@@ -46,11 +46,14 @@ public class GomokuAlphaBetaPruning implements GomokuAI {
 	@Override
 	public Point next(Chessboard chessboard, ChessType chessType) {
 		List<Pair<Point, Double>> bestPointsList = this.getBestPoints(chessboard, chessType);
+		if (bestPointsList.isEmpty()) {
+			return new Point(Chessboard.DEFAULT_SIZE / 2, Chessboard.DEFAULT_SIZE / 2);
+		}
+
 		bestPointsList.parallelStream().forEach(pair -> {
 			Chessboard newChessboard = chessboard.clone();
-			newChessboard.setChess(pair.getFirst(), chessType);
-			double estimate = this.alphaBeta(0, -MAX_SCORE, MAX_SCORE, newChessboard,
-					GomokuReferee.nextChessType(chessType));
+			double estimate = newChessboard.setChess(pair.getFirst(), chessType) ? MAX_SCORE
+					: this.alphaBeta(0, -MAX_SCORE, MAX_SCORE, newChessboard, GomokuReferee.nextChessType(chessType));
 			pair.setSecond(estimate);
 		});
 		double bestEstimate = bestPointsList.stream().map(pair -> pair.getSecond()).max((a, b) -> Double.compare(a, b))
@@ -64,8 +67,8 @@ public class GomokuAlphaBetaPruning implements GomokuAI {
 		List<Point> pointList = GomokuAlphaBetaPruningUtils.getEmptyPoints(chessboard);
 		return pointList.parallelStream().map(point -> {
 			Chessboard newChessboard = chessboard.clone();
-			newChessboard.setChess(point, chessType);
-			double estimate = GomokuAlphaBetaPruningUtils.getGlobalEstimate(newChessboard, chessType);
+			double estimate = newChessboard.setChess(point, chessType) ? MAX_SCORE
+					: GomokuAlphaBetaPruningUtils.getGlobalEstimate(newChessboard, chessType);
 			return new Pair<Point, Double>(point, estimate);
 		}).sorted((a, b) -> Double.compare(b.getSecond(), a.getSecond())).limit(SEARCH_WIDTH)
 				.collect(Collectors.toList());
@@ -80,8 +83,7 @@ public class GomokuAlphaBetaPruning implements GomokuAI {
 			for (Pair<Point, Double> bestPoint : bestPointsList) {
 				Point point = bestPoint.getFirst();
 				if ((depth & 1) == 0) {
-					chessboard.setChess(point, chessType);
-					if (GomokuReferee.isWin(chessboard, point)) {
+					if (chessboard.setChess(point, chessType)) {
 						beta = -MAX_SCORE;
 					} else {
 						beta = Math.min(beta, this.alphaBeta(depth + 1, alpha, beta, chessboard, nextChessType));
@@ -91,8 +93,7 @@ public class GomokuAlphaBetaPruning implements GomokuAI {
 						return beta;
 					}
 				} else {
-					chessboard.setChess(point, chessType);
-					if (GomokuReferee.isWin(chessboard, point)) {
+					if (chessboard.setChess(point, chessType)) {
 						alpha = MAX_SCORE;
 					} else {
 						alpha = Math.max(alpha, this.alphaBeta(depth + 1, alpha, beta, chessboard, nextChessType));
