@@ -24,17 +24,17 @@ public class GomokuAlphaBetaPruning implements GomokuAI {
 	/**
 	 * each level, find best number of point to next level.
 	 */
-	private static final int SEARCH_WIDTH = 12;
+	private static final int SEARCH_WIDTH = 36;
 
 	/**
 	 * the depth of search level.
 	 */
-	private static final int SEARCH_DEPTH = 5;
+	private static final int SEARCH_DEPTH = 3;
 
 	/**
 	 * the score when win.
 	 */
-	private static final double MAX_SCORE = 1e10;
+	private static final double MAX_SCORE = 1e20;
 
 	/*
 	 * (non-Javadoc)
@@ -90,7 +90,7 @@ public class GomokuAlphaBetaPruning implements GomokuAI {
 					}
 					chessboard.setChess(point, ChessType.EMPTY);
 					if (beta <= alpha) {
-						return beta;
+						break;
 					}
 				} else {
 					if (chessboard.setChess(point, chessType)) {
@@ -100,11 +100,11 @@ public class GomokuAlphaBetaPruning implements GomokuAI {
 					}
 					chessboard.setChess(point, ChessType.EMPTY);
 					if (alpha >= beta) {
-						return alpha;
+						break;
 					}
 				}
 			}
-			return (depth & 1) == 0 ? beta : alpha;
+			return ((depth & 1) == 0 ? beta : alpha) * 0.99;
 		}
 	}
 }

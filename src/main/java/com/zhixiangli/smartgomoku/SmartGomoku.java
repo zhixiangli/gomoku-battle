@@ -34,8 +34,11 @@ public class SmartGomoku {
 	 */
 	public static Point next(Class<? extends GomokuAI> gomokuAIClass, Chessboard chessboard, ChessType chessType) {
 		try {
+			System.out.println("current player: " + chessType);
 			GomokuAI gomokuAI = gomokuAIClass.newInstance();
-			return gomokuAI.next(chessboard, chessType);
+			Point nextPoint = gomokuAI.next(chessboard, chessType);
+			System.out.println("player set: " + nextPoint);
+			return nextPoint;
 		} catch (InstantiationException | IllegalAccessException e) {
 			LOGGER.severe(() -> e.getMessage());
 		}

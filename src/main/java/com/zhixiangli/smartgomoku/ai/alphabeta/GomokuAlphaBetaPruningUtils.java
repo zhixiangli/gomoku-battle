@@ -89,7 +89,8 @@ public class GomokuAlphaBetaPruningUtils {
 				}
 			}
 		}
-		return ChessType.BLACK == chessType ? blackEstimate - whiteEstimate : whiteEstimate - blackEstimate;
+		double k = 2;
+		return ChessType.BLACK == chessType ? blackEstimate - k * whiteEstimate : whiteEstimate - k * blackEstimate;
 	}
 
 	/**
@@ -105,42 +106,42 @@ public class GomokuAlphaBetaPruningUtils {
 	 * @return estimate.
 	 */
 	public static double getSingleEstimate(Chessboard chessboard, Point point, Point delta) {
-		Pair<Integer, Integer> pair = GomokuReferee.getContinuousCount(chessboard, point, delta);
+		Pair<Integer, Integer> pair = GomokuReferee.analyseContinuousCount(chessboard, point, delta);
 		int type = Math.min(pair.getFirst() * 3 + pair.getSecond(), 5 * 3 + 0);
 		switch (type) {
 
 		case 15: // ooooo
-			return 1e9;
+			return 603040271;
 
 		case 14: // .oooo.
-			return 1728017;
+			return 120608053;
 
 		case 13: // .oooox
-			return 864007;
+			return 24121607;
 
 		case 11: // .ooo.
-			return 432001;
+			return 4824317;
 
 		case 10: // .ooox
-			return 144013;
+			return 964861;
 
 		case 12: // xoooox
-			return 48017;
+			return 192971;
 
 		case 8: // .oo.
-			return 16001;
+			return 38593;
 
 		case 7: // .oox
-			return 4001;
+			return 7717;
 
 		case 9: // xooox
-			return 1009;
+			return 1543;
 
 		case 5: // .o.
-			return 251;
+			return 307;
 
 		case 4: // .ox
-			return 53;
+			return 59;
 
 		case 6: // xoox
 			return 11;
