@@ -21,6 +21,8 @@ import com.zhixiangli.smartgomoku.model.Chessboard;
  */
 public class GomokuAlphaBetaPruningUtils {
 
+	private static int SEARCH_RANGE = 1;
+
 	/**
 	 * 
 	 * find point can be put chess.
@@ -33,15 +35,16 @@ public class GomokuAlphaBetaPruningUtils {
 		List<Point> pointList = new ArrayList<>();
 		int size = chessboard.getSize();
 
-		int deltaRange = 2;
 		boolean[][] canPut = new boolean[size][size];
 		for (int row = 0; row < size; ++row) {
 			for (int column = 0; column < size; ++column) {
 				if (ChessType.EMPTY == chessboard.getChess(row, column)) {
 					continue;
 				}
-				for (int i = Math.max(0, row - deltaRange); i < Math.min(size, row + deltaRange); ++i) {
-					for (int j = Math.max(0, column - deltaRange); j < Math.min(size, column + deltaRange); ++j) {
+				int x0 = Math.max(0, row - SEARCH_RANGE), x1 = Math.min(size - 1, row + SEARCH_RANGE);
+				int y0 = Math.max(0, column - SEARCH_RANGE), y1 = Math.min(size - 1, column + SEARCH_RANGE);
+				for (int i = x0; i <= x1; ++i) {
+					for (int j = y0; j <= y1; ++j) {
 						if (ChessType.EMPTY == chessboard.getChess(i, j)) {
 							canPut[i][j] = true;
 						}
@@ -56,6 +59,10 @@ public class GomokuAlphaBetaPruningUtils {
 					pointList.add(new Point(row, column));
 				}
 			}
+		}
+
+		if (pointList.isEmpty()) {
+			pointList.add(new Point(Chessboard.DEFAULT_SIZE / 2, Chessboard.DEFAULT_SIZE / 2));
 		}
 		return pointList;
 	}

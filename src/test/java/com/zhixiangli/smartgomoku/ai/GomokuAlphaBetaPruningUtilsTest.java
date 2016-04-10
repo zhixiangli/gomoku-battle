@@ -46,9 +46,15 @@ public class GomokuAlphaBetaPruningUtilsTest {
 
 		chessboard.setChess(2, 1, ChessType.BLACK);
 		pointList = GomokuAlphaBetaPruningUtils.getEmptyPoints(chessboard);
+		pointList.sort((a, b) -> {
+			if (a.x == b.x) {
+				return Integer.compare(a.y, b.y);
+			} else {
+				return Integer.compare(a.x, b.x);
+			}
+		});
 		expected = pointList.toString().replace("java.awt.Point", "");
-		assertEquals(
-				"[[x=0,y=0], [x=0,y=1], [x=0,y=2], [x=0,y=3], [x=1,y=0], [x=1,y=1], [x=1,y=2], [x=1,y=3], [x=2,y=0], [x=2,y=2], [x=2,y=3], [x=3,y=0], [x=3,y=1], [x=3,y=2], [x=3,y=3], [x=4,y=0], [x=4,y=1], [x=4,y=2], [x=4,y=3]]",
+		assertEquals("[[x=1,y=0], [x=1,y=1], [x=1,y=2], [x=2,y=0], [x=2,y=2], [x=3,y=0], [x=3,y=1], [x=3,y=2]]",
 				expected);
 	}
 

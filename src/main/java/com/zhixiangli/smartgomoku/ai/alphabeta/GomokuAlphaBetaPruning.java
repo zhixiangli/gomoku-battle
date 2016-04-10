@@ -24,7 +24,7 @@ public class GomokuAlphaBetaPruning implements GomokuAI {
 	/**
 	 * each level, find best number of point to next level.
 	 */
-	private static final int SEARCH_WIDTH = 36;
+	private static final int SEARCH_WIDTH = 25;
 
 	/**
 	 * the depth of search level.
@@ -59,11 +59,12 @@ public class GomokuAlphaBetaPruning implements GomokuAI {
 		double bestEstimate = bestPointsList.stream().map(pair -> pair.getSecond()).max((a, b) -> Double.compare(a, b))
 				.get();
 		List<Pair<Point, Double>> resultPointsList = bestPointsList.stream()
-				.filter(pair -> bestEstimate == pair.getSecond()).collect(Collectors.toList());
-		return resultPointsList.get(GomokuReferee.RANDOM.nextInt(resultPointsList.size())).getFirst();
+				.filter(pair -> Math.abs(bestEstimate - pair.getSecond()) < 1e-6).collect(Collectors.toList());
+		int randomIndex = GomokuReferee.RANDOM.nextInt(resultPointsList.size());
+		return resultPointsList.get(randomIndex).getFirst();
 	}
 
-	private List<Pair<Point, Double>> getBestPoints(Chessboard chessboard, ChessType chessType) {
+	private final List<Pair<Point, Double>> getBestPoints(Chessboard chessboard, ChessType chessType) {
 		List<Point> pointList = GomokuAlphaBetaPruningUtils.getEmptyPoints(chessboard);
 		return pointList.parallelStream().map(point -> {
 			Chessboard newChessboard = chessboard.clone();
@@ -74,7 +75,7 @@ public class GomokuAlphaBetaPruning implements GomokuAI {
 				.collect(Collectors.toList());
 	}
 
-	private double alphaBeta(int depth, double alpha, double beta, Chessboard chessboard, ChessType chessType) {
+	private final double alphaBeta(int depth, double alpha, double beta, Chessboard chessboard, ChessType chessType) {
 		if (SEARCH_DEPTH == depth) {
 			return GomokuAlphaBetaPruningUtils.getGlobalEstimate(chessboard, chessType);
 		} else {
