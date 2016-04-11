@@ -35,7 +35,7 @@ public class GomokuReferee {
 	 * @return true if is draw, otherwise false.
 	 */
 	public static final boolean isDraw(Chessboard chessboard, Point point) {
-		int size = chessboard.getSize();
+		int size = Chessboard.DEFAULT_SIZE;
 		int blackCount = chessboard.getChessTypeCount(ChessType.BLACK);
 		int whiteCount = chessboard.getChessTypeCount(ChessType.WHITE);
 		return size * size == blackCount + whiteCount && !isWin(chessboard, point);
@@ -74,7 +74,7 @@ public class GomokuReferee {
 	 */
 	public static final boolean isPossibleWin(Chessboard chessboard, Point point, Point delta) {
 		int possible = 0;
-		int size = chessboard.getSize();
+		int size = Chessboard.DEFAULT_SIZE;
 		ChessType chessType = chessboard.getChess(point.x, point.y);
 		for (int i = point.x, j = point.y; i >= 0 && i < size && j >= 0 && j < size
 				&& possible < GomokuConstant.CONTINUOUS_NUMBER; i += delta.x, j += delta.y) {
@@ -124,7 +124,7 @@ public class GomokuReferee {
 		if (ChessType.EMPTY == chessType) {
 			return new Pair<Integer, Integer>(0, 0);
 		}
-		int size = chessboard.getSize();
+		int size = Chessboard.DEFAULT_SIZE;
 
 		int serial0 = 0;
 		int blank0 = 0;
@@ -169,9 +169,10 @@ public class GomokuReferee {
 			}
 		}
 
-		int serial = serial0 + serial1 + Math.max(other1, other0);
-		int blank = Math.min(2, blank1 + blank0);
+		int serial = serial0 + serial1 + (Math.max(other1, other0) - 1);
+		int blank = Math.min(1, blank1) + Math.min(1, blank0);
 		if (!isPossibleWin(chessboard, point, delta)) {
+			--serial;
 			blank = 0;
 		}
 		return new Pair<Integer, Integer>(serial, blank);
@@ -195,7 +196,7 @@ public class GomokuReferee {
 		if (ChessType.EMPTY == chessType) {
 			return 0;
 		}
-		int size = chessboard.getSize();
+		int size = Chessboard.DEFAULT_SIZE;
 
 		int cnt = 0;
 		for (int i = point.x, j = point.y; i >= 0 && i < size && j >= 0 && j < size; i += delta.x, j += delta.y) {

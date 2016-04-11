@@ -4,7 +4,9 @@
 package com.zhixiangli.smartgomoku.model;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.zhixiangli.smartgomoku.common.GomokuReferee;
@@ -23,11 +25,6 @@ public class Chessboard implements Cloneable {
 	public static final int DEFAULT_SIZE = 15;
 
 	/**
-	 * chessboard is size*size.
-	 */
-	private int size;
-
-	/**
 	 * chessboard.
 	 */
 	private ChessType[][] chessboard;
@@ -41,15 +38,7 @@ public class Chessboard implements Cloneable {
 	 * init an empty chessboard.
 	 */
 	public Chessboard() {
-		this(DEFAULT_SIZE);
-	}
-
-	/**
-	 * init an empty chessboard.
-	 */
-	public Chessboard(int size) {
-		this.size = size;
-		this.chessboard = new ChessType[this.size][this.size];
+		this.chessboard = new ChessType[DEFAULT_SIZE][DEFAULT_SIZE];
 		this.chessTypeCount = new HashMap<>();
 
 		this.clear();
@@ -60,8 +49,8 @@ public class Chessboard implements Cloneable {
 	 * clear the chessboard.
 	 */
 	public void clear() {
-		for (int row = 0; row < this.size; ++row) {
-			for (int column = 0; column < this.size; ++column) {
+		for (int row = 0; row < DEFAULT_SIZE; ++row) {
+			for (int column = 0; column < DEFAULT_SIZE; ++column) {
 				this.chessboard[row][column] = ChessType.EMPTY;
 			}
 		}
@@ -105,15 +94,6 @@ public class Chessboard implements Cloneable {
 		return null == count ? 0 : count;
 	}
 
-	/**
-	 * getter method for property size
-	 * 
-	 * @return the size
-	 */
-	public int getSize() {
-		return size;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -122,12 +102,32 @@ public class Chessboard implements Cloneable {
 	@Override
 	public Chessboard clone() {
 		Chessboard clonedChessboard = new Chessboard();
-		for (int row = 0; row < this.size; ++row) {
-			for (int column = 0; column < this.size; ++column) {
+		for (int row = 0; row < DEFAULT_SIZE; ++row) {
+			for (int column = 0; column < DEFAULT_SIZE; ++column) {
 				clonedChessboard.setChess(row, column, this.chessboard[row][column]);
 			}
 		}
 		return clonedChessboard;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		List<String> chessboardString = new ArrayList<>();
+		chessboardString.add("------------------");
+		for (int i = 0; i < DEFAULT_SIZE; ++i) {
+			String tmp = "";
+			for (int j = 0; j < DEFAULT_SIZE; ++j) {
+				tmp += this.getChess(i, j).ordinal();
+			}
+			chessboardString.add(tmp);
+		}
+		chessboardString.add("------------------");
+		return String.join("\n", chessboardString);
 	}
 
 }

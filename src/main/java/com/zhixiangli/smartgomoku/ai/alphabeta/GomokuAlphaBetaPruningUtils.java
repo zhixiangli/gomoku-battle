@@ -33,7 +33,7 @@ public class GomokuAlphaBetaPruningUtils {
 	 */
 	public static List<Point> getEmptyPoints(Chessboard chessboard) {
 		List<Point> pointList = new ArrayList<>();
-		int size = chessboard.getSize();
+		int size = Chessboard.DEFAULT_SIZE;
 
 		boolean[][] canPut = new boolean[size][size];
 		for (int row = 0; row < size; ++row) {
@@ -80,7 +80,7 @@ public class GomokuAlphaBetaPruningUtils {
 	public static double getGlobalEstimate(Chessboard chessboard, ChessType chessType) {
 		double blackEstimate = 0;
 		double whiteEstimate = 0;
-		int size = chessboard.getSize();
+		int size = Chessboard.DEFAULT_SIZE;
 		for (int row = 0; row < size; ++row) {
 			for (int column = 0; column < size; ++column) {
 				if (ChessType.EMPTY != chessboard.getChess(row, column)) {
