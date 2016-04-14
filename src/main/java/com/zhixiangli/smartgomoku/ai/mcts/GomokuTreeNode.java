@@ -4,9 +4,12 @@
 package com.zhixiangli.smartgomoku.ai.mcts;
 
 import java.awt.Point;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import com.zhixiangli.smartgomoku.common.GomokuReferee;
 import com.zhixiangli.smartgomoku.model.ChessType;
@@ -20,44 +23,59 @@ public class GomokuTreeNode {
 
 	private static final double EPSILON = 1e-6;
 
-	private static final Random RANDOM = new Random();
+	private static final Random RANDOM = new SecureRandom();
 
-	private double nGames;
+	private int numOfWin;
 
-	private double nWins;
+	private int numOfGame;
 
-	private Point point;
+	private long[] childrenId;
 
-	private GomokuTreeNode[] children;
+	private Point[] childrenMove;
 
-	private ChessType isWin;
+	private ChessType whoseTurn;
 
-	/**
-	 * @param row
-	 * @param column
-	 */
-	public GomokuTreeNode(int row, int column) {
-		this(new Point(row, column));
+	private boolean isEnd;
+
+	private Chessboard chessboard;
+
+	private long id;
+
+	public GomokuTreeNode(Chessboard chessboard, ChessType whoseTurn, boolean isEnd) {
+		this.numOfGame = 0;
+		this.numOfWin = 0;
+		this.chessboard = chessboard.clone();
+		this.whoseTurn = whoseTurn;
+		this.isEnd = isEnd;
+		this.id = generateId();
 	}
 
-	/**
-	 * @param row
-	 * @param column
-	 */
-	public GomokuTreeNode(Point point) {
-		super();
-		this.point = point;
+	private long generateId() {
+		StringBuilder id = new StringBuilder();
+		for (int i = 0; i < Chessboard.DEFAULT_SIZE; ++i) {
+			for (int j = 0; j < Chessboard.DEFAULT_SIZE; ++j) {
+				ChessType chessType = this.chessboard.getChess(i, j);
+				if (chessType == ChessType.EMPTY) {
+					continue;
+				}
+				id.append((char) (i + 'a'));
+				id.append((char) (j + 'a'));
+				id.append(chessType.ordinal());
+			}
+		}
+		return id.toString().hashCode();
 	}
 
-	public GomokuTreeNode select(Chessboard chessboard) {
-		if (null == children) {
+	public GomokuTreeNode select() {
+		if (null == childrenId) {
 			return null;
 		}
 
 		GomokuTreeNode selected = null;
-		double best = Long.MIN_VALUE;
-		for (GomokuTreeNode c : children) {
-			double ucb = upperConfidenceBounds(c.nWins, c.nGames);
+		double best = 0;
+		for (long id : childrenId) {
+			GomokuTreeNode c = GomokuMCTS.TREE_NODE_MAP.get(id);
+			double ucb = upperConfidenceBounds(c.numOfWin, c.numOfGame);
 			if (ucb > best) {
 				best = ucb;
 				selected = c;
@@ -66,111 +84,129 @@ public class GomokuTreeNode {
 		return selected;
 	}
 
-	private double upperConfidenceBounds(double childNWins, double childNGames) {
-		double tmp = childNGames + EPSILON;
-		return childNWins / tmp + Math.sqrt(2 * Math.log(this.nGames + 1) / tmp) + EPSILON * RANDOM.nextDouble();
+	private double upperConfidenceBounds(double childNumOfWin, double childNumOfGames) {
+		return childNumOfWin / (childNumOfGames + EPSILON)
+				+ Math.sqrt(2 * Math.log(this.numOfGame + 1) / (childNumOfGames + EPSILON))
+				+ EPSILON * RANDOM.nextDouble();
 	}
 
-	public void expand(Chessboard chessboard) {
-		List<Point> rangeList = GomokuMCTS.expandSearchRange(chessboard, this.point, GomokuMCTS.SEARCH_RANGE);
-		this.children = new GomokuTreeNode[rangeList.size()];
-		for (int i = 0; i < rangeList.size(); ++i) {
-			this.children[i] = new GomokuTreeNode(rangeList.get(i));
+	public void expand() {
+		List<Point> emptyList = GomokuMCTS.searchRange(chessboard);
+		if (emptyList.size() == 0) {
+			emptyList.add(new Point(Chessboard.DEFAULT_SIZE / 2, Chessboard.DEFAULT_SIZE / 2));
+		}
+		this.childrenId = new long[emptyList.size()];
+		this.childrenMove = new Point[emptyList.size()];
+		for (int i = 0; i < emptyList.size(); ++i) {
+			Point movePoint = emptyList.get(i);
+			Chessboard newChessboard = chessboard.clone();
+			boolean isEnd = newChessboard.setChess(movePoint, this.whoseTurn);
+			ChessType chessType = GomokuReferee.nextChessType(whoseTurn);
+			this.childrenId[i] = GomokuMCTS.nodeFactory(newChessboard, chessType, isEnd);
+			this.childrenMove[i] = movePoint;
 		}
 	}
 
-	public ChessType simulate(Chessboard chessboard, ChessType chessType) {
-		List<Point> rangeList = GomokuMCTS.expandSearchRange(chessboard, Chessboard.DEFAULT_SIZE);
-		ChessType currChessType = chessType;
-		List<Point> choosePointList = new ArrayList<>();
+	public ChessType simulate() {
+		List<Point> emptyList = GomokuMCTS.searchRange(chessboard);
+		// prevent point repeating.
+		Set<Point> emptySet = new HashSet<>(emptyList);
 
-		boolean isDraw = true;
-		for (; rangeList.size() > 0; currChessType = GomokuReferee.nextChessType(currChessType)) {
-			Point choosePoint = rangeList.get(RANDOM.nextInt(rangeList.size()));
-			choosePointList.add(choosePoint);
-			if (chessboard.setChess(choosePoint, currChessType)) {
-				isDraw = false;
+		List<Point> choseList = new ArrayList<>();
+
+		ChessType whoseTurn = this.whoseTurn;
+		ChessType winnerType = ChessType.EMPTY;
+		while (!emptyList.isEmpty()) {
+			int randomIndex = RANDOM.nextInt(emptyList.size());
+			Point chosePoint = emptyList.get(randomIndex);
+			choseList.add(chosePoint);
+
+			if (chessboard.setChess(chosePoint, whoseTurn)) {
+				winnerType = whoseTurn;
 				break;
 			}
-			rangeList.remove(choosePoint);
-		}
-		for (Point point : choosePointList) {
-			chessboard.setChess(point, ChessType.EMPTY);
-		}
-		return isDraw ? null : currChessType;
-	}
+			emptyList.remove(randomIndex);
 
-	/**
-	 * 
-	 * @param chessboard
-	 *            chessboard.
-	 * @param chessType
-	 *            tree node's chess type.
-	 */
-	public void go(Chessboard chessboard, ChessType chessType) {
-		List<GomokuTreeNode> path = new ArrayList<>();
-		GomokuTreeNode curNode = this;
-		GomokuTreeNode tmpNode = this;
-		ChessType currChessType = chessType;
-		ChessType finalWinner = null;
-		for (; null != tmpNode; tmpNode = tmpNode.select(chessboard)) {
-			curNode = tmpNode;
-			path.add(curNode);
-			if (chessboard.setChess(curNode.getPoint(), currChessType)) {
-				this.isWin = currChessType;
-				finalWinner = currChessType;
-				break;
-			}
-			currChessType = GomokuReferee.nextChessType(currChessType);
-		}
-
-		if (null == this.isWin) {
-			curNode.expand(chessboard);
-			curNode = curNode.select(chessboard);
-
-			if (null != curNode) {
-				path.add(curNode);
-				if (chessboard.setChess(curNode.getPoint(), currChessType)) {
-					this.isWin = currChessType;
-					finalWinner = currChessType;
-				} else {
-					finalWinner = curNode.simulate(chessboard, currChessType);
+			List<Point> aroundList = GomokuMCTS.searchAround(chessboard, chosePoint.x, chosePoint.y);
+			for (Point point : aroundList) {
+				if (emptySet.contains(point)) {
+					continue;
 				}
+				emptyList.add(point);
+				emptySet.add(point);
 			}
+
+			whoseTurn = GomokuReferee.nextChessType(whoseTurn);
+		}
+		for (Point p : choseList) {
+			chessboard.setChess(p, ChessType.EMPTY);
 		}
 
-		currChessType = chessType;
-		for (GomokuTreeNode node : path) {
-			node.updateStatus(currChessType == finalWinner ? 1 : 0);
-			chessboard.setChess(node.getPoint(), ChessType.EMPTY);
-			currChessType = GomokuReferee.nextChessType(currChessType);
+		return winnerType;
+
+	}
+
+	public void updateStatus(ChessType chessType) {
+		++this.numOfGame;
+		if (chessType != ChessType.EMPTY && chessType != this.whoseTurn) {
+			++this.numOfWin;
 		}
 	}
 
-	public void updateStatus(double value) {
-		this.nWins += value;
-		++this.nGames;
+	/**
+	 * @return the id
+	 */
+	public long getId() {
+		return id;
 	}
 
 	/**
-	 * @return the point
+	 * @return the isEnd
 	 */
-	public Point getPoint() {
-		return point;
+	public boolean isEnd() {
+		return isEnd;
 	}
 
 	/**
-	 * @return the nGames
+	 * @return the whoseTurn
 	 */
-	public double getnGames() {
-		return nGames;
+	public ChessType getWhoseTurn() {
+		return whoseTurn;
 	}
 
 	/**
-	 * @return the nWins
+	 * @return the childrenId
 	 */
-	public double getnWins() {
-		return nWins;
+	public long[] getChildrenId() {
+		return childrenId;
+	}
+
+	/**
+	 * @return the childrenMove
+	 */
+	public Point[] getChildrenMove() {
+		return childrenMove;
+	}
+
+	/**
+	 * @return the chessboard
+	 */
+	public Chessboard getChessboard() {
+		return chessboard;
+	}
+
+	/**
+	 * @return the numOfWin
+	 */
+	public int getNumOfWin() {
+		return numOfWin;
+	}
+
+	/**
+	 * @return the numOfGame
+	 */
+	public int getNumOfGame() {
+		return numOfGame;
 	}
 
 }

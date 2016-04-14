@@ -36,9 +36,14 @@ public class GomokuReferee {
 	 */
 	public static final boolean isDraw(Chessboard chessboard, Point point) {
 		int size = Chessboard.DEFAULT_SIZE;
-		int blackCount = chessboard.getChessTypeCount(ChessType.BLACK);
-		int whiteCount = chessboard.getChessTypeCount(ChessType.WHITE);
-		return size * size == blackCount + whiteCount && !isWin(chessboard, point);
+		for (int i = 0; i < size; ++i) {
+			for (int j = 0; j < size; ++j) {
+				if (chessboard.getChess(i, j) == ChessType.EMPTY) {
+					return false;
+				}
+			}
+		}
+		return !isWin(chessboard, point);
 	}
 
 	public static final boolean isDraw(Chessboard chessboard, int row, int column) {

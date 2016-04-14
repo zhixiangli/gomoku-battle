@@ -5,9 +5,7 @@ package com.zhixiangli.smartgomoku.model;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.zhixiangli.smartgomoku.common.GomokuReferee;
 
@@ -30,16 +28,10 @@ public class Chessboard implements Cloneable {
 	private ChessType[][] chessboard;
 
 	/**
-	 * the count of each chess type.
-	 */
-	private Map<ChessType, Integer> chessTypeCount;
-
-	/**
 	 * init an empty chessboard.
 	 */
 	public Chessboard() {
 		this.chessboard = new ChessType[DEFAULT_SIZE][DEFAULT_SIZE];
-		this.chessTypeCount = new HashMap<>();
 
 		this.clear();
 	}
@@ -54,7 +46,6 @@ public class Chessboard implements Cloneable {
 				this.chessboard[row][column] = ChessType.EMPTY;
 			}
 		}
-		this.chessTypeCount.clear();
 	}
 
 	/**
@@ -73,25 +64,11 @@ public class Chessboard implements Cloneable {
 
 	public boolean setChess(int row, int column, ChessType chessType) {
 		this.chessboard[row][column] = chessType;
-		this.chessTypeCount.compute(chessType, (k, v) -> null == v ? 1 : v + 1);
 		return chessType == ChessType.EMPTY ? false : GomokuReferee.isWin(this, row, column);
 	}
 
 	public boolean setChess(Point point, ChessType chessType) {
 		return this.setChess(point.x, point.y, chessType);
-	}
-
-	/**
-	 * 
-	 * get the number of a chess type.
-	 * 
-	 * @param chessType
-	 *            chess type.
-	 * @return the number.
-	 */
-	public int getChessTypeCount(ChessType chessType) {
-		Integer count = this.chessTypeCount.get(chessType);
-		return null == count ? 0 : count;
 	}
 
 	/*
