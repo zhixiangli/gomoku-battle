@@ -10,11 +10,11 @@ package com.zhixiangli.smartgomoku.model;
  *
  */
 public enum ChessType {
-    
+
     EMPTY,
-    
+
     BLACK,
-    
+
     WHITE,
-    
+
 }

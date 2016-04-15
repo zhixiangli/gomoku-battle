@@ -15,7 +15,7 @@ import com.zhixiangli.smartgomoku.model.Chessboard;
  *
  */
 public interface GomokuAI {
-    
+
     /**
      * 
      * get next move.
@@ -27,5 +27,5 @@ public interface GomokuAI {
      * @return the point to move.
      */
     Point next(Chessboard chessboard, ChessType chessType);
-    
+
 }

@@ -23,39 +23,39 @@ import com.zhixiangli.smartgomoku.model.Chessboard;
  */
 public class GomokuAlphaBetaPruningUtilsTest {
 
-	private Chessboard chessboard;
+    private Chessboard chessboard;
 
-	/**
-	 * TODO
-	 * 
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-		this.chessboard = new Chessboard();
-	}
+    /**
+     * TODO
+     * 
+     * @throws java.lang.Exception
+     */
+    @Before
+    public void setUp() throws Exception {
+	this.chessboard = new Chessboard();
+    }
 
-	@Test
-	public void testGetEmptyPoints() {
-		List<Point> pointList;
-		String expected;
+    @Test
+    public void testGetEmptyPoints() {
+	List<Point> pointList;
+	String expected;
 
-		pointList = GomokuAlphaBetaPruningUtils.getEmptyPoints(chessboard);
-		expected = pointList.toString().replace("java.awt.Point", "");
-		assertEquals("[[x=7,y=7]]", expected);
+	pointList = GomokuAlphaBetaPruningUtils.getEmptyPoints(chessboard);
+	expected = pointList.toString().replace("java.awt.Point", "");
+	assertEquals("[[x=7,y=7]]", expected);
 
-		chessboard.setChess(2, 1, ChessType.BLACK);
-		pointList = GomokuAlphaBetaPruningUtils.getEmptyPoints(chessboard);
-		pointList.sort((a, b) -> {
-			if (a.x == b.x) {
-				return Integer.compare(a.y, b.y);
-			} else {
-				return Integer.compare(a.x, b.x);
-			}
-		});
-		expected = pointList.toString().replace("java.awt.Point", "");
-		assertEquals("[[x=1,y=0], [x=1,y=1], [x=1,y=2], [x=2,y=0], [x=2,y=2], [x=3,y=0], [x=3,y=1], [x=3,y=2]]",
-				expected);
-	}
+	chessboard.setChess(2, 1, ChessType.BLACK);
+	pointList = GomokuAlphaBetaPruningUtils.getEmptyPoints(chessboard);
+	pointList.sort((a, b) -> {
+	    if (a.x == b.x) {
+		return Integer.compare(a.y, b.y);
+	    } else {
+		return Integer.compare(a.x, b.x);
+	    }
+	});
+	expected = pointList.toString().replace("java.awt.Point", "");
+	assertEquals("[[x=1,y=0], [x=1,y=1], [x=1,y=2], [x=2,y=0], [x=2,y=2], [x=3,y=0], [x=3,y=1], [x=3,y=2]]",
+		expected);
+    }
 
 }

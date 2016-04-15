@@ -10,26 +10,26 @@ package com.zhixiangli.smartgomoku.common;
  * @date 2015年6月6日
  */
 public class Pair<A, B> {
-    
+
     /**
      * first value.
      */
     private A first;
-    
+
     /**
      * second value.
      */
     private B second;
-    
+
     /**
      * getter method for property first
      * 
      * @return the first
      */
     public A getFirst() {
-        return first;
+	return first;
     }
-    
+
     /**
      * setter method for property first
      * 
@@ -37,18 +37,18 @@ public class Pair<A, B> {
      *            the first to set
      */
     public void setFirst(A first) {
-        this.first = first;
+	this.first = first;
     }
-    
+
     /**
      * getter method for property second
      * 
      * @return the second
      */
     public B getSecond() {
-        return second;
+	return second;
     }
-    
+
     /**
      * setter method for property second
      * 
@@ -56,9 +56,9 @@ public class Pair<A, B> {
      *            the second to set
      */
     public void setSecond(B second) {
-        this.second = second;
+	this.second = second;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -66,9 +66,9 @@ public class Pair<A, B> {
      */
     @Override
     public String toString() {
-        return "Pair [first=" + first + ", second=" + second + "]";
+	return "Pair [first=" + first + ", second=" + second + "]";
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -76,13 +76,13 @@ public class Pair<A, B> {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((first == null) ? 0 : first.hashCode());
-        result = prime * result + ((second == null) ? 0 : second.hashCode());
-        return result;
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((first == null) ? 0 : first.hashCode());
+	result = prime * result + ((second == null) ? 0 : second.hashCode());
+	return result;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -90,41 +90,41 @@ public class Pair<A, B> {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof Pair)) {
-            return false;
-        }
-        Pair<?, ?> other = (Pair<?, ?>) obj;
-        if (first == null) {
-            if (other.first != null) {
-                return false;
-            }
-        } else if (!first.equals(other.first)) {
-            return false;
-        }
-        if (second == null) {
-            if (other.second != null) {
-                return false;
-            }
-        } else if (!second.equals(other.second)) {
-            return false;
-        }
-        return true;
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (!(obj instanceof Pair)) {
+	    return false;
+	}
+	Pair<?, ?> other = (Pair<?, ?>) obj;
+	if (first == null) {
+	    if (other.first != null) {
+		return false;
+	    }
+	} else if (!first.equals(other.first)) {
+	    return false;
+	}
+	if (second == null) {
+	    if (other.second != null) {
+		return false;
+	    }
+	} else if (!second.equals(other.second)) {
+	    return false;
+	}
+	return true;
     }
-    
+
     /**
      * @param first
      * @param second
      */
     public Pair(A first, B second) {
-        super();
-        this.first = first;
-        this.second = second;
+	super();
+	this.first = first;
+	this.second = second;
     }
-    
+
 }
