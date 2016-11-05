@@ -1,6 +1,6 @@
 # smart-gomoku
 
-***[Chinese Version](http://www.zhixiangli.com/2015/06/11/%E4%BA%BA%E6%9C%BA%E5%8D%9A%E5%BC%88%EF%BC%9A%E4%BA%94%E5%AD%90%E6%A3%8B%E6%B8%B8%E6%88%8F/)***
+***[Chinese Version](http://www.zhixiangli.com/2015/06/11/smart-gomoku/)***
 
 AI of Five Chess / Gomoku / Gobang Game.
 
