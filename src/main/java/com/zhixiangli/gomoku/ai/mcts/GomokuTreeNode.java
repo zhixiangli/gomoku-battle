@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import com.zhixiangli.gomoku.chessboard.ChessType;
+import com.zhixiangli.gomoku.chessboard.Chessboard;
 import com.zhixiangli.gomoku.common.GomokuReferee;
-import com.zhixiangli.gomoku.model.ChessType;
-import com.zhixiangli.gomoku.model.Chessboard;
 
 /**
  * @author lizhixiang
@@ -38,7 +38,7 @@ public class GomokuTreeNode {
     public GomokuTreeNode(Chessboard chessboard) {
         this.numOfGame = 0;
         this.numOfWin = 0;
-        this.id = chessboard.getId();
+        this.id = chessboard.hashCode();
     }
 
     public int select() {
@@ -66,7 +66,7 @@ public class GomokuTreeNode {
     public void expand(Chessboard chessboard, ChessType chessType) {
         List<Point> emptyList = GomokuMCTS.searchRange(chessboard);
         if (emptyList.size() == 0) {
-            emptyList.add(new Point(Chessboard.DEFAULT_SIZE / 2, Chessboard.DEFAULT_SIZE / 2));
+            emptyList.add(new Point(chessboard.getLength() / 2, chessboard.getLength() / 2));
         }
         this.childrenId = new long[emptyList.size()];
         this.childrenMove = new Point[emptyList.size()];
@@ -91,8 +91,8 @@ public class GomokuTreeNode {
             int randomIndex = RANDOM.nextInt(emptyList.size());
             Point chosePoint = emptyList.get(randomIndex);
             choseList.add(chosePoint);
-
-            if (chessboard.setChess(chosePoint, chessType)) {
+            chessboard.setChess(chosePoint, chessType);
+            if (GomokuReferee.isWin(chessboard, chosePoint)) {
                 winnerType = chessType;
                 break;
             }

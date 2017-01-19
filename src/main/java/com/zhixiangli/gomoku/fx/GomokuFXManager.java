@@ -12,10 +12,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
 
 import com.zhixiangli.gomoku.SmartGomoku;
-import com.zhixiangli.gomoku.ai.GomokuAI;
+import com.zhixiangli.gomoku.ai.GomokuAgent;
+import com.zhixiangli.gomoku.chessboard.ChessType;
+import com.zhixiangli.gomoku.chessboard.Chessboard;
 import com.zhixiangli.gomoku.common.GomokuReferee;
-import com.zhixiangli.gomoku.model.ChessType;
-import com.zhixiangli.gomoku.model.Chessboard;
 
 /**
  * adapter between gomoku AI and UI.
@@ -34,7 +34,7 @@ public class GomokuFXManager {
      * chessboard property, if changed the UI will changed as well.
      */
     private SimpleIntegerProperty[][] chessboardProperty =
-            new SimpleIntegerProperty[Chessboard.DEFAULT_SIZE][Chessboard.DEFAULT_SIZE];
+            new SimpleIntegerProperty[chessboard.getLength()][chessboard.getLength()];
 
     /**
      * current play's chess type, white or black.
@@ -44,8 +44,8 @@ public class GomokuFXManager {
     /**
      * current play property, if changed will let another play to move.
      */
-    private SimpleObjectProperty<Class<? extends GomokuAI>> currentPlayerProperty =
-            new SimpleObjectProperty<Class<? extends GomokuAI>>();
+    private SimpleObjectProperty<Class<? extends GomokuAgent>> currentPlayerProperty =
+            new SimpleObjectProperty<Class<? extends GomokuAgent>>();
 
     /**
      * chessboard state property, game on, draw, black win, white win.
@@ -56,12 +56,12 @@ public class GomokuFXManager {
     /**
      * black player strategy class. GomokuAI's subclass if is computer, otherwise null.
      */
-    private Class<? extends GomokuAI> blackPlayerStrategyClass;
+    private Class<? extends GomokuAgent> blackPlayerStrategyClass;
 
     /**
      * white player strategy class. GomokuAI's subclass if is computer, otherwise null.
      */
-    private Class<? extends GomokuAI> whitePlayerStrategyClass;
+    private Class<? extends GomokuAgent> whitePlayerStrategyClass;
 
     private ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor(runnable -> {
         Thread thread = new Thread(runnable);
@@ -70,8 +70,8 @@ public class GomokuFXManager {
     });
 
     public GomokuFXManager() {
-        for (int row = 0; row < Chessboard.DEFAULT_SIZE; ++row) {
-            for (int column = 0; column < Chessboard.DEFAULT_SIZE; ++column) {
+        for (int row = 0; row < chessboard.getLength(); ++row) {
+            for (int column = 0; column < chessboard.getLength(); ++column) {
                 this.chessboardProperty[row][column] = new SimpleIntegerProperty(ChessType.EMPTY.ordinal());
             }
         }
@@ -141,7 +141,7 @@ public class GomokuFXManager {
      * 
      * @return the currentPlayerProperty
      */
-    public SimpleObjectProperty<Class<? extends GomokuAI>> getCurrentPlayerProperty() {
+    public SimpleObjectProperty<Class<? extends GomokuAgent>> getCurrentPlayerProperty() {
         return currentPlayerProperty;
     }
 
@@ -150,7 +150,7 @@ public class GomokuFXManager {
      * 
      * @param blackPlayerStrategyClass the blackPlayerStrategyClass to set
      */
-    public void setBlackPlayerStrategyClass(Class<? extends GomokuAI> blackPlayerStrategyClass) {
+    public void setBlackPlayerStrategyClass(Class<? extends GomokuAgent> blackPlayerStrategyClass) {
         this.blackPlayerStrategyClass = blackPlayerStrategyClass;
     }
 
@@ -159,7 +159,7 @@ public class GomokuFXManager {
      * 
      * @param whitePlayerStrategyClass the whitePlayerStrategyClass to set
      */
-    public void setWhitePlayerStrategyClass(Class<? extends GomokuAI> whitePlayerStrategyClass) {
+    public void setWhitePlayerStrategyClass(Class<? extends GomokuAgent> whitePlayerStrategyClass) {
         this.whitePlayerStrategyClass = whitePlayerStrategyClass;
     }
 

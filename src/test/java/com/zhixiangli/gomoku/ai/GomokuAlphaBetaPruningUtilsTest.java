@@ -12,8 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zhixiangli.gomoku.ai.alphabeta.GomokuAlphaBetaPruningUtils;
-import com.zhixiangli.gomoku.model.ChessType;
-import com.zhixiangli.gomoku.model.Chessboard;
+import com.zhixiangli.gomoku.chessboard.ChessType;
+import com.zhixiangli.gomoku.chessboard.Chessboard;
 
 /**
  * TODO

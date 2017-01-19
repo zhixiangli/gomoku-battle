@@ -3,7 +3,7 @@
  */
 package com.zhixiangli.gomoku.fx;
 
-import com.zhixiangli.gomoku.model.ChessType;
+import com.zhixiangli.gomoku.chessboard.ChessType;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;

@@ -6,9 +6,9 @@ package com.zhixiangli.gomoku;
 import java.awt.Point;
 import java.util.logging.Logger;
 
-import com.zhixiangli.gomoku.ai.GomokuAI;
-import com.zhixiangli.gomoku.model.ChessType;
-import com.zhixiangli.gomoku.model.Chessboard;
+import com.zhixiangli.gomoku.ai.GomokuAgent;
+import com.zhixiangli.gomoku.chessboard.ChessType;
+import com.zhixiangli.gomoku.chessboard.Chessboard;
 
 /**
  * entry of AI.
@@ -29,10 +29,10 @@ public class SmartGomoku {
      * @param chessType ChessType.class
      * @return point of next move.
      */
-    public static Point next(Class<? extends GomokuAI> gomokuAIClass, Chessboard chessboard, ChessType chessType) {
+    public static Point next(Class<? extends GomokuAgent> gomokuAIClass, Chessboard chessboard, ChessType chessType) {
         try {
             System.out.println("current player: " + chessType);
-            GomokuAI gomokuAI = gomokuAIClass.newInstance();
+            GomokuAgent gomokuAI = gomokuAIClass.newInstance();
             Point nextPoint = gomokuAI.next(chessboard.clone(), chessType);
             System.out.println("player set: " + nextPoint);
             return nextPoint;

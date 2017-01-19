@@ -7,11 +7,12 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.zhixiangli.gomoku.chessboard.ChessType;
+import com.zhixiangli.gomoku.chessboard.Chessboard;
 import com.zhixiangli.gomoku.common.GomokuConstant;
 import com.zhixiangli.gomoku.common.GomokuReferee;
-import com.zhixiangli.gomoku.common.Pair;
-import com.zhixiangli.gomoku.model.ChessType;
-import com.zhixiangli.gomoku.model.Chessboard;
 
 /**
  * utils of AI.
@@ -32,7 +33,7 @@ public class GomokuAlphaBetaPruningUtils {
      */
     public static List<Point> getEmptyPoints(Chessboard chessboard) {
         List<Point> pointList = new ArrayList<>();
-        int size = Chessboard.DEFAULT_SIZE;
+        int size = chessboard.getLength();
 
         boolean[][] canPut = new boolean[size][size];
         for (int row = 0; row < size; ++row) {
@@ -61,7 +62,7 @@ public class GomokuAlphaBetaPruningUtils {
         }
 
         if (pointList.isEmpty()) {
-            pointList.add(new Point(Chessboard.DEFAULT_SIZE / 2, Chessboard.DEFAULT_SIZE / 2));
+            pointList.add(new Point(chessboard.getLength() / 2, chessboard.getLength() / 2));
         }
         return pointList;
     }
@@ -77,7 +78,7 @@ public class GomokuAlphaBetaPruningUtils {
     public static double getGlobalEstimate(Chessboard chessboard, ChessType chessType) {
         double blackEstimate = 0;
         double whiteEstimate = 0;
-        int size = Chessboard.DEFAULT_SIZE;
+        int size = chessboard.getLength();
         for (int row = 0; row < size; ++row) {
             for (int column = 0; column < size; ++column) {
                 if (ChessType.EMPTY != chessboard.getChess(row, column)) {
@@ -108,7 +109,7 @@ public class GomokuAlphaBetaPruningUtils {
      */
     public static double getSingleEstimate(Chessboard chessboard, Point point, Point delta) {
         Pair<Integer, Integer> pair = GomokuReferee.analyseContinuousCount(chessboard, point, delta);
-        int type = Math.min(pair.getFirst() * 3 + pair.getSecond(), 5 * 3 + 0);
+        int type = Math.min(pair.getLeft() * 3 + pair.getRight(), 5 * 3 + 0);
         switch (type) {
 
             case 15: // ooooo

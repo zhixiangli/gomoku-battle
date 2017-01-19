@@ -8,8 +8,11 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Random;
 
-import com.zhixiangli.gomoku.model.ChessType;
-import com.zhixiangli.gomoku.model.Chessboard;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.zhixiangli.gomoku.chessboard.ChessType;
+import com.zhixiangli.gomoku.chessboard.Chessboard;
 
 /**
  * chessboard referee.
@@ -24,16 +27,8 @@ public class GomokuReferee {
      */
     public static final Random RANDOM = new SecureRandom();
 
-    /**
-     * 
-     * the game is draw?
-     * 
-     * @param chessboard Chessboard.
-     * @param point the position was put just now.
-     * @return true if is draw, otherwise false.
-     */
-    public static final boolean isDraw(Chessboard chessboard, Point point) {
-        int size = Chessboard.DEFAULT_SIZE;
+    public static final boolean isFull(Chessboard chessboard) {
+        int size = chessboard.getLength();
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {
                 if (chessboard.getChess(i, j) == ChessType.EMPTY) {
@@ -41,11 +36,11 @@ public class GomokuReferee {
                 }
             }
         }
-        return !isWin(chessboard, point);
+        return true;
     }
 
     public static final boolean isDraw(Chessboard chessboard, int row, int column) {
-        return isDraw(chessboard, new Point(row, column));
+        return isFull(chessboard) && !isWin(chessboard, row, column);
     }
 
     /**
@@ -57,12 +52,12 @@ public class GomokuReferee {
      * @return true if is win, otherwise false.
      */
     public static final boolean isWin(Chessboard chessboard, Point point) {
-        return Arrays.stream(GomokuConstant.DIRECTIONS).anyMatch(
-                direction -> getContinuousCount(chessboard, point, direction) >= GomokuConstant.CONTINUOUS_NUMBER);
+        return isWin(chessboard, point.x, point.y);
     }
 
     public static final boolean isWin(Chessboard chessboard, int row, int column) {
-        return isWin(chessboard, new Point(row, column));
+        return Arrays.stream(GomokuConstant.DIRECTIONS).anyMatch(direction -> getContinuousCount(chessboard, row,
+                column, direction) >= GomokuConstant.CONTINUOUS_NUMBER);
     }
 
     /**
@@ -75,7 +70,7 @@ public class GomokuReferee {
      */
     public static final boolean isPossibleWin(Chessboard chessboard, Point point, Point delta) {
         int possible = 0;
-        int size = Chessboard.DEFAULT_SIZE;
+        int size = chessboard.getLength();
         ChessType chessType = chessboard.getChess(point.x, point.y);
         for (int i = point.x, j = point.y; i >= 0 && i < size && j >= 0 && j < size
                 && possible < GomokuConstant.CONTINUOUS_NUMBER; i += delta.x, j += delta.y) {
@@ -120,9 +115,9 @@ public class GomokuReferee {
         ChessType chessType = chessboard.getChess(point.x, point.y);
 
         if (ChessType.EMPTY == chessType) {
-            return new Pair<Integer, Integer>(0, 0);
+            return MutablePair.of(0, 0);
         }
-        int size = Chessboard.DEFAULT_SIZE;
+        int size = chessboard.getLength();
 
         int serial0 = 0;
         int blank0 = 0;
@@ -173,7 +168,7 @@ public class GomokuReferee {
             --serial;
             blank = 0;
         }
-        return new Pair<Integer, Integer>(serial, blank);
+        return MutablePair.of(serial, blank);
     }
 
     /**
@@ -182,19 +177,33 @@ public class GomokuReferee {
      * 
      * @param chessboard Chessboard.
      * @param point the position was put just now.
-     * @param delta direction.
+     * @param d direction.
      * @return Pair<Integer, Integer>. The first number is continuous number, and the second number
      *         is blank number.
      */
-    public static final int getContinuousCount(Chessboard chessboard, Point point, Point delta) {
-        ChessType chessType = chessboard.getChess(point.x, point.y);
+    public static final int getContinuousCount(Chessboard chessboard, Point point, Point d) {
+        return getContinuousCount(chessboard, point.x, point.y, d);
+    }
+
+    /**
+     * 
+     * get continuous number of same color.
+     * 
+     * @param chessboard Chessboard.
+     * @param point the position was put just now.
+     * @param d direction.
+     * @return Pair<Integer, Integer>. The first number is continuous number, and the second number
+     *         is blank number.
+     */
+    public static final int getContinuousCount(Chessboard chessboard, int x, int y, Point d) {
+        ChessType chessType = chessboard.getChess(x, y);
         if (ChessType.EMPTY == chessType) {
             return 0;
         }
-        int size = Chessboard.DEFAULT_SIZE;
+        int size = chessboard.getLength();
 
         int cnt = 0;
-        for (int i = point.x, j = point.y; i >= 0 && i < size && j >= 0 && j < size; i += delta.x, j += delta.y) {
+        for (int i = x, j = y; i >= 0 && i < size && j >= 0 && j < size; i += d.x, j += d.y) {
             if (chessboard.getChess(i, j) == chessType) {
                 ++cnt;
             } else {
@@ -202,8 +211,7 @@ public class GomokuReferee {
             }
         }
 
-        for (int i = point.x - delta.x, j = point.y - delta.y; i >= 0 && i < size && j >= 0 && j < size; i -=
-                delta.x, j -= delta.y) {
+        for (int i = x - d.x, j = y - d.y; i >= 0 && i < size && j >= 0 && j < size; i -= d.x, j -= d.y) {
             if (chessboard.getChess(i, j) == chessType) {
                 ++cnt;
             } else {

@@ -5,8 +5,6 @@ package com.zhixiangli.gomoku.fx;
 
 import java.util.Calendar;
 
-import com.zhixiangli.gomoku.model.Chessboard;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -48,10 +46,12 @@ public class UIConstant {
         CHOICE_BOX_CHOICES.add(UIConstant.COMPUTER_PLAYER);
     }
 
+    public static final int CHESSBOARD_LENGTH = 15;
+
     /**
      * length of each cell.
      */
-    public static final double CELL_SIZE = 800.0 / Chessboard.DEFAULT_SIZE;
+    public static final double CELL_SIZE = 800.0 / CHESSBOARD_LENGTH;
 
     /**
      * game on's text in announcement text area.

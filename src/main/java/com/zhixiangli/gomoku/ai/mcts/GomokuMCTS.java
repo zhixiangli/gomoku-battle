@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.zhixiangli.gomoku.ai.GomokuAI;
+import com.zhixiangli.gomoku.ai.GomokuAgent;
+import com.zhixiangli.gomoku.chessboard.ChessType;
+import com.zhixiangli.gomoku.chessboard.Chessboard;
 import com.zhixiangli.gomoku.common.GomokuReferee;
-import com.zhixiangli.gomoku.model.ChessType;
-import com.zhixiangli.gomoku.model.Chessboard;
 
 /**
  * monte carlo tree search of gomoku.
@@ -23,7 +23,7 @@ import com.zhixiangli.gomoku.model.Chessboard;
  * 
  *
  */
-public class GomokuMCTS implements GomokuAI {
+public class GomokuMCTS implements GomokuAgent {
 
     public static final Map<Long, GomokuTreeNode> TREE_NODE_MAP = new HashMap<>();
 
@@ -32,7 +32,7 @@ public class GomokuMCTS implements GomokuAI {
     public static final int EXPERIMENT_TIMES = 100000;
 
     public static final long registerTreeNode(Chessboard chessboard) {
-        long id = chessboard.getId();
+        long id = chessboard.hashCode();
         if (!TREE_NODE_MAP.containsKey(id)) {
             GomokuTreeNode node = new GomokuTreeNode(chessboard);
             TREE_NODE_MAP.put(id, node);
@@ -42,8 +42,8 @@ public class GomokuMCTS implements GomokuAI {
 
     public static List<Point> searchAround(Chessboard chessboard, int x, int y) {
         List<Point> aroundList = new ArrayList<>();
-        int x0 = Math.max(0, x - SEARCH_RANGE), x1 = Math.min(Chessboard.DEFAULT_SIZE - 1, x + SEARCH_RANGE);
-        int y0 = Math.max(0, y - SEARCH_RANGE), y1 = Math.min(Chessboard.DEFAULT_SIZE - 1, y + SEARCH_RANGE);
+        int x0 = Math.max(0, x - SEARCH_RANGE), x1 = Math.min(chessboard.getLength() - 1, x + SEARCH_RANGE);
+        int y0 = Math.max(0, y - SEARCH_RANGE), y1 = Math.min(chessboard.getLength() - 1, y + SEARCH_RANGE);
         for (int a = x0; a <= x1; ++a) {
             for (int b = y0; b <= y1; ++b) {
                 if (chessboard.getChess(a, b) != ChessType.EMPTY) {
@@ -57,8 +57,8 @@ public class GomokuMCTS implements GomokuAI {
 
     public static List<Point> searchRange(Chessboard chessboard) {
         Set<Point> rangeSet = new HashSet<>();
-        for (int i = 0; i < Chessboard.DEFAULT_SIZE; ++i) {
-            for (int j = 0; j < Chessboard.DEFAULT_SIZE; ++j) {
+        for (int i = 0; i < chessboard.getLength(); ++i) {
+            for (int j = 0; j < chessboard.getLength(); ++j) {
                 if (chessboard.getChess(i, j) == ChessType.EMPTY) {
                     continue;
                 }
@@ -101,7 +101,8 @@ public class GomokuMCTS implements GomokuAI {
         while (curNode.getChildrenId() != null) {
             int selected = curNode.select();
             Point move = curNode.getChildrenMove()[selected];
-            if (chessboard.setChess(move, currentChessType)) {
+            chessboard.setChess(move, currentChessType);
+            if (GomokuReferee.isWin(chessboard, move)) {
                 winnerType = currentChessType;
                 break;
             }
@@ -117,7 +118,8 @@ public class GomokuMCTS implements GomokuAI {
                 Point move = curNode.getChildrenMove()[selected];
                 curNode = GomokuMCTS.TREE_NODE_MAP.get(curNode.getChildrenId()[selected]);
                 dfsPath.add(curNode);
-                if (chessboard.setChess(move, currentChessType)) {
+                chessboard.setChess(move, currentChessType);
+                if (GomokuReferee.isWin(chessboard, move)) {
                     winnerType = currentChessType;
                 } else {
                     winnerType = curNode.simulate(chessboard, GomokuReferee.nextChessType(currentChessType));

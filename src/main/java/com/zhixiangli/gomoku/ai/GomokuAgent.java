@@ -5,8 +5,8 @@ package com.zhixiangli.gomoku.ai;
 
 import java.awt.Point;
 
-import com.zhixiangli.gomoku.model.ChessType;
-import com.zhixiangli.gomoku.model.Chessboard;
+import com.zhixiangli.gomoku.chessboard.ChessType;
+import com.zhixiangli.gomoku.chessboard.Chessboard;
 
 /**
  * Gomoku AI interface.
@@ -14,7 +14,7 @@ import com.zhixiangli.gomoku.model.Chessboard;
  * @author lizhixiang
  *
  */
-public interface GomokuAI {
+public interface GomokuAgent {
 
     /**
      * 

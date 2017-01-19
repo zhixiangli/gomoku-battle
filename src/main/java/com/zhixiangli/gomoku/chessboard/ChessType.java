@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.model;
+package com.zhixiangli.gomoku.chessboard;
 
 /**
  * chess type.

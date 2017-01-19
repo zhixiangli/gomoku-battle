@@ -5,9 +5,8 @@ package com.zhixiangli.gomoku.fx;
 
 import java.io.IOException;
 
-import com.zhixiangli.gomoku.ai.GomokuAI;
+import com.zhixiangli.gomoku.ai.GomokuAgent;
 import com.zhixiangli.gomoku.ai.alphabeta.GomokuAlphaBetaPruning;
-import com.zhixiangli.gomoku.model.Chessboard;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
@@ -76,7 +75,7 @@ public class GomokuController {
         this.setPlayerStrategy();
 
         // add listener when current play changed.
-        SimpleObjectProperty<Class<? extends GomokuAI>> currentPlayerProperty =
+        SimpleObjectProperty<Class<? extends GomokuAgent>> currentPlayerProperty =
                 this.gomokuManager.getCurrentPlayerProperty();
         this.makeStrategyMove(currentPlayerProperty);
         currentPlayerProperty.addListener(event -> this.makeStrategyMove(currentPlayerProperty));
@@ -89,8 +88,8 @@ public class GomokuController {
 
         // add each cell pane to grid pane.
         this.chessboardGridPane.getChildren().clear();
-        for (int row = 0; row < Chessboard.DEFAULT_SIZE; ++row) {
-            for (int column = 0; column < Chessboard.DEFAULT_SIZE; ++column) {
+        for (int row = 0; row <UIConstant.CHESSBOARD_LENGTH; ++row) {
+            for (int column = 0; column < UIConstant.CHESSBOARD_LENGTH; ++column) {
                 this.chessboardGridPane.getChildren().add(new GomokuCellPane(row, column, this.gomokuManager));
             }
         }
@@ -102,10 +101,10 @@ public class GomokuController {
      * set play's strategy, computer or human role.
      */
     private void setPlayerStrategy() {
-        Class<? extends GomokuAI> blackPlayerStrategyClass =
+        Class<? extends GomokuAgent> blackPlayerStrategyClass =
                 UIConstant.COMPUTER_PLAYER.equals(this.blackPlayerChoiceBox.getSelectionModel().getSelectedItem())
                         ? GomokuAlphaBetaPruning.class : null;
-        Class<? extends GomokuAI> whitePlayerStrategyClass =
+        Class<? extends GomokuAgent> whitePlayerStrategyClass =
                 UIConstant.COMPUTER_PLAYER.equals(this.whitePlayerChoiceBox.getSelectionModel().getSelectedItem())
                         ? GomokuAlphaBetaPruning.class : null;
         this.gomokuManager.setBlackPlayerStrategyClass(blackPlayerStrategyClass);
@@ -119,7 +118,7 @@ public class GomokuController {
      * 
      * @param currentPlayerProperty current player's property.
      */
-    private void makeStrategyMove(SimpleObjectProperty<Class<? extends GomokuAI>> currentPlayerProperty) {
+    private void makeStrategyMove(SimpleObjectProperty<Class<? extends GomokuAgent>> currentPlayerProperty) {
         if (null != currentPlayerProperty.get()) {
             this.gomokuManager.makeStrategyMove();
         }

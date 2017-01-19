@@ -10,8 +10,8 @@ import org.junit.Test;
 
 import com.zhixiangli.gomoku.ai.mcts.GomokuMCTS;
 import com.zhixiangli.gomoku.ai.mcts.GomokuTreeNode;
-import com.zhixiangli.gomoku.model.ChessType;
-import com.zhixiangli.gomoku.model.Chessboard;
+import com.zhixiangli.gomoku.chessboard.ChessType;
+import com.zhixiangli.gomoku.chessboard.Chessboard;
 
 /**
  * @author lizhixiang
