@@ -6,7 +6,7 @@ package com.zhixiangli.gomoku;
 import java.awt.Point;
 import java.util.logging.Logger;
 
-import com.zhixiangli.gomoku.ai.GomokuAgent;
+import com.zhixiangli.gomoku.agent.GomokuAgent;
 import com.zhixiangli.gomoku.chessboard.ChessType;
 import com.zhixiangli.gomoku.chessboard.Chessboard;
 

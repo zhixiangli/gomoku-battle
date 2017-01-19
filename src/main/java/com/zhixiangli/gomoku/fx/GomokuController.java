@@ -5,8 +5,8 @@ package com.zhixiangli.gomoku.fx;
 
 import java.io.IOException;
 
-import com.zhixiangli.gomoku.ai.GomokuAgent;
-import com.zhixiangli.gomoku.ai.alphabeta.GomokuAlphaBetaPruning;
+import com.zhixiangli.gomoku.agent.GomokuAgent;
+import com.zhixiangli.gomoku.agent.alphabeta.GomokuAlphaBetaPruning;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
@@ -148,17 +148,6 @@ public class GomokuController {
                 break;
         }
         this.announcementTextArea.setText(announcementString);
-    }
-
-    /**
-     * 
-     * the method is called when click 'NEW GAME'.
-     * 
-     * @throws IOException
-     */
-    @FXML
-    public void newGame() throws IOException {
-        this.initialize();
     }
 
 }

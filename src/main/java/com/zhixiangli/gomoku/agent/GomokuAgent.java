@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.ai;
+package com.zhixiangli.gomoku.agent;
 
 import java.awt.Point;
 

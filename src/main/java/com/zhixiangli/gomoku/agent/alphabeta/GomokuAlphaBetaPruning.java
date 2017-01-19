@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.ai.alphabeta;
+package com.zhixiangli.gomoku.agent.alphabeta;
 
 import java.awt.Point;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.zhixiangli.gomoku.ai.GomokuAgent;
+import com.zhixiangli.gomoku.agent.GomokuAgent;
 import com.zhixiangli.gomoku.chessboard.ChessType;
 import com.zhixiangli.gomoku.chessboard.Chessboard;
 import com.zhixiangli.gomoku.common.GomokuReferee;

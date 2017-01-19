@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.ai.mcts;
+package com.zhixiangli.gomoku.agent.mcts;
 
 import java.awt.Point;
 import java.security.SecureRandom;

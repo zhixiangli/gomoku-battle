@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.ai.mcts;
+package com.zhixiangli.gomoku.agent.mcts;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.zhixiangli.gomoku.ai.GomokuAgent;
+import com.zhixiangli.gomoku.agent.GomokuAgent;
 import com.zhixiangli.gomoku.chessboard.ChessType;
 import com.zhixiangli.gomoku.chessboard.Chessboard;
 import com.zhixiangli.gomoku.common.GomokuReferee;

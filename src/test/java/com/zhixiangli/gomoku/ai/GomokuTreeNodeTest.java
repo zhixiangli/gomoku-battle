@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.zhixiangli.gomoku.ai.mcts.GomokuMCTS;
+import com.zhixiangli.gomoku.agent.mcts.GomokuMCTS;
 import com.zhixiangli.gomoku.chessboard.ChessType;
 import com.zhixiangli.gomoku.chessboard.Chessboard;
 

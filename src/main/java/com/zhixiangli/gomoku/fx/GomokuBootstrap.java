@@ -23,10 +23,10 @@ public class GomokuBootstrap extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gomoku.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gomoku_pane.fxml"));
         fxmlLoader.setController(new GomokuController());
         Scene scene = new Scene(fxmlLoader.load());
-        scene.getStylesheets().add(getClass().getResource("/gomoku.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/gomoku_style.css").toExternalForm());
 
         primaryStage.setTitle(String.format("%s (%s)", UIConstant.TITLE, UIConstant.COPYRIGHT));
         primaryStage.setScene(scene);

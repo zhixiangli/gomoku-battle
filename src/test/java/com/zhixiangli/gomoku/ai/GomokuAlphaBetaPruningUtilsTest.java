@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zhixiangli.gomoku.ai.alphabeta.GomokuAlphaBetaPruningUtils;
+import com.zhixiangli.gomoku.agent.alphabeta.GomokuAlphaBetaPruningUtils;
 import com.zhixiangli.gomoku.chessboard.ChessType;
 import com.zhixiangli.gomoku.chessboard.Chessboard;
 

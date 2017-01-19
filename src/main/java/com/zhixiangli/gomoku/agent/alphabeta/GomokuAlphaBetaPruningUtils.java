@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.ai.alphabeta;
+package com.zhixiangli.gomoku.agent.alphabeta;
 
 import java.awt.Point;
 import java.util.ArrayList;
