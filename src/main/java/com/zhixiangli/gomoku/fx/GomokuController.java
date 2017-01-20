@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import com.zhixiangli.gomoku.agent.GomokuAgent;
 import com.zhixiangli.gomoku.agent.alphabeta.GomokuAlphaBetaPruning;
+import com.zhixiangli.gomoku.chessboard.ChessboardState;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;

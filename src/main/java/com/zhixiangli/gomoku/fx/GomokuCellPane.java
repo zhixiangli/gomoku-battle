@@ -6,6 +6,7 @@ package com.zhixiangli.gomoku.fx;
 import java.io.IOException;
 
 import com.zhixiangli.gomoku.chessboard.ChessType;
+import com.zhixiangli.gomoku.chessboard.ChessboardState;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;

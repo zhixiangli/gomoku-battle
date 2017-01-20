@@ -6,7 +6,6 @@ package com.zhixiangli.gomoku.chessboard;
 import java.awt.Point;
 
 import com.google.common.base.Preconditions;
-import com.zhixiangli.gomoku.common.GomokuReferee;
 import com.zhixiangli.gomoku.fx.UIConstant;
 
 /**
@@ -75,25 +74,6 @@ public class Chessboard implements Cloneable {
      */
     public int getLength() {
         return length;
-    }
-
-    public ChessboardState getChessboardState(int row, int column) {
-        if (GomokuReferee.isWin(this, row, column)) {
-            ChessType chessType = chessboard[row][column];
-            Preconditions.checkArgument(ChessType.EMPTY != chessType);
-
-            if (ChessType.BLACK == chessType) {
-                return ChessboardState.BLACK_WIN;
-            } else {
-                return ChessboardState.WHITE_WIN;
-            }
-
-        } else if (GomokuReferee.isFull(this)) {
-            return ChessboardState.GAME_DRAW;
-
-        } else {
-            return ChessboardState.GAME_ON;
-        }
     }
 
     /*

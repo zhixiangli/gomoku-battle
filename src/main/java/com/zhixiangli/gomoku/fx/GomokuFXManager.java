@@ -15,6 +15,7 @@ import com.zhixiangli.gomoku.SmartGomoku;
 import com.zhixiangli.gomoku.agent.GomokuAgent;
 import com.zhixiangli.gomoku.chessboard.ChessType;
 import com.zhixiangli.gomoku.chessboard.Chessboard;
+import com.zhixiangli.gomoku.chessboard.ChessboardState;
 import com.zhixiangli.gomoku.common.GomokuReferee;
 
 /**
