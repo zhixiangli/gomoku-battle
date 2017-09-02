@@ -6,10 +6,14 @@ package com.zhixiangli.gomoku.fx;
 import java.io.IOException;
 
 import com.zhixiangli.gomoku.agent.GomokuAgent;
-import com.zhixiangli.gomoku.agent.alphabeta.GomokuAlphaBetaPruning;
-import com.zhixiangli.gomoku.chessboard.ChessboardState;
+import com.zhixiangli.gomoku.chessboard.ChessPlayer;
+import com.zhixiangli.gomoku.chessboard.ChessState;
+import com.zhixiangli.gomoku.common.GomokuConstant;
+import com.zhixiangli.gomoku.service.GomokuService;
 
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
@@ -23,132 +27,128 @@ import javafx.scene.layout.GridPane;
  */
 public class GomokuController {
 
-    /**
-     * black player choice box.
-     */
-    @FXML
-    private ChoiceBox<String> blackPlayerChoiceBox;
+	/**
+	 * black player choice box.
+	 */
+	@FXML
+	private ChoiceBox<ChessPlayer> blackPlayerChoiceBox;
 
-    /**
-     * white player choice box.
-     */
-    @FXML
-    private ChoiceBox<String> whitePlayerChoiceBox;
+	/**
+	 * white player choice box.
+	 */
+	@FXML
+	private ChoiceBox<ChessPlayer> whitePlayerChoiceBox;
 
-    /**
-     * announcement text area.
-     */
-    @FXML
-    private TextArea announcementTextArea;
+	/**
+	 * announcement text area.
+	 */
+	@FXML
+	private TextArea announcementTextArea;
 
-    /**
-     * chessboard grid pane.
-     */
-    @FXML
-    private GridPane chessboardGridPane;
+	/**
+	 * chessboard grid pane.
+	 */
+	@FXML
+	private GridPane chessboardGridPane;
 
-    /**
-     * GomokuManager.
-     */
-    private GomokuFXManager gomokuManager;
+	/**
+	 * GomokuManager.
+	 */
+	private GomokuService gomokuService;
 
-    /**
-     * 
-     * initialize.
-     * 
-     * @throws IOException
-     */
-    @FXML
-    public void initialize() throws IOException {
-        this.gomokuManager = new GomokuFXManager();
+	/**
+	 * 
+	 * initialize.
+	 * 
+	 * @throws IOException
+	 */
+	@FXML
+	public void initialize() throws IOException {
+		gomokuService = new GomokuService();
 
-        // initialize choice box.
-        if (this.blackPlayerChoiceBox.getItems().isEmpty()) {
-            this.blackPlayerChoiceBox.setItems(UIConstant.CHOICE_BOX_CHOICES);
-            this.blackPlayerChoiceBox.getSelectionModel().select(0);
-        }
-        if (this.whitePlayerChoiceBox.getItems().isEmpty()) {
-            this.whitePlayerChoiceBox.setItems(UIConstant.CHOICE_BOX_CHOICES);
-            this.whitePlayerChoiceBox.getSelectionModel().select(1);
-        }
+		// initialize choice box.
+		initializeChoiceBoxes();
 
-        // set strategy according to the choice box.
-        this.setPlayerStrategy();
+		// add listener to update announcement when chessboard state is changed.
+		initailizeAnnouncement();
 
-        // add listener when current play changed.
-        SimpleObjectProperty<Class<? extends GomokuAgent>> currentPlayerProperty =
-                this.gomokuManager.getCurrentPlayerProperty();
-        this.makeStrategyMove(currentPlayerProperty);
-        currentPlayerProperty.addListener(event -> this.makeStrategyMove(currentPlayerProperty));
+		// add each cell pane to grid pane.
+		initializeChessboardGridPane();
 
-        // add listener to update announcement when chessboard state is changed.
-        this.announcementTextArea.setEditable(false);
-        SimpleObjectProperty<ChessboardState> chessboardStateProperty = this.gomokuManager.getChessboardStateProperty();
-        this.setAnnouncement(chessboardStateProperty.get());
-        chessboardStateProperty.addListener(event -> this.setAnnouncement(chessboardStateProperty.get()));
+		// initialize strategy according to the choice box.
+		initializePlayerStrategy();
 
-        // add each cell pane to grid pane.
-        this.chessboardGridPane.getChildren().clear();
-        for (int row = 0; row <UIConstant.CHESSBOARD_LENGTH; ++row) {
-            for (int column = 0; column < UIConstant.CHESSBOARD_LENGTH; ++column) {
-                this.chessboardGridPane.getChildren().add(new GomokuCellPane(row, column, this.gomokuManager));
-            }
-        }
+	}
 
-    }
+	private void initailizeAnnouncement() {
+		this.announcementTextArea.setEditable(false);
+		SimpleObjectProperty<ChessState> chessboardStateProperty = this.gomokuService.getChessStateProperty();
+		this.setAnnouncement(chessboardStateProperty.get());
+		chessboardStateProperty.addListener(event -> this.setAnnouncement(chessboardStateProperty.get()));
+	}
 
-    /**
-     * 
-     * set play's strategy, computer or human role.
-     */
-    private void setPlayerStrategy() {
-        Class<? extends GomokuAgent> blackPlayerStrategyClass =
-                UIConstant.COMPUTER_PLAYER.equals(this.blackPlayerChoiceBox.getSelectionModel().getSelectedItem())
-                        ? GomokuAlphaBetaPruning.class : null;
-        Class<? extends GomokuAgent> whitePlayerStrategyClass =
-                UIConstant.COMPUTER_PLAYER.equals(this.whitePlayerChoiceBox.getSelectionModel().getSelectedItem())
-                        ? GomokuAlphaBetaPruning.class : null;
-        this.gomokuManager.setBlackPlayerStrategyClass(blackPlayerStrategyClass);
-        this.gomokuManager.setWhitePlayerStrategyClass(whitePlayerStrategyClass);
-        this.gomokuManager.getCurrentPlayerProperty().set(blackPlayerStrategyClass);
-    }
+	private void initializeChessboardGridPane() throws IOException {
+		this.chessboardGridPane.getChildren().clear();
+		for (int row = 0; row < GomokuConstant.CHESSBOARD_GRID_NUM; ++row) {
+			for (int column = 0; column < GomokuConstant.CHESSBOARD_GRID_NUM; ++column) {
+				this.chessboardGridPane.getChildren().add(new GomokuCellPane(row, column, this.gomokuService));
+			}
+		}
+	}
 
-    /**
-     * 
-     * make move if current player is computer.
-     * 
-     * @param currentPlayerProperty current player's property.
-     */
-    private void makeStrategyMove(SimpleObjectProperty<Class<? extends GomokuAgent>> currentPlayerProperty) {
-        if (null != currentPlayerProperty.get()) {
-            this.gomokuManager.makeStrategyMove();
-        }
-    }
+	/**
+	 * 
+	 * set play's strategy, computer or human role.
+	 */
+	private void initializePlayerStrategy() {
+		Class<? extends GomokuAgent> blackPlayerStrategyClass = blackPlayerChoiceBox.getSelectionModel()
+				.getSelectedItem().getAgent();
+		this.gomokuService.setBlackPlayerStrategyClass(blackPlayerStrategyClass);
 
-    /**
-     * 
-     * set announcement to text area according to chessboard state.
-     * 
-     * @param chessboardState chessboard state.
-     */
-    private void setAnnouncement(ChessboardState chessboardState) {
-        String announcementString;
-        switch (chessboardState) {
-            case GAME_DRAW:
-                announcementString = UIConstant.GAME_DRAW;
-                break;
-            case BLACK_WIN:
-                announcementString = UIConstant.BLACK_WIN;
-                break;
-            case WHITE_WIN:
-                announcementString = UIConstant.WHITE_WIN;
-                break;
-            case GAME_ON:
-            default:
-                announcementString = UIConstant.GAME_ON;
-                break;
-        }
-        this.announcementTextArea.setText(announcementString);
-    }
+		Class<? extends GomokuAgent> whitePlayerStrategyClass = whitePlayerChoiceBox.getSelectionModel()
+				.getSelectedItem().getAgent();
+		this.gomokuService.setWhitePlayerStrategyClass(whitePlayerStrategyClass);
+
+		this.gomokuService.getCurrentAgentProperty().set(blackPlayerStrategyClass);
+	}
+
+	private void initializeChoiceBoxes() {
+		ObservableList<ChessPlayer> items = FXCollections.observableArrayList(ChessPlayer.values());
+		if (blackPlayerChoiceBox.getItems().isEmpty()) {
+			blackPlayerChoiceBox.setItems(items);
+			blackPlayerChoiceBox.getSelectionModel().select(0);
+		}
+		if (whitePlayerChoiceBox.getItems().isEmpty()) {
+			whitePlayerChoiceBox.setItems(items);
+			whitePlayerChoiceBox.getSelectionModel().select(1);
+		}
+	}
+
+	/**
+	 * 
+	 * set announcement to text area according to chessboard state.
+	 * 
+	 * @param chessboardState
+	 *            chessboard state.
+	 */
+	private void setAnnouncement(ChessState chessboardState) {
+		String announcementString;
+		switch (chessboardState) {
+		case GAME_DRAW:
+			announcementString = ChessState.GAME_DRAW.name();
+			break;
+		case BLACK_WIN:
+			announcementString = ChessState.BLACK_WIN.name();
+			break;
+		case WHITE_WIN:
+			announcementString = ChessState.WHITE_WIN.name();
+			break;
+		case GAME_ON:
+		default:
+			announcementString = ChessState.GAME_ON.name();
+			break;
+		}
+		this.announcementTextArea.setText(announcementString);
+	}
 
 }

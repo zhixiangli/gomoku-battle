@@ -8,7 +8,7 @@ package com.zhixiangli.gomoku.chessboard;
  * 
  * @author lizhixiang
  */
-public enum ChessboardState {
+public enum ChessState {
 
     /**
      * game is on.

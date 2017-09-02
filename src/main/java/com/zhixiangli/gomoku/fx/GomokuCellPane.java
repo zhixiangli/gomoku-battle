@@ -6,7 +6,9 @@ package com.zhixiangli.gomoku.fx;
 import java.io.IOException;
 
 import com.zhixiangli.gomoku.chessboard.ChessType;
-import com.zhixiangli.gomoku.chessboard.ChessboardState;
+import com.zhixiangli.gomoku.common.GomokuConstant;
+import com.zhixiangli.gomoku.service.GomokuService;
+import com.zhixiangli.gomoku.chessboard.ChessState;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -25,94 +27,93 @@ import javafx.scene.shape.Circle;
  */
 class GomokuCellPane extends Pane {
 
-    /**
-     * row index of this cell.
-     */
-    private int row;
+	/**
+	 * pane of this cell.
+	 */
+	@FXML
+	private Pane cellPane;
 
-    /**
-     * column index of this cell.
-     */
-    private int column;
+	/**
+	 * chess of this cell.
+	 */
+	@FXML
+	private Circle cellCircle;
 
-    /**
-     * GomokuManager.
-     */
-    private GomokuFXManager gomokuManger;
+	/**
+	 * row index of this cell.
+	 */
+	private int rowIndex;
 
-    /**
-     * pane of this cell.
-     */
-    @FXML
-    private Pane cellPane;
+	/**
+	 * column index of this cell.
+	 */
+	private int columnIndex;
 
-    /**
-     * chess of this cell.
-     */
-    @FXML
-    private Circle cellCircle;
+	/**
+	 * Gomoku Service.
+	 */
+	private GomokuService gomokuService;
 
-    public GomokuCellPane(int row, int column, GomokuFXManager gomokuManager) throws IOException {
-        this.row = row;
-        this.column = column;
-        this.gomokuManger = gomokuManager;
+	public GomokuCellPane(int rowIndex, int columnIndex, GomokuService gomokuService) throws IOException {
+		this.rowIndex = rowIndex;
+		this.columnIndex = columnIndex;
+		this.gomokuService = gomokuService;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/chess_pane.fxml"));
-        fxmlLoader.setRoot(this);
-        fxmlLoader.setController(this);
-        fxmlLoader.load();
+		this.setPrefHeight(GomokuConstant.GRID_SIZE);
+		this.setPrefWidth(GomokuConstant.GRID_SIZE);
 
-        this.setPrefHeight(UIConstant.CELL_SIZE);
-        this.setPrefWidth(UIConstant.CELL_SIZE);
+		// set row index and column index when this pane is put in a grid pane.
+		GridPane.setRowIndex(this, rowIndex);
+		GridPane.setColumnIndex(this, columnIndex);
 
-        // set row index and column index when this pane is put in a grid pane.
-        GridPane.setRowIndex(this, row);
-        GridPane.setColumnIndex(this, column);
-    }
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/chess_pane.fxml"));
+		fxmlLoader.setRoot(this);
+		fxmlLoader.setController(this);
+		fxmlLoader.load();
+	}
 
-    /**
-     * 
-     * initialize.
-     */
-    @FXML
-    public void initialize() {
+	/**
+	 * 
+	 * initialize.
+	 */
+	@FXML
+	public void initialize() {
 
-        // pane is disabled when following contition meets.
-        this.cellPane.disableProperty()
-                .bind(this.gomokuManger.getChessboardStateProperty().isNotEqualTo(ChessboardState.GAME_ON).or(
-                        this.gomokuManger.getChessboardProperty(row, column).isNotEqualTo(ChessType.EMPTY.ordinal())));
+		// pane is disabled when following contition meets.
+		this.cellPane.disableProperty().bind(gomokuService.getChessStateProperty().isNotEqualTo(ChessState.GAME_ON).or(
+				gomokuService.getChessboardProperty(rowIndex, columnIndex).isNotEqualTo(ChessType.EMPTY.ordinal())));
 
-        // location of this chess piece.
-        this.cellCircle.layoutXProperty().bind(this.cellPane.widthProperty().divide(2));
-        this.cellCircle.layoutYProperty().bind(this.cellPane.heightProperty().divide(2));
+		// location of this chess piece.
+		this.cellCircle.layoutXProperty().bind(this.cellPane.widthProperty().divide(2));
+		this.cellCircle.layoutYProperty().bind(this.cellPane.heightProperty().divide(2));
 
-        // radius of this chess piece.
-        this.cellCircle.radiusProperty()
-                .bind(Bindings.min(cellPane.widthProperty(), cellPane.heightProperty()).divide(2.5));
+		// radius of this chess piece.
+		this.cellCircle.radiusProperty()
+				.bind(Bindings.min(cellPane.widthProperty(), cellPane.heightProperty()).divide(2.5));
 
-        // the chess type of this cell, and add listener when the chess type
-        // is changed.
-        SimpleIntegerProperty chessTypeProperty = this.gomokuManger.getChessboardProperty(row, column);
-        this.updateCell(chessTypeProperty);
-        chessTypeProperty.addListener(event -> this.updateCell(chessTypeProperty));
-    }
+		// the chess type of this cell, and add listener when the chess type
+		// is changed.
+		SimpleIntegerProperty chessTypeProperty = this.gomokuService.getChessboardProperty(rowIndex, columnIndex);
+		this.updateGrid(chessTypeProperty);
+		chessTypeProperty.addListener(event -> this.updateGrid(chessTypeProperty));
+	}
 
-    private void updateCell(SimpleIntegerProperty chessTypeProperty) {
-        if (ChessType.EMPTY.ordinal() == chessTypeProperty.get()) {
-            this.cellCircle.visibleProperty().set(false);
-        } else {
-            this.cellCircle.visibleProperty().set(true);
-            this.cellCircle.setFill(ChessType.BLACK.ordinal() == chessTypeProperty.get() ? Color.BLACK : Color.WHITE);
-        }
-    }
+	private void updateGrid(SimpleIntegerProperty chessTypeProperty) {
+		if (ChessType.EMPTY.ordinal() == chessTypeProperty.get()) {
+			this.cellCircle.visibleProperty().set(false);
+		} else {
+			this.cellCircle.visibleProperty().set(true);
+			this.cellCircle.setFill(ChessType.BLACK.ordinal() == chessTypeProperty.get() ? Color.BLACK : Color.WHITE);
+		}
+	}
 
-    /**
-     * 
-     * when this cell is clicked, this method will be called.
-     */
-    @FXML
-    public void makeMove() {
-        this.gomokuManger.makeMove(row, column);
-    }
+	/**
+	 * 
+	 * when this cell is clicked, this method will be called.
+	 */
+	@FXML
+	public void moveOnMouseClicked() {
+		this.gomokuService.moveOnMouseClicked(rowIndex, columnIndex);
+	}
 
 }

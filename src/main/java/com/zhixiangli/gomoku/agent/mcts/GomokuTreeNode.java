@@ -66,7 +66,7 @@ public class GomokuTreeNode {
     public void expand(Chessboard chessboard, ChessType chessType) {
         List<Point> emptyList = GomokuMCTS.searchRange(chessboard);
         if (emptyList.size() == 0) {
-            emptyList.add(new Point(chessboard.getLength() / 2, chessboard.getLength() / 2));
+            emptyList.add(new Point(chessboard.size() / 2, chessboard.size() / 2));
         }
         this.childrenId = new long[emptyList.size()];
         this.childrenMove = new Point[emptyList.size()];

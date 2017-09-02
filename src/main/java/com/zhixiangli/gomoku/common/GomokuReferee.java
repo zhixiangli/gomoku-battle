@@ -28,7 +28,7 @@ public class GomokuReferee {
     public static final Random RANDOM = new SecureRandom();
 
     public static final boolean isFull(Chessboard chessboard) {
-        int size = chessboard.getLength();
+        int size = chessboard.size();
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {
                 if (chessboard.getChess(i, j) == ChessType.EMPTY) {
@@ -70,7 +70,7 @@ public class GomokuReferee {
      */
     public static final boolean isPossibleWin(Chessboard chessboard, Point point, Point delta) {
         int possible = 0;
-        int size = chessboard.getLength();
+        int size = chessboard.size();
         ChessType chessType = chessboard.getChess(point.x, point.y);
         for (int i = point.x, j = point.y; i >= 0 && i < size && j >= 0 && j < size
                 && possible < GomokuConstant.CONTINUOUS_NUMBER; i += delta.x, j += delta.y) {
@@ -117,7 +117,7 @@ public class GomokuReferee {
         if (ChessType.EMPTY == chessType) {
             return MutablePair.of(0, 0);
         }
-        int size = chessboard.getLength();
+        int size = chessboard.size();
 
         int serial0 = 0;
         int blank0 = 0;
@@ -200,7 +200,7 @@ public class GomokuReferee {
         if (ChessType.EMPTY == chessType) {
             return 0;
         }
-        int size = chessboard.getLength();
+        int size = chessboard.size();
 
         int cnt = 0;
         for (int i = x, j = y; i >= 0 && i < size && j >= 0 && j < size; i += d.x, j += d.y) {

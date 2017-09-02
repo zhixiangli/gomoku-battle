@@ -42,8 +42,8 @@ public class GomokuMCTS implements GomokuAgent {
 
     public static List<Point> searchAround(Chessboard chessboard, int x, int y) {
         List<Point> aroundList = new ArrayList<>();
-        int x0 = Math.max(0, x - SEARCH_RANGE), x1 = Math.min(chessboard.getLength() - 1, x + SEARCH_RANGE);
-        int y0 = Math.max(0, y - SEARCH_RANGE), y1 = Math.min(chessboard.getLength() - 1, y + SEARCH_RANGE);
+        int x0 = Math.max(0, x - SEARCH_RANGE), x1 = Math.min(chessboard.size() - 1, x + SEARCH_RANGE);
+        int y0 = Math.max(0, y - SEARCH_RANGE), y1 = Math.min(chessboard.size() - 1, y + SEARCH_RANGE);
         for (int a = x0; a <= x1; ++a) {
             for (int b = y0; b <= y1; ++b) {
                 if (chessboard.getChess(a, b) != ChessType.EMPTY) {
@@ -57,8 +57,8 @@ public class GomokuMCTS implements GomokuAgent {
 
     public static List<Point> searchRange(Chessboard chessboard) {
         Set<Point> rangeSet = new HashSet<>();
-        for (int i = 0; i < chessboard.getLength(); ++i) {
-            for (int j = 0; j < chessboard.getLength(); ++j) {
+        for (int i = 0; i < chessboard.size(); ++i) {
+            for (int j = 0; j < chessboard.size(); ++j) {
                 if (chessboard.getChess(i, j) == ChessType.EMPTY) {
                     continue;
                 }

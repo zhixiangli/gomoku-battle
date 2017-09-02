@@ -3,6 +3,8 @@
  */
 package com.zhixiangli.gomoku.fx;
 
+import com.zhixiangli.gomoku.common.GomokuConstant;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -28,7 +30,7 @@ public class GomokuBootstrap extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         scene.getStylesheets().add(getClass().getResource("/gomoku_style.css").toExternalForm());
 
-        primaryStage.setTitle(String.format("%s (%s)", UIConstant.TITLE, UIConstant.COPYRIGHT));
+        primaryStage.setTitle(String.format("%s (%s)", GomokuConstant.TITLE, GomokuConstant.COPYRIGHT));
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
