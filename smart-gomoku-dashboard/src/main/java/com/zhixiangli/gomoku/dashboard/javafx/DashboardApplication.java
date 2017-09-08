@@ -1,9 +1,9 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.fx;
+package com.zhixiangli.gomoku.dashboard.javafx;
 
-import com.zhixiangli.gomoku.common.GomokuConstant;
+import java.util.Calendar;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -16,7 +16,7 @@ import javafx.stage.Stage;
  * @author lizhixiang
  *
  */
-public class GomokuBootstrap extends Application {
+public class DashboardApplication extends Application {
 
     /*
      * (non-Javadoc)
@@ -26,23 +26,16 @@ public class GomokuBootstrap extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gomoku_pane.fxml"));
-        fxmlLoader.setController(new GomokuController());
+        fxmlLoader.setController(new DashboardController());
+
         Scene scene = new Scene(fxmlLoader.load());
         scene.getStylesheets().add(getClass().getResource("/gomoku_style.css").toExternalForm());
 
-        primaryStage.setTitle(String.format("%s (%s)", GomokuConstant.TITLE, GomokuConstant.COPYRIGHT));
+        String title = String.format("SMART GOMOKU (©%d LI ZHIXIANG)", Calendar.getInstance().get(Calendar.YEAR));
+        primaryStage.setTitle(title);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
-    }
-
-    /**
-     * main method.
-     * 
-     * @param args arguments.
-     */
-    public static void main(String[] args) {
-        GomokuBootstrap.launch(args);
     }
 
 }
