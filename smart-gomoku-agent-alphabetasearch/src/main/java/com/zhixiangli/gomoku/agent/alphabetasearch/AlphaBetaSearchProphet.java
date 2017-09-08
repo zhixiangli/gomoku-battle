@@ -34,10 +34,9 @@ public class AlphaBetaSearchProphet {
         double value = 0;
         for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
             for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
-                if (chessboard.getChess(i, j) == ChessType.EMPTY) {
-                    continue;
+                if (chessboard.getChess(i, j) == chessType) {
+                    value += estimatePointValueByChessType(chessboard, new Point(i, j), chessType);
                 }
-                value += estimatePointValueByChessType(chessboard, new Point(i, j), chessType);
             }
         }
         return value;
@@ -51,21 +50,46 @@ public class AlphaBetaSearchProphet {
     private static final double estimatePointValueByChessType(Chessboard chessboard, Point point, ChessType chessType) {
         GomokuPatternStatistics statistics = GlobalAnalyser.getPatternStatistics(chessboard, point, chessType);
         double value = 0;
-        value += statistics.getFive() * AlphaBetaSearchConst.Estimate.FIVE;
-        if (statistics.getOpenFour() > 0) {
+        if (statistics.getFive() > 0) {
+            value += statistics.getFive() * AlphaBetaSearchConst.Estimate.FIVE;
+        }
+        if (statistics.getOpenFour() > 0 || statistics.getHalfOpenFour() > 1 || (statistics.getHalfOpenFour() > 0
+                && (statistics.getOpenThree() + statistics.getSpacedOpenThree() > 0))) {
             value += AlphaBetaSearchConst.Estimate.OPEN_FOUR;
         }
-        if (statistics.getOpenThree() + statistics.getSpacedOpenThree() + statistics.getHalfOpenFour() > 1) {
-            value += AlphaBetaSearchConst.Estimate.OPEN_FOUR;
+        if (statistics.getOpenThree() + statistics.getSpacedOpenThree() > 1) {
+            value += AlphaBetaSearchConst.Estimate.DOUBLE_OPEN_THREE;
         }
-        value += statistics.getHalfOpenFour() * AlphaBetaSearchConst.Estimate.HALF_OPEN_FOUR;
-        value += statistics.getOpenThree() * AlphaBetaSearchConst.Estimate.OPEN_THREE;
-        value += statistics.getSpacedOpenThree() * AlphaBetaSearchConst.Estimate.SPACED_OPEN_THREE;
-        value += statistics.getHalfOpenThree() * AlphaBetaSearchConst.Estimate.HALF_OPEN_THREE;
-        value += statistics.getOpenTwo() * AlphaBetaSearchConst.Estimate.OPEN_TWO;
-        value += statistics.getOneSpacedOpenTwo() * AlphaBetaSearchConst.Estimate.ONE_SPACED_OPEN_TWO;
-        value += statistics.getTwoSpacedOpenTwo() * AlphaBetaSearchConst.Estimate.TWO_SPACED_OPEN_TWO;
-        value += statistics.getHalfOpenTwo() * AlphaBetaSearchConst.Estimate.HALF_OPEN_TWO;
+        if (statistics.getHalfOpenThree() > 0 && (statistics.getSpacedOpenThree() + statistics.getOpenThree() > 0)) {
+            value += AlphaBetaSearchConst.Estimate.OPEN_AND_HALF_OPEN_THREE;
+        }
+        if (statistics.getHalfOpenFour() > 0) {
+            value += AlphaBetaSearchConst.Estimate.HALF_OPEN_FOUR;
+        }
+        if (statistics.getOpenThree() > 0) {
+            value += AlphaBetaSearchConst.Estimate.OPEN_THREE;
+        }
+        if (statistics.getSpacedOpenThree() > 0) {
+            value += AlphaBetaSearchConst.Estimate.SPACED_OPEN_THREE;
+        }
+        if (statistics.getOpenTwo() + statistics.getOneSpacedOpenTwo() + statistics.getTwoSpacedOpenTwo() > 1) {
+            value += AlphaBetaSearchConst.Estimate.DOUBLE_OPEN_TWO;
+        }
+        if (statistics.getHalfOpenThree() > 0) {
+            value += AlphaBetaSearchConst.Estimate.HALF_OPEN_THREE;
+        }
+        if (statistics.getOpenTwo() > 0) {
+            value += AlphaBetaSearchConst.Estimate.OPEN_TWO;
+        }
+        if (statistics.getOneSpacedOpenTwo() > 0) {
+            value += AlphaBetaSearchConst.Estimate.ONE_SPACED_OPEN_TWO;
+        }
+        if (statistics.getTwoSpacedOpenTwo() > 0) {
+            value += AlphaBetaSearchConst.Estimate.TWO_SPACED_OPEN_TWO;
+        }
+        if (statistics.getHalfOpenTwo() > 0) {
+            value += AlphaBetaSearchConst.Estimate.HALF_OPEN_TWO;
+        }
         return value;
     }
 

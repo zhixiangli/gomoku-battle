@@ -70,7 +70,6 @@ public class AlphaBetaSearchAlgorithm {
             }
         }
         chessboard.setChess(point, ChessType.EMPTY);
-        // the faster win the game, the better.
         return result * AlphaBetaSearchConst.Search.DECAY_FACTOR;
     }
 
