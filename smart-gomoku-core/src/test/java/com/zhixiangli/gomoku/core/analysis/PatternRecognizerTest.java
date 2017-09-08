@@ -53,8 +53,20 @@ public class PatternRecognizerTest {
                 PatternRecognizer.getPatternType(Arrays.asList(WHITE, BLACK, EMPTY, BLACK, EMPTY, EMPTY), BLACK));
 
         Assert.assertEquals(ChessPatternType.OTHERS,
-                PatternRecognizer.getPatternType(Arrays.asList(BLACK, WHITE, BLACK, WHITE, BLACK), BLACK));
+                PatternRecognizer.getPatternType(Arrays.asList(BLACK, WHITE, BLACK, WHITE, BLACK, EMPTY), BLACK));
 
+    }
+
+    @Test
+    public void getBestPatternType() {
+        Assert.assertEquals(ChessPatternType.FIVE, PatternRecognizer
+                .getBestPatternType(Arrays.asList(EMPTY, WHITE, WHITE, BLACK, BLACK, BLACK, BLACK, BLACK), BLACK));
+
+        Assert.assertEquals(ChessPatternType.SPACED_OPEN_THREE, PatternRecognizer.getBestPatternType(
+                Arrays.asList(EMPTY, WHITE, EMPTY, BLACK, BLACK, EMPTY, BLACK, EMPTY, WHITE, EMPTY), BLACK));
+
+        Assert.assertEquals(ChessPatternType.HALF_OPEN_TWO, PatternRecognizer
+                .getBestPatternType(Arrays.asList(WHITE, BLACK, EMPTY, BLACK, EMPTY, EMPTY, WHITE, BLACK), BLACK));
     }
 
 }

@@ -117,17 +117,7 @@ public class GlobalAnalyser {
 
     public static final ChessPatternType getChessPatternType(Chessboard chessboard, Point point, Point direction) {
         List<ChessType> pattern = getChessTypeRange(chessboard, point, direction, GomokuConst.CONSECUTIVE_NUM);
-        if (pattern.size() <= GomokuConst.CONSECUTIVE_NUM + 1) {
-            return PatternRecognizer.getPatternType(pattern, chessboard.getChess(point));
-        }
-        ChessPatternType patternType = ChessPatternType.OTHERS;
-        for (int i = 0; i + GomokuConst.CONSECUTIVE_NUM + 1 <= pattern.size(); ++i) {
-            ChessPatternType newPatternType = PatternRecognizer.getPatternType(
-                    pattern.subList(i, i + GomokuConst.CONSECUTIVE_NUM + 1), chessboard.getChess(point));
-            if (newPatternType.compareTo(patternType) > 0)
-                patternType = newPatternType;
-        }
-        return patternType;
+        return PatternRecognizer.getBestPatternType(pattern, chessboard.getChess(point));
     }
 
     private static final List<ChessType> getChessTypeRange(Chessboard chessboard, Point point, Point direction,

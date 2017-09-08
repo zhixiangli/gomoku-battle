@@ -29,9 +29,13 @@ public class PatternRecognizer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PatternRecognizer.class);
 
+    private static final int SEED = ChessType.values().length;
+
+    private static final int POW_SEED_SIX = (int) Math.pow(SEED, 6);
+
     private static final int PATTERN_MAX_LENGTH = GomokuConst.CONSECUTIVE_NUM + 1;
 
-    private static final int PATTERN_HASH_BOUND = 2 * (int) Math.pow(ChessType.values().length, PATTERN_MAX_LENGTH);
+    private static final int PATTERN_HASH_BOUND = 2 * (int) Math.pow(SEED, PATTERN_MAX_LENGTH);
 
     private static final ChessPatternType[] BLACK_PATTERN_MAP = new ChessPatternType[PATTERN_HASH_BOUND];
 
@@ -61,12 +65,33 @@ public class PatternRecognizer {
         }
     }
 
+    public static final ChessPatternType getBestPatternType(List<ChessType> pattern, ChessType consideredChessType) {
+        if (pattern.size() <= PATTERN_MAX_LENGTH) {
+            return PatternRecognizer.getPatternType(pattern, consideredChessType);
+        }
+        // (((((1*seed+s[0])*seed+s[1])*seed+s[2])*seed+s[3])*seed+s[4])*seed+s[5]
+        // f(0,6)=seed^6+s[0]*seed^5+s[1]*seed^4+s[2]*seed^3+s[3]*seed^2+s[4]*seed+s[5]
+        // f(1,7)=seed*f(0,6)-seed^7-s[0]*seed^6+seed^6+s[6]
+        // =seed*f(0,6)+(1-s[0]-seed)*seed^6+s[6]
+        int hashCode = hashPatternList(pattern, 0, PATTERN_MAX_LENGTH);
+        ChessPatternType[] patternMap = getPatternMap(consideredChessType);
+        ChessPatternType patternType = patternMap[hashCode];
+        for (int i = 1; i + GomokuConst.CONSECUTIVE_NUM + 1 <= pattern.size(); ++i) {
+            hashCode = SEED * hashCode + (1 - pattern.get(i - 1).ordinal() - SEED) * POW_SEED_SIX
+                    + pattern.get(i + GomokuConst.CONSECUTIVE_NUM).ordinal();
+            ChessPatternType newPatternType = patternMap[hashCode];
+            if (newPatternType.compareTo(patternType) > 0)
+                patternType = newPatternType;
+        }
+        return patternType;
+    }
+
     public static final ChessPatternType getPatternType(List<ChessType> pattern, ChessType consideredChessType) {
         Preconditions.checkArgument(ChessType.EMPTY != consideredChessType);
         Preconditions.checkArgument(pattern.size() <= PATTERN_MAX_LENGTH);
 
         ChessPatternType[] patternMap = getPatternMap(consideredChessType);
-        int patternHashCode = hashPatternList(pattern);
+        int patternHashCode = hashPatternList(pattern, 0, pattern.size());
 
         ChessPatternType bestPatternType = patternMap[patternHashCode];
         if (null != bestPatternType) {
@@ -154,15 +179,6 @@ public class PatternRecognizer {
         return bestPatternType;
     }
 
-    private static final int hashPatternList(List<ChessType> patternList) {
-        int hash = 1;
-        int seed = ChessType.values().length;
-        for (ChessType type : patternList) {
-            hash = hash * seed + type.ordinal();
-        }
-        return hash;
-    }
-
     private static final boolean isFive(List<ChessType> pattern, ChessType chessType) {
         List<ImmutablePair<ChessType, Integer>> analyzed = analyzePattern(pattern);
         for (ImmutablePair<ChessType, Integer> pair : analyzed) {
@@ -217,6 +233,15 @@ public class PatternRecognizer {
         }
         analyzed.add(ImmutablePair.of(lastType, count));
         return analyzed;
+    }
+
+    private static final int hashPatternList(List<ChessType> pattern, int fromIndex, int toIndex) {
+        int hash = 1;
+        int seed = ChessType.values().length;
+        for (int i = fromIndex; i < toIndex; ++i) {
+            hash = hash * seed + pattern.get(i).ordinal();
+        }
+        return hash;
     }
 
     private static final ChessPatternType[] getPatternMap(ChessType chessType) {
