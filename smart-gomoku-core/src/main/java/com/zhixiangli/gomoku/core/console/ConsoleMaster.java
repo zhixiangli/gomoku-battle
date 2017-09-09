@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.dashboard.console;
+package com.zhixiangli.gomoku.core.console;
 
 import java.awt.Point;
 import java.io.FileNotFoundException;
@@ -13,11 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
+import com.zhixiangli.gomoku.core.chessboard.ChessboardService;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
-import com.zhixiangli.gomoku.core.console.ConsoleCommand;
-import com.zhixiangli.gomoku.core.console.ConsoleProcess;
-import com.zhixiangli.gomoku.dashboard.common.DashboardConst;
-import com.zhixiangli.gomoku.dashboard.service.DashboardService;
 
 /**
  * 
@@ -28,25 +25,25 @@ import com.zhixiangli.gomoku.dashboard.service.DashboardService;
  * @author zhixiangli
  *
  */
-public class DashboardConsole implements Runnable {
+public class ConsoleMaster implements Runnable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardConsole.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleMaster.class);
 
-    private DashboardService dashboardService = DashboardService.getInstance();
+    private ChessboardService chessboardService = ChessboardService.getInstance();
 
     private ConsoleProcess blackPlayerProcess;
 
     private ConsoleProcess whitePlayerProcess;
 
-    public DashboardConsole() throws FileNotFoundException, IOException {
-        if (StringUtils.isNotBlank(DashboardConst.Player.playerBlackCommand)) {
-            blackPlayerProcess = new ConsoleProcess(DashboardConst.Player.playerBlackCommand);
+    public ConsoleMaster() throws FileNotFoundException, IOException {
+        if (StringUtils.isNotBlank(GomokuConst.Player.playerBlackCommand)) {
+            blackPlayerProcess = new ConsoleProcess(GomokuConst.Player.playerBlackCommand);
         }
-        if (StringUtils.isNotBlank(DashboardConst.Player.playerWhiteCommand)) {
-            whitePlayerProcess = new ConsoleProcess(DashboardConst.Player.playerWhiteCommand);
+        if (StringUtils.isNotBlank(GomokuConst.Player.playerWhiteCommand)) {
+            whitePlayerProcess = new ConsoleProcess(GomokuConst.Player.playerWhiteCommand);
         }
 
-        dashboardService.addCurrentChessTypeChangeListener((observable, oldValue, newValue) -> {
+        chessboardService.addCurrentChessTypeChangeListener((observable, oldValue, newValue) -> {
             Thread t = new Thread(() -> this.callForAction(newValue));
             t.start();
         });
@@ -76,14 +73,14 @@ public class DashboardConsole implements Runnable {
         if (null == process) {
             return;
         }
-        Point lastMovePoint = dashboardService.getLastMovePoint();
+        Point lastMovePoint = chessboardService.getLastMovePoint();
         if (null != lastMovePoint) {
             process.send(ConsoleCommand.format(play, lastMovePoint));
         }
         process.send(this.showChessboard());
         process.send(ConsoleCommand.format(next));
         Pair<ConsoleCommand, Point> commandPair = ConsoleCommand.parse(process.receive());
-        this.dashboardService.takeMove(commandPair.getValue());
+        this.chessboardService.takeMove(commandPair.getValue());
 
     }
 
@@ -99,7 +96,7 @@ public class DashboardConsole implements Runnable {
                 new Point(GomokuConst.CHESSBOARD_SIZE, GomokuConst.CHESSBOARD_SIZE)));
         for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
             for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
-                ChessType chessType = this.dashboardService.getChessboard(new Point(i, j));
+                ChessType chessType = this.chessboardService.getChessboard(new Point(i, j));
                 if (chessType == ChessType.EMPTY) {
                     sb.append(GomokuConst.ChessChar.EMPTY);
                 } else if (chessType == ChessType.BLACK) {

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.dashboard.service;
+package com.zhixiangli.gomoku.core.chessboard;
 
 import java.awt.Point;
 
@@ -10,9 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.core.analysis.GameReferee;
-import com.zhixiangli.gomoku.core.chessboard.ChessState;
-import com.zhixiangli.gomoku.core.chessboard.ChessType;
-import com.zhixiangli.gomoku.core.chessboard.Chessboard;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 
 import javafx.beans.property.SimpleObjectProperty;
@@ -23,9 +20,9 @@ import javafx.beans.value.ChangeListener;
  * 
  * @author lizhixiang
  */
-public class DashboardService {
+public class ChessboardService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChessboardService.class);
 
     /**
      * chessboard property, if changed the UI will changed as well.
@@ -44,14 +41,14 @@ public class DashboardService {
      */
     private SimpleObjectProperty<ChessState> chessStateProperty;
 
-    private static final DashboardService DASHBOARD_SERVICE = new DashboardService();
+    private static final ChessboardService CHESSBOARD_SERVICE = new ChessboardService();
 
-    public static final DashboardService getInstance() {
-        return DASHBOARD_SERVICE;
+    public static final ChessboardService getInstance() {
+        return CHESSBOARD_SERVICE;
     }
 
     @SuppressWarnings("unchecked")
-    private DashboardService() {
+    private ChessboardService() {
         this.chessboardProperty = new SimpleObjectProperty[GomokuConst.CHESSBOARD_SIZE][GomokuConst.CHESSBOARD_SIZE];
         for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
             for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
@@ -63,7 +60,7 @@ public class DashboardService {
         this.lastMovePoint = new SimpleObjectProperty<>();
     }
 
-    public void newGame() {
+    public void restart() {
         LOGGER.info("start a new game.");
         for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
             for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
@@ -98,11 +95,9 @@ public class DashboardService {
                     : ChessState.WHITE_WIN;
             this.chessStateProperty.set(winner);
             this.currentChessType.set(ChessType.EMPTY);
-            this.lastMovePoint = null;
         } else if (GameReferee.isDraw(chessboard, point)) { // if draw.
             this.chessStateProperty.set(ChessState.GAME_DRAW);
             this.currentChessType.set(ChessType.EMPTY);
-            this.lastMovePoint = null;
         } else {
             this.lastMovePoint.set(new Point(point));
             // finish this move, and change the current chess type and current

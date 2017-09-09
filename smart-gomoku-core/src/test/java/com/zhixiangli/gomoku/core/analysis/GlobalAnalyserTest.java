@@ -6,15 +6,16 @@ package com.zhixiangli.gomoku.core.analysis;
 import java.awt.Point;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
-import com.zhixiangli.gomoku.core.common.GomokuPatternStatistics;
 
 /**
  * @author zhixiangli
@@ -71,19 +72,19 @@ public class GlobalAnalyserTest {
         this.chessboard.setChess(6, 5, ChessType.WHITE);
         this.chessboard.setChess(6, 8, ChessType.WHITE);
         Point blackPoint = new Point(4, 3);
-        GomokuPatternStatistics blackStatistics = GlobalAnalyser.getPatternStatistics(chessboard, blackPoint,
+        List<ChessPatternType> patternTypeList = GlobalAnalyser.getPatternStatistics(chessboard, blackPoint,
                 ChessType.BLACK);
         Assert.assertEquals(ChessType.EMPTY, chessboard.getChess(blackPoint));
-        Assert.assertEquals(blackStatistics.getFive(), 1);
-        Assert.assertEquals(blackStatistics.getOpenFour(), 1);
-        Assert.assertEquals(blackStatistics.getHalfOpenFour(), 1);
-        Assert.assertEquals(blackStatistics.getOpenThree(), 0);
-        Assert.assertEquals(blackStatistics.getSpacedOpenThree(), 0);
-        Assert.assertEquals(blackStatistics.getHalfOpenThree(), 1);
-        Assert.assertEquals(blackStatistics.getOpenTwo(), 0);
-        Assert.assertEquals(blackStatistics.getOneSpacedOpenTwo(), 0);
-        Assert.assertEquals(blackStatistics.getTwoSpacedOpenTwo(), 0);
-        Assert.assertEquals(blackStatistics.getHalfOpenTwo(), 0);
+
+        for (ChessPatternType patternType : Arrays.asList(ChessPatternType.FIVE, ChessPatternType.OPEN_FOUR,
+                ChessPatternType.HALF_OPEN_FOUR, ChessPatternType.HALF_OPEN_THREE)) {
+            Assert.assertEquals(CollectionUtils.countMatches(patternTypeList, x -> x == patternType), 1);
+        }
+        for (ChessPatternType patternType : Arrays.asList(ChessPatternType.OPEN_THREE,
+                ChessPatternType.SPACED_OPEN_THREE, ChessPatternType.OPEN_TWO, ChessPatternType.ONE_SPACED_OPEN_TWO,
+                ChessPatternType.TWO_SPACED_OPEN_TWO, ChessPatternType.HALF_OPEN_TWO)) {
+            Assert.assertEquals(CollectionUtils.countMatches(patternTypeList, x -> x == patternType), 0);
+        }
     }
 
 }

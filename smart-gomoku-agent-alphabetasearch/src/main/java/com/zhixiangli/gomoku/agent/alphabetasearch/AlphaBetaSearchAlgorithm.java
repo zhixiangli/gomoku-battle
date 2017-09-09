@@ -4,6 +4,8 @@
 package com.zhixiangli.gomoku.agent.alphabetasearch;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +17,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.zhixiangli.gomoku.core.analysis.ChessPatternType;
 import com.zhixiangli.gomoku.core.analysis.GameReferee;
 import com.zhixiangli.gomoku.core.analysis.GlobalAnalyser;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
@@ -60,11 +63,8 @@ public class AlphaBetaSearchAlgorithm {
         Double value = SEARCH_CACHE.get(key, () -> {
             double result = 0;
             if (GameReferee.isWin(chessboard, point)) {
-                if ((depth & 1) == 0) {
-                    result = AlphaBetaSearchConst.Estimate.WIN;
-                } else {
-                    result = -AlphaBetaSearchConst.Estimate.WIN;
-                }
+                double searchValue = AlphaBetaSearchConst.ESTIMATED_MAP.get(ChessPatternType.FIVE);
+                result = (depth & 1) == 0 ? searchValue : -searchValue;
             } else if (depth >= AlphaBetaSearchConst.Search.MAX_DEPTH) {
                 result = AlphaBetaSearchProphet.estimateChessboardValue(chessboard,
                         (depth & 1) == 0 ? chessType : GameReferee.nextChessType(chessType));
@@ -92,8 +92,10 @@ public class AlphaBetaSearchAlgorithm {
     }
 
     protected List<Point> nextMoves(Chessboard chessboard, ChessType chessType) {
-        return GlobalAnalyser.getEmptyPointsAround(chessboard, AlphaBetaSearchConst.Search.AROUND_CANDIDATE_RANGE)
-                .stream().map(point -> ImmutablePair.of(point, estimateValue(chessboard, point)))
+        List<Point> emptyPointList = new ArrayList<>(
+                GlobalAnalyser.getEmptyPointsAround(chessboard, AlphaBetaSearchConst.Search.AROUND_CANDIDATE_RANGE));
+        Collections.shuffle(emptyPointList);
+        return emptyPointList.stream().map(point -> ImmutablePair.of(point, estimateValue(chessboard, point)))
                 .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
                 .limit(AlphaBetaSearchConst.Search.MAX_CANDIDATE_NUM).map(pair -> pair.getKey())
                 .collect(Collectors.toList());

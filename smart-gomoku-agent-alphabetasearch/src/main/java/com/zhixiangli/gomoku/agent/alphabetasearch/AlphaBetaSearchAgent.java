@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.zhixiangli.gomoku.core.analysis.ChessPatternType;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
@@ -52,10 +53,11 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
         }
         List<Pair<Point, Double>> bestPoints = candidatePoints.parallelStream().map(point -> {
             Chessboard newChessboard = chessboard.clone();
-            double value = -AlphaBetaSearchConst.Estimate.WIN;
+            double maxEstimatedValue = AlphaBetaSearchConst.ESTIMATED_MAP.get(ChessPatternType.FIVE);
+            double value = -maxEstimatedValue;
             try {
-                value = alphaBetaAlgorithm.search(0, -AlphaBetaSearchConst.Estimate.WIN,
-                        AlphaBetaSearchConst.Estimate.WIN, newChessboard, point, chessType);
+                value = alphaBetaAlgorithm.search(0, -maxEstimatedValue, maxEstimatedValue, newChessboard, point,
+                        chessType);
             } catch (ExecutionException e) {
                 LOGGER.error("alpha beta search error {}", e);
             }

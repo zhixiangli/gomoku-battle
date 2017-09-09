@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.core.chessboard;
+package com.zhixiangli.gomoku.core.analysis;
 
 /**
  * 
@@ -14,70 +14,83 @@ package com.zhixiangli.gomoku.core.chessboard;
  */
 public enum ChessPatternType {
 
-    OTHERS,
+    OTHERS(0),
 
     /**
      * at least 1 position to form THREE_HALF.
      * 
      * ...oox, ..o.ox
      */
-    HALF_OPEN_TWO,
+    HALF_OPEN_TWO(2),
 
     /**
      * .o..o.
      */
-    TWO_SPACED_OPEN_TWO,
+    TWO_SPACED_OPEN_TWO(2),
 
     /**
      * .o.o..
      */
-    ONE_SPACED_OPEN_TWO,
+    ONE_SPACED_OPEN_TWO(2),
 
     /**
      * at least 1 position to form THREE_LIVE.
      * 
      * ..oo..
      */
-    OPEN_TWO,
+    OPEN_TWO(2),
 
     /**
      * at least 1 position to form FOUR_HALF.
      * 
      * ..ooox, .o.oox, .oo.ox, o..oo, o.o.o, x.ooo.x
      */
-    HALF_OPEN_THREE,
+    HALF_OPEN_THREE(3),
 
     /**
      * .o.oo.
      */
-    SPACED_OPEN_THREE,
+    SPACED_OPEN_THREE(3),
 
     /**
      * at least 1 position to form FOUR_LIVE.
      * 
      * ..ooo.
      */
-    OPEN_THREE,
+    OPEN_THREE(3),
 
     /**
      * only 1 position to form FIVE.
      * 
      * .oooox, o.ooo, oo.oo,
      */
-    HALF_OPEN_FOUR,
+    HALF_OPEN_FOUR(4),
 
     /**
      * 2 positions to form FIVE.
      * 
      * .oooo.
      */
-    OPEN_FOUR,
+    OPEN_FOUR(4),
 
     /**
      * at least 5 chesses.
      */
-    FIVE,
+    FIVE(5),
 
     ;
+
+    private int chessNum;
+
+    private ChessPatternType(int chessNum) {
+        this.chessNum = chessNum;
+    }
+
+    /**
+     * @return the chessNum
+     */
+    public int getChessNum() {
+        return chessNum;
+    }
 
 }
