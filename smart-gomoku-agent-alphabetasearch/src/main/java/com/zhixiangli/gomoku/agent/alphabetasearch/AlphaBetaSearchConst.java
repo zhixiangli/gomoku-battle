@@ -21,6 +21,13 @@ public class AlphaBetaSearchConst {
 
     }
 
+    public class Cache {
+
+        public static final int DURATION = 2;
+
+        public static final long MAXIMUM_SIZE = 10000000;
+    }
+
     public class Estimate {
 
         public static final double WIN = 1L << 60;

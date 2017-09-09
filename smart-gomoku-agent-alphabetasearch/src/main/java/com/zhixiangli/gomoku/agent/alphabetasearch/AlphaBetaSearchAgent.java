@@ -5,6 +5,7 @@ package com.zhixiangli.gomoku.agent.alphabetasearch;
 
 import java.awt.Point;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.RandomUtils;
@@ -51,8 +52,13 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
         }
         List<Pair<Point, Double>> bestPoints = candidatePoints.parallelStream().map(point -> {
             Chessboard newChessboard = chessboard.clone();
-            double value = alphaBetaAlgorithm.search(0, -AlphaBetaSearchConst.Estimate.WIN,
-                    AlphaBetaSearchConst.Estimate.WIN, newChessboard, point, chessType);
+            double value = -AlphaBetaSearchConst.Estimate.WIN;
+            try {
+                value = alphaBetaAlgorithm.search(0, -AlphaBetaSearchConst.Estimate.WIN,
+                        AlphaBetaSearchConst.Estimate.WIN, newChessboard, point, chessType);
+            } catch (ExecutionException e) {
+                LOGGER.error("alpha beta search error {}", e);
+            }
             Preconditions.checkState(newChessboard.equals(chessboard));
             return ImmutablePair.of(point, value);
         }).collect(Collectors.toList());

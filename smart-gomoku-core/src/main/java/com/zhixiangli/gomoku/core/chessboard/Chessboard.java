@@ -7,6 +7,8 @@ import java.awt.Point;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
@@ -82,6 +84,20 @@ public class Chessboard implements Cloneable {
         int result = 1;
         result = prime * result + Arrays.deepHashCode(chessboard);
         return result;
+    }
+
+    public Pair<Long, Long> doubleHashCode() {
+        long result1 = 1;
+        long result2 = 1;
+        int prime1 = 13;
+        int prime2 = 11;
+        for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
+            for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
+                result1 = result1 * prime1 + chessboard[i][j].ordinal();
+                result2 = result2 * prime2 + chessboard[i][j].ordinal();
+            }
+        }
+        return ImmutablePair.of(result1, result2);
     }
 
     /*
