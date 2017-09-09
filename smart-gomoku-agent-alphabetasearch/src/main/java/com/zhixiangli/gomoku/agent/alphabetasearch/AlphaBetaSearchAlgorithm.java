@@ -19,6 +19,7 @@ import com.zhixiangli.gomoku.core.analysis.GameReferee;
 import com.zhixiangli.gomoku.core.analysis.GlobalAnalyser;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
+import com.zhixiangli.gomoku.core.common.GomokuConst;
 
 /**
  * @author zhixiangli
@@ -55,7 +56,7 @@ public class AlphaBetaSearchAlgorithm {
 
         chessboard.setChess(point, chessType);
 
-        TableNode key = new TableNode(depth, chessboard.doubleHashCode());
+        TableNode key = new TableNode(depth, chessboard);
         Double value = SEARCH_CACHE.get(key, () -> {
             double result = 0;
             if (GameReferee.isWin(chessboard, point)) {
@@ -108,9 +109,24 @@ class TableNode {
     int searchDepth;
     Pair<Long, Long> tableHashCode;
 
-    public TableNode(int searchDepth, Pair<Long, Long> tableHashCode) {
+    public TableNode(int searchDepth, Chessboard chessboard) {
         this.searchDepth = searchDepth;
-        this.tableHashCode = tableHashCode;
+        this.tableHashCode = hashChessboard(chessboard);
+    }
+
+    private Pair<Long, Long> hashChessboard(Chessboard chessboard) {
+        long result1 = 1;
+        long result2 = 1;
+        int prime1 = 13;
+        int prime2 = 11;
+        for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
+            for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
+                int type = chessboard.getChess(i, j).ordinal();
+                result1 = result1 * prime1 + type;
+                result2 = result2 * prime2 + type;
+            }
+        }
+        return ImmutablePair.of(result1, result2);
     }
 
     /*
