@@ -65,6 +65,6 @@
 	<modules>
 		<module>smart-gomoku-dashboard</module>
 		<module>smart-gomoku-core</module>
-		<module>smart-gomoku-agent-alpha-beta-search</module>
+		<module>smart-gomoku-agent-alphabetasearch</module>
 	</modules>
 </project>
