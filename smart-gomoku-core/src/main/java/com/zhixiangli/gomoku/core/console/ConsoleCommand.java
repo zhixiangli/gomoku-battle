@@ -9,6 +9,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * @author zhixiangli
@@ -50,7 +51,7 @@ public enum ConsoleCommand {
         return String.format("%s %d %d", command.getText(), point.x, point.y) + StringUtils.LF;
     }
 
-    public static final ImmutablePair<ConsoleCommand, Point> parse(String str) {
+    public static final Pair<ConsoleCommand, Point> parse(String str) {
         for (ConsoleCommand command : ConsoleCommand.values()) {
             if (StringUtils.startsWith(str, command.getText() + StringUtils.EMPTY)) {
                 switch (command) {

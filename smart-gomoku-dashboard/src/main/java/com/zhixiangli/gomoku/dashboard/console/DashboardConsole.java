@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +82,7 @@ public class DashboardConsole implements Runnable {
         }
         process.send(this.showChessboard());
         process.send(ConsoleCommand.format(next));
-        ImmutablePair<ConsoleCommand, Point> commandPair = ConsoleCommand.parse(process.receive());
+        Pair<ConsoleCommand, Point> commandPair = ConsoleCommand.parse(process.receive());
         this.dashboardService.takeMove(commandPair.getValue());
 
     }

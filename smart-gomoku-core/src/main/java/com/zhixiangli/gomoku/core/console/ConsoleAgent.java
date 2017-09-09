@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public abstract class ConsoleAgent {
                 String command = StringUtils.strip(reader.nextLine());
                 LOGGER.info("received command {}", command);
 
-                ImmutablePair<ConsoleCommand, Point> commandPair = ConsoleCommand.parse(command);
+                Pair<ConsoleCommand, Point> commandPair = ConsoleCommand.parse(command);
                 if (null == commandPair) {
                     LOGGER.error("unknown command: {}", command);
                     continue;

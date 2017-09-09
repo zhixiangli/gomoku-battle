@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,8 +151,7 @@ public class PatternRecognizer {
                         }
                         break;
                     }
-                    ImmutablePair<Integer, Integer> spacedOpenTwoPattern = isSpacedOpenPattern(pattern,
-                            consideredChessType);
+                    Pair<Integer, Integer> spacedOpenTwoPattern = isSpacedOpenPattern(pattern, consideredChessType);
                     Preconditions.checkNotNull(spacedOpenTwoPattern);
                     Preconditions.checkArgument(spacedOpenTwoPattern.getKey() == 2);
                     Preconditions.checkArgument(
@@ -180,8 +180,8 @@ public class PatternRecognizer {
     }
 
     private static final boolean isFive(List<ChessType> pattern, ChessType chessType) {
-        List<ImmutablePair<ChessType, Integer>> analyzed = analyzePattern(pattern);
-        for (ImmutablePair<ChessType, Integer> pair : analyzed) {
+        List<Pair<ChessType, Integer>> analyzed = analyzePattern(pattern);
+        for (Pair<ChessType, Integer> pair : analyzed) {
             if (pair.getKey() == chessType && pair.getValue() >= GomokuConst.CONSECUTIVE_NUM) {
                 return true;
             }
@@ -190,7 +190,7 @@ public class PatternRecognizer {
     }
 
     private static final int isOpenPattern(List<ChessType> pattern, ChessType chessType) {
-        List<ImmutablePair<ChessType, Integer>> analyzed = analyzePattern(pattern);
+        List<Pair<ChessType, Integer>> analyzed = analyzePattern(pattern);
         if (analyzed.size() != 3) {
             return 0;
         }
@@ -201,9 +201,8 @@ public class PatternRecognizer {
         return 0;
     }
 
-    private static final ImmutablePair<Integer, Integer> isSpacedOpenPattern(List<ChessType> pattern,
-            ChessType chessType) {
-        List<ImmutablePair<ChessType, Integer>> analyzed = analyzePattern(pattern);
+    private static final Pair<Integer, Integer> isSpacedOpenPattern(List<ChessType> pattern, ChessType chessType) {
+        List<Pair<ChessType, Integer>> analyzed = analyzePattern(pattern);
         if (analyzed.size() != 5) {
             return null;
         }
@@ -216,8 +215,8 @@ public class PatternRecognizer {
         return null;
     }
 
-    private static final List<ImmutablePair<ChessType, Integer>> analyzePattern(List<ChessType> pattern) {
-        List<ImmutablePair<ChessType, Integer>> analyzed = new ArrayList<>();
+    private static final List<Pair<ChessType, Integer>> analyzePattern(List<ChessType> pattern) {
+        List<Pair<ChessType, Integer>> analyzed = new ArrayList<>();
         int count = 0;
         ChessType lastType = null;
         for (ChessType chessType : pattern) {

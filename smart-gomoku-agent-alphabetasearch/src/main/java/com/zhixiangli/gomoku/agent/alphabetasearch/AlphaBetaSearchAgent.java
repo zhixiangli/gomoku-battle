@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
         if (candidatePoints.isEmpty()) {
             return new Point(GomokuConst.CHESSBOARD_SIZE / 2, GomokuConst.CHESSBOARD_SIZE / 2);
         }
-        List<ImmutablePair<Point, Double>> bestPoints = candidatePoints.parallelStream().map(point -> {
+        List<Pair<Point, Double>> bestPoints = candidatePoints.parallelStream().map(point -> {
             Chessboard newChessboard = chessboard.clone();
             double value = alphaBetaAlgorithm.search(0, -AlphaBetaSearchConst.Estimate.WIN,
                     AlphaBetaSearchConst.Estimate.WIN, newChessboard, point, chessType);
@@ -57,7 +58,7 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
         }).collect(Collectors.toList());
 
         double bestValue = bestPoints.stream().map(pair -> pair.getValue()).max((a, b) -> Double.compare(a, b)).get();
-        List<ImmutablePair<Point, Double>> resultPoints = bestPoints.stream()
+        List<Pair<Point, Double>> resultPoints = bestPoints.stream()
                 .filter(pair -> Double.compare(bestValue, pair.getValue()) == 0).collect(Collectors.toList());
         return resultPoints.get(RandomUtils.nextInt(0, resultPoints.size())).getKey();
     }
