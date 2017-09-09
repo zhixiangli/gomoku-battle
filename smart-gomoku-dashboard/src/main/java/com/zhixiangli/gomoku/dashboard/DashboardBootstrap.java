@@ -6,7 +6,7 @@ package com.zhixiangli.gomoku.dashboard;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.zhixiangli.gomoku.dashboard.console.DashboardConsole;
+import com.zhixiangli.gomoku.core.console.ConsoleMaster;
 import com.zhixiangli.gomoku.dashboard.javafx.DashboardApplication;
 
 /**
@@ -22,7 +22,7 @@ public class DashboardBootstrap extends DashboardApplication {
      */
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
-        Thread t = new Thread(new DashboardConsole());
+        Thread t = new Thread(new ConsoleMaster());
         t.setDaemon(true);
         t.start();
 

@@ -7,9 +7,8 @@ import java.awt.Point;
 import java.io.IOException;
 
 import com.zhixiangli.gomoku.core.chessboard.ChessState;
+import com.zhixiangli.gomoku.core.chessboard.ChessboardService;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
-import com.zhixiangli.gomoku.dashboard.common.DashboardConst;
-import com.zhixiangli.gomoku.dashboard.service.DashboardService;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -40,7 +39,7 @@ public class DashboardController {
     @FXML
     private GridPane chessboardGridPane;
 
-    private DashboardService dashboardService = DashboardService.getInstance();
+    private ChessboardService chessboardService = ChessboardService.getInstance();
 
     /**
      * 
@@ -61,20 +60,20 @@ public class DashboardController {
     }
 
     public void newGame() {
-        dashboardService.newGame();
+        chessboardService.restart();
     }
 
     private void initializePlayerAlias() {
         blackAliasArea.setEditable(false);
-        blackAliasArea.setText(DashboardConst.Player.playerBlackAlias);
+        blackAliasArea.setText(GomokuConst.Player.playerBlackAlias);
 
         whiteAliasArea.setEditable(false);
-        whiteAliasArea.setText(DashboardConst.Player.playerWhiteAlias);
+        whiteAliasArea.setText(GomokuConst.Player.playerWhiteAlias);
     }
 
     private void initailizeAnnouncement() {
         announcementArea.setEditable(false);
-        dashboardService.addChessStateChangeListener(
+        chessboardService.addChessStateChangeListener(
                 (observable, oldValue, newValue) -> announcementArea.setText(newValue.name()));
         announcementArea.setText(ChessState.GAME_READY.name());
     }

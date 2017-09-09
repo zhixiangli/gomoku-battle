@@ -12,7 +12,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <left>
-      <Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="800.0" prefWidth="150.0">
+      <Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="750" prefWidth="150.0">
          <children>
             <Button layoutX="25.0" layoutY="550.0" mnemonicParsing="false" onMouseClicked="#newGame" prefHeight="30.0" prefWidth="100.0" text="NEW GAME" />
             <TextArea fx:id="blackAliasArea" layoutX="25.0" layoutY="350.0" prefHeight="30.0" prefWidth="100.0" />

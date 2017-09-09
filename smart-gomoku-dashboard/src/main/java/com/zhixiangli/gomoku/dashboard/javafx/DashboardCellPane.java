@@ -7,8 +7,7 @@ import java.awt.Point;
 import java.io.IOException;
 
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
-import com.zhixiangli.gomoku.dashboard.common.DashboardConst;
-import com.zhixiangli.gomoku.dashboard.service.DashboardService;
+import com.zhixiangli.gomoku.core.chessboard.ChessboardService;
 
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -44,13 +43,10 @@ class DashboardCellPane extends Pane {
     /**
      * Gomoku Service.
      */
-    private DashboardService dashboardService = DashboardService.getInstance();
+    private ChessboardService chessboardService = ChessboardService.getInstance();
 
     public DashboardCellPane(Point position) throws IOException {
         this.position = position;
-
-        setPrefHeight(DashboardConst.GRID_LENGTH);
-        setPrefWidth(DashboardConst.GRID_LENGTH);
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/cell_pane.fxml"));
         fxmlLoader.setRoot(this);
@@ -73,13 +69,13 @@ class DashboardCellPane extends Pane {
 
         // the chess type of this cell, and add listener when the chess type
         // is changed.
-        dashboardService.addChessboardChangeListener(position,
+        chessboardService.addChessboardChangeListener(position,
                 (observable, oldValue, newValue) -> updateCellPane(newValue, true));
         updateCellPane(ChessType.EMPTY, true);
 
-        dashboardService.addLastMovePointChangeListener((observable, oldValue, newValue) -> {
+        chessboardService.addLastMovePointChangeListener((observable, oldValue, newValue) -> {
             if (position.equals(oldValue)) {
-                updateCellPane(dashboardService.getChessboard(oldValue), false);
+                updateCellPane(chessboardService.getChessboard(oldValue), false);
             }
         });
 
@@ -91,9 +87,9 @@ class DashboardCellPane extends Pane {
         } else {
             cellCircle.visibleProperty().set(true);
             if (isLatestPosition) {
-                cellCircle.setFill(ChessType.BLACK == chessType ? Color.DIMGRAY : Color.CORNSILK);
+                cellCircle.setFill(ChessType.BLACK == chessType ? Color.BLACK : Color.CORNSILK);
             } else {
-                cellCircle.setFill(ChessType.BLACK == chessType ? Color.BLACK : Color.WHITE);
+                cellCircle.setFill(ChessType.BLACK == chessType ? Color.DIMGRAY : Color.WHITE);
             }
         }
     }
@@ -104,7 +100,7 @@ class DashboardCellPane extends Pane {
      */
     @FXML
     public void takeMove() {
-        dashboardService.takeMove(position);
+        chessboardService.takeMove(position);
     }
 
 }
