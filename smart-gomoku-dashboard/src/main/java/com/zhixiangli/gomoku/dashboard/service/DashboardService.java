@@ -37,7 +37,7 @@ public class DashboardService {
      */
     private SimpleObjectProperty<ChessType> currentChessType;
 
-    private Point lastMovePoint;
+    private SimpleObjectProperty<Point> lastMovePoint;
 
     /**
      * chessboard state property, game on, draw, black win, white win.
@@ -60,6 +60,7 @@ public class DashboardService {
         }
         this.currentChessType = new SimpleObjectProperty<>(ChessType.EMPTY);
         this.chessStateProperty = new SimpleObjectProperty<>(ChessState.GAME_READY);
+        this.lastMovePoint = new SimpleObjectProperty<>();
     }
 
     public void newGame() {
@@ -71,7 +72,7 @@ public class DashboardService {
         }
         this.chessStateProperty.set(ChessState.GAME_ON);
         this.currentChessType.set(ChessType.BLACK);
-        this.lastMovePoint = null;
+        this.lastMovePoint.set(null);
     }
 
     /**
@@ -103,7 +104,7 @@ public class DashboardService {
             this.currentChessType.set(ChessType.EMPTY);
             this.lastMovePoint = null;
         } else {
-            this.lastMovePoint = new Point(point);
+            this.lastMovePoint.set(new Point(point));
             // finish this move, and change the current chess type and current
             // player.
             this.currentChessType.set(GameReferee.nextChessType(this.currentChessType.get()));
@@ -121,6 +122,10 @@ public class DashboardService {
 
     public void addCurrentChessTypeChangeListener(ChangeListener<ChessType> listener) {
         this.currentChessType.addListener(listener);
+    }
+
+    public void addLastMovePointChangeListener(ChangeListener<Point> listener) {
+        this.lastMovePoint.addListener(listener);
     }
 
     public ChessType getChessboard(Point point) {
@@ -141,7 +146,7 @@ public class DashboardService {
      * @return the lastMovePoint
      */
     public Point getLastMovePoint() {
-        return lastMovePoint;
+        return lastMovePoint.get();
     }
 
     public ChessType getCurrentChessType() {

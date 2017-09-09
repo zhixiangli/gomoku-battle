@@ -80,13 +80,12 @@ public class DashboardController {
     }
 
     private void initializeGridPane() throws IOException {
-        this.chessboardGridPane.getChildren().clear();
+        chessboardGridPane.getChildren().clear();
         for (int row = 0; row < GomokuConst.CHESSBOARD_SIZE; ++row) {
             for (int column = 0; column < GomokuConst.CHESSBOARD_SIZE; ++column) {
                 Point point = new Point(row, column);
-                this.chessboardGridPane.getChildren().add(new DashboardCellPane(point));
+                chessboardGridPane.add(new DashboardCellPane(point), column, row);
             }
         }
     }
-
 }

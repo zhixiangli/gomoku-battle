@@ -13,7 +13,6 @@ import com.zhixiangli.gomoku.dashboard.service.DashboardService;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -40,22 +39,18 @@ class DashboardCellPane extends Pane {
     /**
      * chess position
      */
-    private Point point;
+    private Point position;
 
     /**
      * Gomoku Service.
      */
     private DashboardService dashboardService = DashboardService.getInstance();
 
-    public DashboardCellPane(Point point) throws IOException {
-        this.point = point;
+    public DashboardCellPane(Point position) throws IOException {
+        this.position = position;
 
-        this.setPrefHeight(DashboardConst.GRID_LENGTH);
-        this.setPrefWidth(DashboardConst.GRID_LENGTH);
-
-        // set row index and column index when this pane is put in a grid pane.
-        GridPane.setRowIndex(this, point.x);
-        GridPane.setColumnIndex(this, point.y);
+        setPrefHeight(DashboardConst.GRID_LENGTH);
+        setPrefWidth(DashboardConst.GRID_LENGTH);
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/cell_pane.fxml"));
         fxmlLoader.setRoot(this);
@@ -70,26 +65,36 @@ class DashboardCellPane extends Pane {
     @FXML
     public void initialize() {
         // location of this chess piece.
-        this.cellCircle.layoutXProperty().bind(this.cellPane.widthProperty().divide(2));
-        this.cellCircle.layoutYProperty().bind(this.cellPane.heightProperty().divide(2));
+        cellCircle.layoutXProperty().bind(cellPane.widthProperty().divide(2));
+        cellCircle.layoutYProperty().bind(cellPane.heightProperty().divide(2));
 
         // radius of this chess piece.
-        this.cellCircle.radiusProperty()
-                .bind(Bindings.min(cellPane.widthProperty(), cellPane.heightProperty()).divide(2.5));
+        cellCircle.radiusProperty().bind(Bindings.min(cellPane.widthProperty(), cellPane.heightProperty()).divide(2.5));
 
         // the chess type of this cell, and add listener when the chess type
         // is changed.
-        this.dashboardService.addChessboardChangeListener(point,
-                (observable, oldValue, newValue) -> this.updatePane(newValue));
-        this.updatePane(ChessType.EMPTY);
+        dashboardService.addChessboardChangeListener(position,
+                (observable, oldValue, newValue) -> updateCellPane(newValue, true));
+        updateCellPane(ChessType.EMPTY, true);
+
+        dashboardService.addLastMovePointChangeListener((observable, oldValue, newValue) -> {
+            if (position.equals(oldValue)) {
+                updateCellPane(dashboardService.getChessboard(oldValue), false);
+            }
+        });
+
     }
 
-    private void updatePane(ChessType chessType) {
+    private void updateCellPane(ChessType chessType, boolean isLatestPosition) {
         if (ChessType.EMPTY == chessType) {
-            this.cellCircle.visibleProperty().set(false);
+            cellCircle.visibleProperty().set(false);
         } else {
-            this.cellCircle.visibleProperty().set(true);
-            this.cellCircle.setFill(ChessType.BLACK == chessType ? Color.BLACK : Color.WHITE);
+            cellCircle.visibleProperty().set(true);
+            if (isLatestPosition) {
+                cellCircle.setFill(ChessType.BLACK == chessType ? Color.DIMGRAY : Color.CORNSILK);
+            } else {
+                cellCircle.setFill(ChessType.BLACK == chessType ? Color.BLACK : Color.WHITE);
+            }
         }
     }
 
@@ -99,7 +104,7 @@ class DashboardCellPane extends Pane {
      */
     @FXML
     public void takeMove() {
-        this.dashboardService.takeMove(point);
+        dashboardService.takeMove(position);
     }
 
 }
