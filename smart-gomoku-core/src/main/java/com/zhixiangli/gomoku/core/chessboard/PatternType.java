@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.core.analysis;
+package com.zhixiangli.gomoku.core.chessboard;
 
 /**
  * 
@@ -12,7 +12,7 @@ package com.zhixiangli.gomoku.core.analysis;
  * @author zhixiangli
  *
  */
-public enum ChessPatternType {
+public enum PatternType {
 
     OTHERS(0),
 
@@ -82,7 +82,7 @@ public enum ChessPatternType {
 
     private int chessNum;
 
-    private ChessPatternType(int chessNum) {
+    private PatternType(int chessNum) {
         this.chessNum = chessNum;
     }
 

@@ -23,7 +23,7 @@ public enum ConsoleCommand {
 
     NEXT_WHITE("NEXT_WHITE"),
 
-    SHOW("SHOW"),
+    RESET("RESET"),
 
     PUT("PUT"),
 
@@ -55,7 +55,7 @@ public enum ConsoleCommand {
         for (ConsoleCommand command : ConsoleCommand.values()) {
             if (StringUtils.startsWith(str, command.getText() + StringUtils.EMPTY)) {
                 switch (command) {
-                case SHOW:
+                case RESET:
                 case PUT:
                 case PLAY_BLACK:
                 case PLAY_WHITE:

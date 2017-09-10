@@ -9,6 +9,7 @@ import java.io.IOException;
 import com.zhixiangli.gomoku.core.chessboard.ChessState;
 import com.zhixiangli.gomoku.core.chessboard.ChessboardService;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
+import com.zhixiangli.gomoku.core.common.PlayerProperties;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -65,10 +66,10 @@ public class DashboardController {
 
     private void initializePlayerAlias() {
         blackAliasArea.setEditable(false);
-        blackAliasArea.setText(GomokuConst.Player.playerBlackAlias);
+        blackAliasArea.setText(PlayerProperties.playerBlackAlias);
 
         whiteAliasArea.setEditable(false);
-        whiteAliasArea.setText(GomokuConst.Player.playerWhiteAlias);
+        whiteAliasArea.setText(PlayerProperties.playerWhiteAlias);
     }
 
     private void initailizeAnnouncement() {

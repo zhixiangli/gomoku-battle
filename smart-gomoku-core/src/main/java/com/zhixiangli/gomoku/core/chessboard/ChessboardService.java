@@ -68,6 +68,8 @@ public class ChessboardService {
             }
         }
         this.chessStateProperty.set(ChessState.GAME_ON);
+        // change current chess type to fire action.
+        this.currentChessType.set(ChessType.EMPTY);
         this.currentChessType.set(ChessType.BLACK);
         this.lastMovePoint.set(null);
     }
@@ -94,10 +96,8 @@ public class ChessboardService {
             ChessState winner = ChessType.BLACK == this.currentChessType.get() ? ChessState.BLACK_WIN
                     : ChessState.WHITE_WIN;
             this.chessStateProperty.set(winner);
-            this.currentChessType.set(ChessType.EMPTY);
         } else if (GameReferee.isDraw(chessboard, point)) { // if draw.
             this.chessStateProperty.set(ChessState.GAME_DRAW);
-            this.currentChessType.set(ChessType.EMPTY);
         } else {
             this.lastMovePoint.set(new Point(point));
             // finish this move, and change the current chess type and current

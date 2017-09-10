@@ -57,7 +57,7 @@ public abstract class ConsoleAgent {
                 case PLAY_WHITE:
                     this.play(ChessType.WHITE, commandPair.getValue());
                     break;
-                case SHOW:
+                case RESET:
                     Chessboard chessboard = new Chessboard();
                     for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
                         String row = reader.nextLine();
@@ -65,13 +65,13 @@ public abstract class ConsoleAgent {
                         for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
                             ChessType chessType = null;
                             switch (row.charAt(j)) {
-                            case GomokuConst.ChessChar.BLACK:
+                            case GomokuConst.CHESS_CHAR_BLACK:
                                 chessType = ChessType.BLACK;
                                 break;
-                            case GomokuConst.ChessChar.WHITE:
+                            case GomokuConst.CHESS_CHAR_WHITE:
                                 chessType = ChessType.WHITE;
                                 break;
-                            case GomokuConst.ChessChar.EMPTY:
+                            case GomokuConst.CHESS_CHAR_EMPTY:
                                 chessType = ChessType.EMPTY;
                                 break;
                             default:

@@ -12,6 +12,7 @@ import java.util.Set;
 import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
+import com.zhixiangli.gomoku.core.chessboard.PatternType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 
 /**
@@ -98,13 +99,13 @@ public class GlobalAnalyser {
      *            chess type to be computed.
      * @return
      */
-    public static final List<ChessPatternType> getPatternStatistics(Chessboard chessboard, Point point,
+    public static final List<PatternType> getPatternStatistics(Chessboard chessboard, Point point,
             ChessType chessType) {
         Preconditions.checkArgument(chessType != ChessType.EMPTY);
 
         ChessType oldChessType = chessboard.getChess(point);
         chessboard.setChess(point, chessType);
-        List<ChessPatternType> patternTypeList = new ArrayList<>();
+        List<PatternType> patternTypeList = new ArrayList<>();
         for (Point direction : GomokuConst.DIRECTIONS) {
             patternTypeList.add(getChessPatternType(chessboard, point, direction));
         }
@@ -112,7 +113,7 @@ public class GlobalAnalyser {
         return patternTypeList;
     }
 
-    public static final ChessPatternType getChessPatternType(Chessboard chessboard, Point point, Point direction) {
+    public static final PatternType getChessPatternType(Chessboard chessboard, Point point, Point direction) {
         List<ChessType> pattern = getChessTypeRange(chessboard, point, direction, GomokuConst.CONSECUTIVE_NUM);
         return PatternRecognizer.getBestPatternType(pattern, chessboard.getChess(point));
     }

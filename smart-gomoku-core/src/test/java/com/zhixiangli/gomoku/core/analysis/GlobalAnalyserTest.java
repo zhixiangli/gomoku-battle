@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
+import com.zhixiangli.gomoku.core.chessboard.PatternType;
 
 /**
  * @author zhixiangli
@@ -72,17 +73,17 @@ public class GlobalAnalyserTest {
         this.chessboard.setChess(6, 5, ChessType.WHITE);
         this.chessboard.setChess(6, 8, ChessType.WHITE);
         Point blackPoint = new Point(4, 3);
-        List<ChessPatternType> patternTypeList = GlobalAnalyser.getPatternStatistics(chessboard, blackPoint,
+        List<PatternType> patternTypeList = GlobalAnalyser.getPatternStatistics(chessboard, blackPoint,
                 ChessType.BLACK);
         Assert.assertEquals(ChessType.EMPTY, chessboard.getChess(blackPoint));
 
-        for (ChessPatternType patternType : Arrays.asList(ChessPatternType.FIVE, ChessPatternType.OPEN_FOUR,
-                ChessPatternType.HALF_OPEN_FOUR, ChessPatternType.HALF_OPEN_THREE)) {
+        for (PatternType patternType : Arrays.asList(PatternType.FIVE, PatternType.OPEN_FOUR,
+                PatternType.HALF_OPEN_FOUR, PatternType.HALF_OPEN_THREE)) {
             Assert.assertEquals(CollectionUtils.countMatches(patternTypeList, x -> x == patternType), 1);
         }
-        for (ChessPatternType patternType : Arrays.asList(ChessPatternType.OPEN_THREE,
-                ChessPatternType.SPACED_OPEN_THREE, ChessPatternType.OPEN_TWO, ChessPatternType.ONE_SPACED_OPEN_TWO,
-                ChessPatternType.TWO_SPACED_OPEN_TWO, ChessPatternType.HALF_OPEN_TWO)) {
+        for (PatternType patternType : Arrays.asList(PatternType.OPEN_THREE,
+                PatternType.SPACED_OPEN_THREE, PatternType.OPEN_TWO, PatternType.ONE_SPACED_OPEN_TWO,
+                PatternType.TWO_SPACED_OPEN_TWO, PatternType.HALF_OPEN_TWO)) {
             Assert.assertEquals(CollectionUtils.countMatches(patternTypeList, x -> x == patternType), 0);
         }
     }

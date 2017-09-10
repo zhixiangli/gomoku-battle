@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
+import com.zhixiangli.gomoku.core.chessboard.PatternType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 
 /**
@@ -37,9 +38,9 @@ public class PatternRecognizer {
 
     private static final int PATTERN_HASH_BOUND = 2 * (int) Math.pow(SEED, PATTERN_MAX_LENGTH);
 
-    private static final ChessPatternType[] BLACK_PATTERN_MAP = new ChessPatternType[PATTERN_HASH_BOUND];
+    private static final PatternType[] BLACK_PATTERN_MAP = new PatternType[PATTERN_HASH_BOUND];
 
-    private static final ChessPatternType[] WHITE_PATTERN_MAP = new ChessPatternType[PATTERN_HASH_BOUND];
+    private static final PatternType[] WHITE_PATTERN_MAP = new PatternType[PATTERN_HASH_BOUND];
 
     static {
         StopWatch stopWatch = new StopWatch();
@@ -65,7 +66,7 @@ public class PatternRecognizer {
         }
     }
 
-    public static final ChessPatternType getBestPatternType(List<ChessType> pattern, ChessType consideredChessType) {
+    public static final PatternType getBestPatternType(List<ChessType> pattern, ChessType consideredChessType) {
         if (pattern.size() <= PATTERN_MAX_LENGTH) {
             return PatternRecognizer.getPatternType(pattern, consideredChessType);
         }
@@ -74,44 +75,44 @@ public class PatternRecognizer {
         // f(1,7)=seed*f(0,6)-seed^7-s[0]*seed^6+seed^6+s[6]
         // =seed*f(0,6)+(1-s[0]-seed)*seed^6+s[6]
         int hashCode = hashPatternList(pattern, 0, PATTERN_MAX_LENGTH);
-        ChessPatternType[] patternMap = getPatternMap(consideredChessType);
-        ChessPatternType patternType = patternMap[hashCode];
+        PatternType[] patternMap = getPatternMap(consideredChessType);
+        PatternType patternType = patternMap[hashCode];
         for (int i = 1; i + GomokuConst.CONSECUTIVE_NUM + 1 <= pattern.size(); ++i) {
             hashCode = SEED * hashCode + (1 - pattern.get(i - 1).ordinal() - SEED) * POW_SEED_SIX
                     + pattern.get(i + GomokuConst.CONSECUTIVE_NUM).ordinal();
-            ChessPatternType newPatternType = patternMap[hashCode];
+            PatternType newPatternType = patternMap[hashCode];
             if (newPatternType.compareTo(patternType) > 0)
                 patternType = newPatternType;
         }
         return patternType;
     }
 
-    public static final ChessPatternType getPatternType(List<ChessType> pattern, ChessType consideredChessType) {
+    public static final PatternType getPatternType(List<ChessType> pattern, ChessType consideredChessType) {
         Preconditions.checkArgument(ChessType.EMPTY != consideredChessType);
         Preconditions.checkArgument(pattern.size() <= PATTERN_MAX_LENGTH);
 
-        ChessPatternType[] patternMap = getPatternMap(consideredChessType);
+        PatternType[] patternMap = getPatternMap(consideredChessType);
         int patternHashCode = hashPatternList(pattern, 0, pattern.size());
 
-        ChessPatternType bestPatternType = patternMap[patternHashCode];
+        PatternType bestPatternType = patternMap[patternHashCode];
         if (null != bestPatternType) {
             return bestPatternType;
         }
 
         // five chess in a row
         if (isFive(pattern, consideredChessType)) {
-            patternMap[patternHashCode] = ChessPatternType.FIVE;
-            return ChessPatternType.FIVE;
+            patternMap[patternHashCode] = PatternType.FIVE;
+            return PatternType.FIVE;
         }
         // open four
         int openPatternLength = isOpenPattern(pattern, consideredChessType);
         if (openPatternLength == 4) {
-            patternMap[patternHashCode] = ChessPatternType.OPEN_FOUR;
-            return ChessPatternType.OPEN_FOUR;
+            patternMap[patternHashCode] = PatternType.OPEN_FOUR;
+            return PatternType.OPEN_FOUR;
         }
 
         // others
-        bestPatternType = ChessPatternType.OTHERS;
+        bestPatternType = PatternType.OTHERS;
         for (int i = 0; i < pattern.size(); ++i) {
             if (pattern.get(i) != ChessType.EMPTY) {
                 continue;
@@ -119,55 +120,54 @@ public class PatternRecognizer {
             for (ChessType newChessType : Arrays.asList(ChessType.BLACK, ChessType.WHITE)) {
                 List<ChessType> newPattern = new ArrayList<>(pattern);
                 newPattern.set(i, newChessType);
-                ChessPatternType newPatternType = getPatternType(newPattern, consideredChessType);
+                PatternType newPatternType = getPatternType(newPattern, consideredChessType);
                 switch (newPatternType) {
                 case FIVE:
-                    if (ChessPatternType.HALF_OPEN_FOUR.compareTo(bestPatternType) > 0) {
-                        bestPatternType = ChessPatternType.HALF_OPEN_FOUR;
+                    if (PatternType.HALF_OPEN_FOUR.compareTo(bestPatternType) > 0) {
+                        bestPatternType = PatternType.HALF_OPEN_FOUR;
                     }
                     break;
                 case OPEN_FOUR: // ..ooo. .oo.o.
                     if (openPatternLength == 3) {
-                        if (ChessPatternType.OPEN_THREE.compareTo(bestPatternType) > 0) {
-                            bestPatternType = ChessPatternType.OPEN_THREE;
+                        if (PatternType.OPEN_THREE.compareTo(bestPatternType) > 0) {
+                            bestPatternType = PatternType.OPEN_THREE;
                         }
                     } else {
-                        if (ChessPatternType.SPACED_OPEN_THREE.compareTo(bestPatternType) > 0) {
-                            bestPatternType = ChessPatternType.SPACED_OPEN_THREE;
+                        if (PatternType.SPACED_OPEN_THREE.compareTo(bestPatternType) > 0) {
+                            bestPatternType = PatternType.SPACED_OPEN_THREE;
                         }
                     }
                     break;
                 case HALF_OPEN_FOUR:
-                    if (ChessPatternType.HALF_OPEN_THREE.compareTo(bestPatternType) > 0) {
-                        bestPatternType = ChessPatternType.HALF_OPEN_THREE;
+                    if (PatternType.HALF_OPEN_THREE.compareTo(bestPatternType) > 0) {
+                        bestPatternType = PatternType.HALF_OPEN_THREE;
                     }
                     break;
                 case OPEN_THREE: // -> ...oo. ..o.o.
                 case SPACED_OPEN_THREE: // -> .oo... .o..o. ..o.o.
                     if (openPatternLength == 2) {
-                        if (ChessPatternType.OPEN_TWO.compareTo(bestPatternType) > 0) {
-                            bestPatternType = ChessPatternType.OPEN_TWO;
+                        if (PatternType.OPEN_TWO.compareTo(bestPatternType) > 0) {
+                            bestPatternType = PatternType.OPEN_TWO;
                         }
                         break;
                     }
-                    Pair<Integer, Integer> spacedOpenTwoPattern = isSpacedOpenPattern(pattern, consideredChessType);
-                    Preconditions.checkNotNull(spacedOpenTwoPattern);
-                    Preconditions.checkArgument(spacedOpenTwoPattern.getKey() == 2);
-                    Preconditions.checkArgument(
-                            spacedOpenTwoPattern.getValue() == 1 || spacedOpenTwoPattern.getValue() == 2);
-                    if (spacedOpenTwoPattern.getValue() == 1) {
-                        if (ChessPatternType.ONE_SPACED_OPEN_TWO.compareTo(bestPatternType) > 0) {
-                            bestPatternType = ChessPatternType.ONE_SPACED_OPEN_TWO;
+                    Pair<Integer, Integer> spacedOpenTwo = isSpacedOpenPattern(pattern, consideredChessType);
+                    Preconditions.checkNotNull(spacedOpenTwo);
+                    Preconditions.checkArgument(spacedOpenTwo.getKey() == 2);
+                    Preconditions.checkArgument(spacedOpenTwo.getValue() == 1 || spacedOpenTwo.getValue() == 2);
+                    if (spacedOpenTwo.getValue() == 1) {
+                        if (PatternType.ONE_SPACED_OPEN_TWO.compareTo(bestPatternType) > 0) {
+                            bestPatternType = PatternType.ONE_SPACED_OPEN_TWO;
                         }
                     } else {
-                        if (ChessPatternType.TWO_SPACED_OPEN_TWO.compareTo(bestPatternType) > 0) {
-                            bestPatternType = ChessPatternType.TWO_SPACED_OPEN_TWO;
+                        if (PatternType.TWO_SPACED_OPEN_TWO.compareTo(bestPatternType) > 0) {
+                            bestPatternType = PatternType.TWO_SPACED_OPEN_TWO;
                         }
                     }
                     break;
                 case HALF_OPEN_THREE:
-                    if (ChessPatternType.HALF_OPEN_TWO.compareTo(bestPatternType) > 0) {
-                        bestPatternType = ChessPatternType.HALF_OPEN_TWO;
+                    if (PatternType.HALF_OPEN_TWO.compareTo(bestPatternType) > 0) {
+                        bestPatternType = PatternType.HALF_OPEN_TWO;
                     }
                     break;
                 default:
@@ -242,7 +242,7 @@ public class PatternRecognizer {
         return hash;
     }
 
-    private static final ChessPatternType[] getPatternMap(ChessType chessType) {
+    private static final PatternType[] getPatternMap(ChessType chessType) {
         return ChessType.BLACK == chessType ? BLACK_PATTERN_MAP : WHITE_PATTERN_MAP;
     }
 

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.ChessboardService;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
+import com.zhixiangli.gomoku.core.common.PlayerProperties;
 
 /**
  * 
@@ -36,11 +37,11 @@ public class ConsoleMaster implements Runnable {
     private ConsoleProcess whitePlayerProcess;
 
     public ConsoleMaster() throws FileNotFoundException, IOException {
-        if (StringUtils.isNotBlank(GomokuConst.Player.playerBlackCommand)) {
-            blackPlayerProcess = new ConsoleProcess(GomokuConst.Player.playerBlackCommand);
+        if (StringUtils.isNotBlank(PlayerProperties.playerBlackCommand)) {
+            blackPlayerProcess = new ConsoleProcess(PlayerProperties.playerBlackCommand);
         }
-        if (StringUtils.isNotBlank(GomokuConst.Player.playerWhiteCommand)) {
-            whitePlayerProcess = new ConsoleProcess(GomokuConst.Player.playerWhiteCommand);
+        if (StringUtils.isNotBlank(PlayerProperties.playerWhiteCommand)) {
+            whitePlayerProcess = new ConsoleProcess(PlayerProperties.playerWhiteCommand);
         }
 
         chessboardService.addCurrentChessTypeChangeListener((observable, oldValue, newValue) -> {
@@ -92,17 +93,17 @@ public class ConsoleMaster implements Runnable {
     }
 
     private String showChessboard() {
-        StringBuilder sb = new StringBuilder(ConsoleCommand.format(ConsoleCommand.SHOW,
+        StringBuilder sb = new StringBuilder(ConsoleCommand.format(ConsoleCommand.RESET,
                 new Point(GomokuConst.CHESSBOARD_SIZE, GomokuConst.CHESSBOARD_SIZE)));
         for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
             for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
                 ChessType chessType = this.chessboardService.getChessboard(new Point(i, j));
                 if (chessType == ChessType.EMPTY) {
-                    sb.append(GomokuConst.ChessChar.EMPTY);
+                    sb.append(GomokuConst.CHESS_CHAR_EMPTY);
                 } else if (chessType == ChessType.BLACK) {
-                    sb.append(GomokuConst.ChessChar.BLACK);
+                    sb.append(GomokuConst.CHESS_CHAR_BLACK);
                 } else if (chessType == ChessType.WHITE) {
-                    sb.append(GomokuConst.ChessChar.WHITE);
+                    sb.append(GomokuConst.CHESS_CHAR_WHITE);
                 }
             }
             sb.append(StringUtils.LF);

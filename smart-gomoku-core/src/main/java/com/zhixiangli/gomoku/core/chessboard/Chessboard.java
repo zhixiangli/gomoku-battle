@@ -138,13 +138,13 @@ public class Chessboard implements Cloneable {
             for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
                 switch (chessboard[i][j]) {
                 case BLACK:
-                    sb.append(GomokuConst.ChessChar.BLACK);
+                    sb.append(GomokuConst.CHESS_CHAR_BLACK);
                     break;
                 case WHITE:
-                    sb.append(GomokuConst.ChessChar.WHITE);
+                    sb.append(GomokuConst.CHESS_CHAR_WHITE);
                     break;
                 case EMPTY:
-                    sb.append(GomokuConst.ChessChar.EMPTY);
+                    sb.append(GomokuConst.CHESS_CHAR_EMPTY);
                     break;
                 default:
                 }
