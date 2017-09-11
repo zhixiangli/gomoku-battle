@@ -28,10 +28,4 @@ public class GomokuConst {
      */
     public static final int CHESSBOARD_SIZE = 15;
 
-    public static final char CHESS_CHAR_EMPTY = '.';
-
-    public static final char CHESS_CHAR_BLACK = 'B';
-
-    public static final char CHESS_CHAR_WHITE = 'W';
-
 }

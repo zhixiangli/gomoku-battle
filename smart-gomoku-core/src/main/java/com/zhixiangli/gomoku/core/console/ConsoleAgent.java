@@ -63,7 +63,7 @@ public abstract class ConsoleAgent {
                         sb.append(reader.nextLine() + StringUtils.LF);
                     }
                     LOGGER.info("received chessboard:\n{}", sb);
-                    this.show(new Chessboard(sb.toString()));
+                    this.reset(new Chessboard(sb.toString()));
                     break;
                 default:
                     break;
@@ -76,7 +76,7 @@ public abstract class ConsoleAgent {
 
     protected abstract Point next(ChessType chessType);
 
-    protected abstract void show(Chessboard chessboard);
+    protected abstract void reset(Chessboard chessboard);
 
     protected abstract void play(ChessType chessType, Point point);
 

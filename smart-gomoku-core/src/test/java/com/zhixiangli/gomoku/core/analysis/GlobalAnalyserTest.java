@@ -15,7 +15,6 @@ import org.junit.Test;
 
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
-import com.zhixiangli.gomoku.core.chessboard.PatternType;
 
 /**
  * @author zhixiangli

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.core.chessboard;
+package com.zhixiangli.gomoku.core.service;
 
 import java.awt.Point;
 
@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.core.analysis.GameReferee;
+import com.zhixiangli.gomoku.core.chessboard.ChessState;
+import com.zhixiangli.gomoku.core.chessboard.ChessType;
+import com.zhixiangli.gomoku.core.chessboard.Chessboard;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 
 import javafx.beans.property.SimpleObjectProperty;

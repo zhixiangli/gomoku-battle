@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
-import com.zhixiangli.gomoku.core.chessboard.PatternType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 
 /**

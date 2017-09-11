@@ -11,10 +11,34 @@ package com.zhixiangli.gomoku.core.chessboard;
  */
 public enum ChessType {
 
-    EMPTY,
+    EMPTY('.'),
 
-    BLACK,
+    BLACK('B'),
 
-    WHITE,
+    WHITE('W'),
+
+    ;
+
+    private char chessChar;
+
+    private ChessType(char chessChar) {
+        this.chessChar = chessChar;
+    }
+
+    public static ChessType getChessType(char ch) {
+        for (ChessType chessType : ChessType.values()) {
+            if (ch == chessType.getChessChar()) {
+                return chessType;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return the chessChar
+     */
+    public char getChessChar() {
+        return chessChar;
+    }
 
 }

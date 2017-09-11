@@ -13,15 +13,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
-import com.zhixiangli.gomoku.core.chessboard.ChessboardService;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 import com.zhixiangli.gomoku.core.common.PlayerProperties;
+import com.zhixiangli.gomoku.core.service.ChessboardService;
 
 /**
  * 
- * From Dashboard to AI: CLEAR; NEXT_WHITE; NEXT_BLACK; SHOW CHESSBOARD_SIZE;
+ * From Dashboard to AI:
  * 
- * From AI to Dashboard: PUT ROW COLUMN;
+ * CLEAR
+ * 
+ * NEXT_WHITE
+ * 
+ * NEXT_BLACK
+ * 
+ * RESET CHESSBOARD_SIZE CHESSBOARD_SIZE
+ * 
+ * PLAY_BLACK ROW COLUMN
+ * 
+ * PLAY_WHITE ROW COLUMN
+ * 
+ * From AI to Dashboard:
+ * 
+ * PUT ROW COLUMN
  * 
  * @author zhixiangli
  *
@@ -78,7 +92,7 @@ public class ConsoleMaster implements Runnable {
         if (null != lastMovePoint) {
             process.send(ConsoleCommand.format(play, lastMovePoint));
         }
-        process.send(this.showChessboard());
+        process.send(this.resetChessboard());
         process.send(ConsoleCommand.format(next));
         Pair<ConsoleCommand, Point> commandPair = ConsoleCommand.parse(process.receive());
         this.chessboardService.takeMove(commandPair.getValue());
@@ -92,23 +106,10 @@ public class ConsoleMaster implements Runnable {
         process.send(ConsoleCommand.format(ConsoleCommand.CLEAR));
     }
 
-    private String showChessboard() {
-        StringBuilder sb = new StringBuilder(ConsoleCommand.format(ConsoleCommand.RESET,
-                new Point(GomokuConst.CHESSBOARD_SIZE, GomokuConst.CHESSBOARD_SIZE)));
-        for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
-            for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
-                ChessType chessType = this.chessboardService.getChessboard(new Point(i, j));
-                if (chessType == ChessType.EMPTY) {
-                    sb.append(GomokuConst.CHESS_CHAR_EMPTY);
-                } else if (chessType == ChessType.BLACK) {
-                    sb.append(GomokuConst.CHESS_CHAR_BLACK);
-                } else if (chessType == ChessType.WHITE) {
-                    sb.append(GomokuConst.CHESS_CHAR_WHITE);
-                }
-            }
-            sb.append(StringUtils.LF);
-        }
-        return sb.toString();
+    private String resetChessboard() {
+        return ConsoleCommand.format(ConsoleCommand.RESET,
+                new Point(GomokuConst.CHESSBOARD_SIZE, GomokuConst.CHESSBOARD_SIZE))
+                + chessboardService.getChessboard().toString();
     }
 
     @Override

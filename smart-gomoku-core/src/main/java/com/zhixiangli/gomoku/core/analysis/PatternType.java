@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.core.chessboard;
+package com.zhixiangli.gomoku.core.analysis;
 
 /**
  * 

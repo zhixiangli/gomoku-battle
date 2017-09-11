@@ -41,20 +41,8 @@ public class Chessboard implements Cloneable {
         for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
             Preconditions.checkArgument(StringUtils.length(rows[i]) == GomokuConst.CHESSBOARD_SIZE);
             for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
-                ChessType chessType = null;
-                switch (rows[i].charAt(j)) {
-                case GomokuConst.CHESS_CHAR_BLACK:
-                    chessType = ChessType.BLACK;
-                    break;
-                case GomokuConst.CHESS_CHAR_WHITE:
-                    chessType = ChessType.WHITE;
-                    break;
-                case GomokuConst.CHESS_CHAR_EMPTY:
-                    chessType = ChessType.EMPTY;
-                    break;
-                default:
-                    break;
-                }
+                ChessType chessType = ChessType.getChessType(rows[i].charAt(j));
+                Preconditions.checkNotNull(chessType);
                 this.chessboard[i][j] = chessType;
             }
         }
@@ -163,18 +151,7 @@ public class Chessboard implements Cloneable {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
             for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
-                switch (chessboard[i][j]) {
-                case BLACK:
-                    sb.append(GomokuConst.CHESS_CHAR_BLACK);
-                    break;
-                case WHITE:
-                    sb.append(GomokuConst.CHESS_CHAR_WHITE);
-                    break;
-                case EMPTY:
-                    sb.append(GomokuConst.CHESS_CHAR_EMPTY);
-                    break;
-                default:
-                }
+                sb.append(chessboard[i][j].getChessChar());
             }
             sb.append(StringUtils.LF);
         }
