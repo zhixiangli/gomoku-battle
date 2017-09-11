@@ -58,29 +58,12 @@ public abstract class ConsoleAgent {
                     this.play(ChessType.WHITE, commandPair.getValue());
                     break;
                 case RESET:
-                    Chessboard chessboard = new Chessboard();
+                    StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
-                        String row = reader.nextLine();
-                        LOGGER.info("received command {}", row);
-                        for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
-                            ChessType chessType = null;
-                            switch (row.charAt(j)) {
-                            case GomokuConst.CHESS_CHAR_BLACK:
-                                chessType = ChessType.BLACK;
-                                break;
-                            case GomokuConst.CHESS_CHAR_WHITE:
-                                chessType = ChessType.WHITE;
-                                break;
-                            case GomokuConst.CHESS_CHAR_EMPTY:
-                                chessType = ChessType.EMPTY;
-                                break;
-                            default:
-                                break;
-                            }
-                            chessboard.setChess(i, j, chessType);
-                        }
+                        sb.append(reader.nextLine() + StringUtils.LF);
                     }
-                    this.show(chessboard);
+                    LOGGER.info("received chessboard:\n{}", sb);
+                    this.show(new Chessboard(sb.toString()));
                     break;
                 default:
                     break;

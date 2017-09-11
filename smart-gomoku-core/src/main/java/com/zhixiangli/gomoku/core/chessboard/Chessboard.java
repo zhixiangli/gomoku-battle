@@ -6,6 +6,7 @@ package com.zhixiangli.gomoku.core.chessboard;
 import java.awt.Point;
 import java.util.Arrays;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Preconditions;
@@ -31,6 +32,32 @@ public class Chessboard implements Cloneable {
         Preconditions.checkArgument(GomokuConst.CHESSBOARD_SIZE > 0);
         this.chessboard = new ChessType[GomokuConst.CHESSBOARD_SIZE][GomokuConst.CHESSBOARD_SIZE];
         this.clear();
+    }
+
+    public Chessboard(String strs) {
+        this();
+        String[] rows = StringUtils.split(strs);
+        Preconditions.checkArgument(ArrayUtils.getLength(rows) == GomokuConst.CHESSBOARD_SIZE);
+        for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
+            Preconditions.checkArgument(StringUtils.length(rows[i]) == GomokuConst.CHESSBOARD_SIZE);
+            for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
+                ChessType chessType = null;
+                switch (rows[i].charAt(j)) {
+                case GomokuConst.CHESS_CHAR_BLACK:
+                    chessType = ChessType.BLACK;
+                    break;
+                case GomokuConst.CHESS_CHAR_WHITE:
+                    chessType = ChessType.WHITE;
+                    break;
+                case GomokuConst.CHESS_CHAR_EMPTY:
+                    chessType = ChessType.EMPTY;
+                    break;
+                default:
+                    break;
+                }
+                this.chessboard[i][j] = chessType;
+            }
+        }
     }
 
     /**
