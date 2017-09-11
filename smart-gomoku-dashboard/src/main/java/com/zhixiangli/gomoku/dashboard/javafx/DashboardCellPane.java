@@ -6,8 +6,12 @@ package com.zhixiangli.gomoku.dashboard.javafx;
 import java.awt.Point;
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.ChessboardService;
+import com.zhixiangli.gomoku.core.common.PlayerProperties;
 
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -100,6 +104,14 @@ class DashboardCellPane extends Pane {
      */
     @FXML
     public void takeMove() {
+        ChessType chessType = chessboardService.getCurrentChessType();
+        Preconditions.checkState(chessType == ChessType.BLACK || chessType == ChessType.WHITE);
+        if (chessType == ChessType.BLACK) {
+            Preconditions.checkState(StringUtils.isBlank(PlayerProperties.playerBlackCommand));
+        } else {
+            Preconditions.checkState(StringUtils.isBlank(PlayerProperties.playerWhiteCommand));
+        }
+
         chessboardService.takeMove(position);
     }
 
