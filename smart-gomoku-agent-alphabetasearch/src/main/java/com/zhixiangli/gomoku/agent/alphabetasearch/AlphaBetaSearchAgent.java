@@ -53,13 +53,12 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
         if (candidatePoints.isEmpty()) {
             return new Point(GomokuConst.CHESSBOARD_SIZE / 2, GomokuConst.CHESSBOARD_SIZE / 2);
         }
-        List<Pair<Point, Double>> bestPoints = candidatePoints.parallelStream().map(point -> {
+        List<Pair<Point, Integer>> bestPoints = candidatePoints.parallelStream().map(point -> {
             Chessboard newChessboard = chessboard.clone();
-            double maxValue = ProphetConst.EVALUATION.get(PatternType.FIVE);
-            double value = -maxValue;
+            int maxValue = ProphetConst.EVALUATION.get(PatternType.FIVE);
+            int value = -maxValue;
             try {
-                value = alphaBetaAlgorithm.search(0, -maxValue, maxValue, newChessboard, point,
-                        chessType);
+                value = alphaBetaAlgorithm.search(0, -maxValue, maxValue, newChessboard, point, chessType);
             } catch (ExecutionException e) {
                 LOGGER.error("alpha beta search error {}", e);
             }
@@ -67,9 +66,9 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
             return ImmutablePair.of(point, value);
         }).collect(Collectors.toList());
 
-        double bestValue = bestPoints.stream().map(pair -> pair.getValue()).max((a, b) -> Double.compare(a, b)).get();
-        List<Pair<Point, Double>> resultPoints = bestPoints.stream()
-                .filter(pair -> Double.compare(bestValue, pair.getValue()) == 0).collect(Collectors.toList());
+        int bestValue = bestPoints.stream().map(pair -> pair.getValue()).max((a, b) -> a - b).get();
+        List<Pair<Point, Integer>> resultPoints = bestPoints.stream().filter(pair -> bestValue == pair.getValue())
+                .collect(Collectors.toList());
         return resultPoints.get(RandomUtils.nextInt(0, resultPoints.size())).getKey();
     }
 

@@ -15,29 +15,29 @@ import com.zhixiangli.gomoku.core.chessboard.PatternType;
  */
 public class ProphetConst {
 
-    public static final ImmutableMap<PatternType, Double> EVALUATION = Maps
-            .immutableEnumMap(new HashMap<PatternType, Double>() {
+    public static final ImmutableMap<PatternType, Integer> EVALUATION = Maps
+            .immutableEnumMap(new HashMap<PatternType, Integer>() {
                 private static final long serialVersionUID = 1L;
 
                 {
-                    put(PatternType.FIVE, 1e25);
+                    put(PatternType.FIVE, 100000000);
 
-                    put(PatternType.OPEN_FOUR, 1e6);
+                    put(PatternType.OPEN_FOUR, 100000);
 
-                    put(PatternType.HALF_OPEN_FOUR, 300.0);
+                    put(PatternType.HALF_OPEN_FOUR, 10000);
 
-                    put(PatternType.OPEN_THREE, 300.0);
-                    put(PatternType.SPACED_OPEN_THREE, 300.0);
+                    put(PatternType.OPEN_THREE, 2000);
+                    put(PatternType.SPACED_OPEN_THREE, 1000);
 
-                    put(PatternType.HALF_OPEN_THREE, 250.0);
+                    put(PatternType.HALF_OPEN_THREE, 100);
 
-                    put(PatternType.OPEN_TWO, 200.0);
-                    put(PatternType.ONE_SPACED_OPEN_TWO, 180.0);
-                    put(PatternType.TWO_SPACED_OPEN_TWO, 150.0);
+                    put(PatternType.OPEN_TWO, 30);
+                    put(PatternType.ONE_SPACED_OPEN_TWO, 20);
+                    put(PatternType.TWO_SPACED_OPEN_TWO, 10);
 
-                    put(PatternType.HALF_OPEN_TWO, 100.0);
+                    put(PatternType.HALF_OPEN_TWO, 1);
 
-                    put(PatternType.OTHERS, 0.0);
+                    put(PatternType.OTHERS, 0);
                 }
             });
 

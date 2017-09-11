@@ -31,7 +31,7 @@ import com.zhixiangli.gomoku.core.chessboard.PatternType;
  */
 public class AlphaBetaSearchAlgorithm {
 
-    private static final Cache<AlphaBetaSearchTable, Double> SEARCH_CACHE = CacheBuilder.newBuilder()
+    private static final Cache<AlphaBetaSearchTable, Integer> SEARCH_CACHE = CacheBuilder.newBuilder()
             .maximumSize(CacheConst.MAXIMUM_SIZE).expireAfterAccess(CacheConst.DURATION, TimeUnit.MINUTES).build();
 
     /**
@@ -51,8 +51,8 @@ public class AlphaBetaSearchAlgorithm {
      * @return
      * @throws ExecutionException
      */
-    public final double search(int depth, double alpha, double beta, Chessboard chessboard, Point point,
-            ChessType chessType) throws ExecutionException {
+    public final int search(int depth, int alpha, int beta, Chessboard chessboard, Point point, ChessType chessType)
+            throws ExecutionException {
         Preconditions.checkArgument(GameReferee.isInChessboard(point));
         Preconditions.checkArgument(chessboard.getChess(point) == ChessType.EMPTY);
         Preconditions.checkArgument(chessType != ChessType.EMPTY);
@@ -60,10 +60,10 @@ public class AlphaBetaSearchAlgorithm {
         chessboard.setChess(point, chessType);
 
         AlphaBetaSearchTable key = new AlphaBetaSearchTable(depth, chessboard);
-        Double value = SEARCH_CACHE.get(key, () -> {
-            double result = 0;
+        int value = SEARCH_CACHE.get(key, () -> {
+            int result = 0;
             if (GameReferee.isWin(chessboard, point)) {
-                double searchValue = ProphetConst.EVALUATION.get(PatternType.FIVE);
+                int searchValue = ProphetConst.EVALUATION.get(PatternType.FIVE);
                 result = (depth & 1) == 0 ? searchValue : -searchValue;
             } else if (depth >= SearchConst.MAX_DEPTH) {
                 result = AlphaBetaSearchProphet.evaluateChessboardValue(chessboard,
@@ -71,10 +71,10 @@ public class AlphaBetaSearchAlgorithm {
             } else {
                 ChessType nextChessType = GameReferee.nextChessType(chessType);
                 List<Point> candidateMoves = this.nextMoves(chessboard, nextChessType);
-                double newAlpha = alpha;
-                double newBeta = beta;
+                int newAlpha = alpha;
+                int newBeta = beta;
                 for (Point nextPoint : candidateMoves) {
-                    double searchValue = search(depth + 1, newAlpha, newBeta, chessboard, nextPoint, nextChessType);
+                    int searchValue = search(depth + 1, newAlpha, newBeta, chessboard, nextPoint, nextChessType);
                     if ((depth & 1) == 0) {
                         result = newBeta = Math.min(newBeta, searchValue);
                     } else {
@@ -85,7 +85,7 @@ public class AlphaBetaSearchAlgorithm {
                     }
                 }
             }
-            return result * SearchConst.DECAY_FACTOR;
+            return (int) (result * SearchConst.DECAY_FACTOR);
         });
         chessboard.setChess(point, ChessType.EMPTY);
         return value;
@@ -96,11 +96,11 @@ public class AlphaBetaSearchAlgorithm {
                 GlobalAnalyser.getEmptyPointsAround(chessboard, SearchConst.AROUND_CANDIDATE_RANGE));
         Collections.shuffle(emptyPointList);
         return emptyPointList.stream().map(point -> ImmutablePair.of(point, evaluateValue(chessboard, point)))
-                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue())).limit(SearchConst.MAX_CANDIDATE_NUM)
+                .sorted((a, b) -> b.getValue() - a.getValue()).limit(SearchConst.MAX_CANDIDATE_NUM)
                 .map(pair -> pair.getKey()).collect(Collectors.toList());
     }
 
-    public double evaluateValue(Chessboard chessboard, Point point) {
+    public int evaluateValue(Chessboard chessboard, Point point) {
         return AlphaBetaSearchProphet.evaluatePointValue(chessboard, point);
     }
 

@@ -5,8 +5,10 @@ package com.zhixiangli.gomoku.core.analysis;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
@@ -99,18 +101,19 @@ public class GlobalAnalyser {
      *            chess type to be computed.
      * @return
      */
-    public static final List<PatternType> getPatternStatistics(Chessboard chessboard, Point point,
+    public static final Map<PatternType, Integer> getPatternStatistics(Chessboard chessboard, Point point,
             ChessType chessType) {
         Preconditions.checkArgument(chessType != ChessType.EMPTY);
 
         ChessType oldChessType = chessboard.getChess(point);
         chessboard.setChess(point, chessType);
-        List<PatternType> patternTypeList = new ArrayList<>();
+        Map<PatternType, Integer> counter = new EnumMap<>(PatternType.class);
         for (Point direction : GomokuConst.DIRECTIONS) {
-            patternTypeList.add(getChessPatternType(chessboard, point, direction));
+            PatternType patternType = getChessPatternType(chessboard, point, direction);
+            counter.compute(patternType, (key, value) -> null == value ? 1 : 1 + value);
         }
         chessboard.setChess(point, oldChessType);
-        return patternTypeList;
+        return counter;
     }
 
     public static final PatternType getChessPatternType(Chessboard chessboard, Point point, Point direction) {
