@@ -10,8 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
-import com.zhixiangli.gomoku.core.chessboard.ChessboardService;
 import com.zhixiangli.gomoku.core.common.PlayerProperties;
+import com.zhixiangli.gomoku.core.service.ChessboardService;
 
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
