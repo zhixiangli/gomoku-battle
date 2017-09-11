@@ -3,17 +3,17 @@
  */
 package com.zhixiangli.gomoku.agent.alphabetasearch.algorithm;
 
-import static com.zhixiangli.gomoku.core.chessboard.PatternType.FIVE;
-import static com.zhixiangli.gomoku.core.chessboard.PatternType.HALF_OPEN_FOUR;
-import static com.zhixiangli.gomoku.core.chessboard.PatternType.HALF_OPEN_THREE;
-import static com.zhixiangli.gomoku.core.chessboard.PatternType.HALF_OPEN_TWO;
-import static com.zhixiangli.gomoku.core.chessboard.PatternType.ONE_SPACED_OPEN_TWO;
-import static com.zhixiangli.gomoku.core.chessboard.PatternType.OPEN_FOUR;
-import static com.zhixiangli.gomoku.core.chessboard.PatternType.OPEN_THREE;
-import static com.zhixiangli.gomoku.core.chessboard.PatternType.OPEN_TWO;
-import static com.zhixiangli.gomoku.core.chessboard.PatternType.OTHERS;
-import static com.zhixiangli.gomoku.core.chessboard.PatternType.SPACED_OPEN_THREE;
-import static com.zhixiangli.gomoku.core.chessboard.PatternType.TWO_SPACED_OPEN_TWO;
+import static com.zhixiangli.gomoku.core.analysis.PatternType.FIVE;
+import static com.zhixiangli.gomoku.core.analysis.PatternType.HALF_OPEN_FOUR;
+import static com.zhixiangli.gomoku.core.analysis.PatternType.HALF_OPEN_THREE;
+import static com.zhixiangli.gomoku.core.analysis.PatternType.HALF_OPEN_TWO;
+import static com.zhixiangli.gomoku.core.analysis.PatternType.ONE_SPACED_OPEN_TWO;
+import static com.zhixiangli.gomoku.core.analysis.PatternType.OPEN_FOUR;
+import static com.zhixiangli.gomoku.core.analysis.PatternType.OPEN_THREE;
+import static com.zhixiangli.gomoku.core.analysis.PatternType.OPEN_TWO;
+import static com.zhixiangli.gomoku.core.analysis.PatternType.OTHERS;
+import static com.zhixiangli.gomoku.core.analysis.PatternType.SPACED_OPEN_THREE;
+import static com.zhixiangli.gomoku.core.analysis.PatternType.TWO_SPACED_OPEN_TWO;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +25,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zhixiangli.gomoku.core.chessboard.PatternType;
+import com.zhixiangli.gomoku.core.analysis.PatternType;
 
 /**
  * @author zhixiangli
@@ -87,9 +87,9 @@ public class AlphaBetaSearchProphetTest {
             int first = this.evaluateChessPatternType(types.get(i));
             System.out.println(String.format("%s = %d", types.get(i), first));
             int second = this.evaluateChessPatternType(types.get(i + 1));
-            if (first <= second) {
-                System.out.println(String.format("%s(%d) should larger than %s(%d)", types.get(i), first,
-                        types.get(i + 1), second));
+            if (first < second) {
+                System.out.println(
+                        String.format("%s(%d) should >= %s(%d)", types.get(i), first, types.get(i + 1), second));
             }
             Assert.assertTrue(first >= second);
         }

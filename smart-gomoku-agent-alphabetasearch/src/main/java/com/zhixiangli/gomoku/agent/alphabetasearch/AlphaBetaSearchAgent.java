@@ -5,10 +5,10 @@ package com.zhixiangli.gomoku.agent.alphabetasearch;
 
 import java.awt.Point;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -16,10 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.agent.alphabetasearch.algorithm.AlphaBetaSearchAlgorithm;
-import com.zhixiangli.gomoku.agent.alphabetasearch.common.ProphetConst;
+import com.zhixiangli.gomoku.agent.alphabetasearch.common.SearchUtils;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
-import com.zhixiangli.gomoku.core.chessboard.PatternType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 import com.zhixiangli.gomoku.core.console.ConsoleAgent;
 
@@ -29,14 +28,13 @@ import com.zhixiangli.gomoku.core.console.ConsoleAgent;
  */
 public class AlphaBetaSearchAgent extends ConsoleAgent {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AlphaBetaSearchAgentTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AlphaBetaSearchAgent.class);
 
     private Chessboard chessboard;
 
     private AlphaBetaSearchAlgorithm alphaBetaAlgorithm;
 
     public AlphaBetaSearchAgent() {
-        super();
         this.alphaBetaAlgorithm = new AlphaBetaSearchAlgorithm();
     }
 
@@ -47,33 +45,42 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
 
     @Override
     protected Point next(ChessType chessType) {
-        LOGGER.info("start the next turn. current chess type {}\n{}", chessType, chessboard);
-        List<Point> candidatePoints = alphaBetaAlgorithm.nextMoves(chessboard, chessType);
+        List<Point> candidates = alphaBetaAlgorithm.nextMoves(chessboard, chessType);
 
-        if (candidatePoints.isEmpty()) {
+        if (candidates.isEmpty()) {
             return new Point(GomokuConst.CHESSBOARD_SIZE / 2, GomokuConst.CHESSBOARD_SIZE / 2);
+        } else {
+            return this.searchBestPoint(candidates, chessType, SearchUtils.MAX_DEPTH);
         }
-        List<Pair<Point, Integer>> bestPoints = candidatePoints.parallelStream().map(point -> {
+    }
+
+    private Point searchBestPoint(List<Point> candidates, ChessType chessType, int depth) {
+        this.alphaBetaAlgorithm.clearCache();
+        List<Pair<Point, Double>> pairs = candidates.parallelStream().map(point -> {
             Chessboard newChessboard = chessboard.clone();
-            int maxValue = ProphetConst.EVALUATION.get(PatternType.FIVE);
-            int value = -maxValue;
+            // set chessboard.
+            newChessboard.setChess(point, chessType);
+            double value = -Double.MAX_VALUE;
             try {
-                value = alphaBetaAlgorithm.search(0, -maxValue, maxValue, newChessboard, point, chessType);
-            } catch (ExecutionException e) {
-                LOGGER.error("alpha beta search error {}", e);
+                value = alphaBetaAlgorithm.search(depth, -Double.MAX_VALUE, Double.MAX_VALUE, newChessboard, point,
+                        chessType, chessType, StringUtils.EMPTY);
+            } catch (Exception e) {
+                LOGGER.error("alpha beta search error: {}", e);
             }
+            // unset chessboard.
+            newChessboard.setChess(point, ChessType.EMPTY);
             Preconditions.checkState(newChessboard.equals(chessboard));
             return ImmutablePair.of(point, value);
         }).collect(Collectors.toList());
 
-        int bestValue = bestPoints.stream().map(pair -> pair.getValue()).max((a, b) -> a - b).get();
-        List<Pair<Point, Integer>> resultPoints = bestPoints.stream().filter(pair -> bestValue == pair.getValue())
-                .collect(Collectors.toList());
+        double bestValue = pairs.stream().map(pair -> pair.getValue()).max((a, b) -> Double.compare(a, b)).get();
+        List<Pair<Point, Double>> resultPoints = pairs.stream()
+                .filter(pair -> Double.compare(bestValue, pair.getValue()) == 0).collect(Collectors.toList());
         return resultPoints.get(RandomUtils.nextInt(0, resultPoints.size())).getKey();
     }
 
     @Override
-    protected void show(Chessboard chessboard) {
+    protected void reset(Chessboard chessboard) {
         this.chessboard = chessboard;
     }
 

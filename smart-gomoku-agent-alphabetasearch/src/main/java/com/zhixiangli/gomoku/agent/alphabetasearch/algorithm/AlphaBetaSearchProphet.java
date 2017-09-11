@@ -10,9 +10,9 @@ import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.agent.alphabetasearch.common.ProphetConst;
 import com.zhixiangli.gomoku.core.analysis.GameReferee;
 import com.zhixiangli.gomoku.core.analysis.GlobalAnalyser;
+import com.zhixiangli.gomoku.core.analysis.PatternType;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
-import com.zhixiangli.gomoku.core.chessboard.PatternType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 
 /**

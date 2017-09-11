@@ -5,9 +5,8 @@ package com.zhixiangli.gomoku.agent.alphabetasearch.algorithm;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -18,12 +17,12 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.zhixiangli.gomoku.agent.alphabetasearch.common.CacheConst;
 import com.zhixiangli.gomoku.agent.alphabetasearch.common.ProphetConst;
-import com.zhixiangli.gomoku.agent.alphabetasearch.common.SearchConst;
+import com.zhixiangli.gomoku.agent.alphabetasearch.common.SearchUtils;
 import com.zhixiangli.gomoku.core.analysis.GameReferee;
 import com.zhixiangli.gomoku.core.analysis.GlobalAnalyser;
+import com.zhixiangli.gomoku.core.analysis.PatternType;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
-import com.zhixiangli.gomoku.core.chessboard.PatternType;
 
 /**
  * @author zhixiangli
@@ -31,8 +30,25 @@ import com.zhixiangli.gomoku.core.chessboard.PatternType;
  */
 public class AlphaBetaSearchAlgorithm {
 
-    private static final Cache<AlphaBetaSearchTable, Integer> SEARCH_CACHE = CacheBuilder.newBuilder()
-            .maximumSize(CacheConst.MAXIMUM_SIZE).expireAfterAccess(CacheConst.DURATION, TimeUnit.MINUTES).build();
+    private Cache<String, Double> seachCache;
+
+    private boolean isEnableCache;
+
+    public AlphaBetaSearchAlgorithm() {
+        this(true);
+    }
+
+    public AlphaBetaSearchAlgorithm(boolean isEnableCache) {
+        this.isEnableCache = isEnableCache;
+        this.seachCache = CacheBuilder.newBuilder().maximumSize(CacheConst.MAXIMUM_SIZE)
+                .expireAfterAccess(CacheConst.DURATION, TimeUnit.MINUTES).build();
+    }
+
+    public final double clearCacheAndSearch(int depth, double alpha, double beta, Chessboard chessboard, Point point,
+            ChessType currentChessType, ChessType rootChessType, String path) throws Exception {
+        this.clearCache();
+        return search(depth, alpha, beta, chessboard, point, currentChessType, rootChessType, path);
+    }
 
     /**
      * 
@@ -45,37 +61,38 @@ public class AlphaBetaSearchAlgorithm {
      * @param chessboard
      *            the current chessboard.
      * @param point
-     *            the point to be put.
-     * @param chessType
-     *            the chess type to be put.
+     *            the point has been put.
+     * @param currentChessType
+     *            the chess type has been put.
      * @return
-     * @throws ExecutionException
+     * @throws Exception
      */
-    public final int search(int depth, int alpha, int beta, Chessboard chessboard, Point point, ChessType chessType)
-            throws ExecutionException {
+    public final double search(int depth, double alpha, double beta, Chessboard chessboard, Point point,
+            ChessType currentChessType, ChessType rootChessType, String path) throws Exception {
         Preconditions.checkArgument(GameReferee.isInChessboard(point));
-        Preconditions.checkArgument(chessboard.getChess(point) == ChessType.EMPTY);
-        Preconditions.checkArgument(chessType != ChessType.EMPTY);
+        Preconditions.checkArgument(chessboard.getChess(point) != ChessType.EMPTY);
+        Preconditions.checkArgument(currentChessType != ChessType.EMPTY);
 
-        chessboard.setChess(point, chessType);
-
-        AlphaBetaSearchTable key = new AlphaBetaSearchTable(depth, chessboard);
-        int value = SEARCH_CACHE.get(key, () -> {
-            int result = 0;
+        String currentPath = path + SearchUtils.encodePoint(point);
+        Callable<Double> callable = () -> {
+            double result = 0;
             if (GameReferee.isWin(chessboard, point)) {
-                int searchValue = ProphetConst.EVALUATION.get(PatternType.FIVE);
-                result = (depth & 1) == 0 ? searchValue : -searchValue;
-            } else if (depth >= SearchConst.MAX_DEPTH) {
-                result = AlphaBetaSearchProphet.evaluateChessboardValue(chessboard,
-                        (depth & 1) == 0 ? chessType : GameReferee.nextChessType(chessType));
+                double maxValue = ProphetConst.EVALUATION.get(PatternType.FIVE);
+                result = rootChessType == currentChessType ? maxValue : -maxValue;
+            } else if (depth <= 0) {
+                result = AlphaBetaSearchProphet.evaluateChessboardValue(chessboard, rootChessType);
             } else {
-                ChessType nextChessType = GameReferee.nextChessType(chessType);
-                List<Point> candidateMoves = this.nextMoves(chessboard, nextChessType);
-                int newAlpha = alpha;
-                int newBeta = beta;
+                ChessType nextChessType = GameReferee.nextChessType(currentChessType);
+                List<Point> candidateMoves = nextMoves(chessboard, nextChessType);
+                double newAlpha = alpha, newBeta = beta;
                 for (Point nextPoint : candidateMoves) {
-                    int searchValue = search(depth + 1, newAlpha, newBeta, chessboard, nextPoint, nextChessType);
-                    if ((depth & 1) == 0) {
+                    // set chessboard.
+                    chessboard.setChess(nextPoint, nextChessType);
+                    double searchValue = search(depth - 1, newAlpha, newBeta, chessboard, nextPoint, nextChessType,
+                            rootChessType, currentPath);
+                    // unset chessboard.
+                    chessboard.setChess(nextPoint, ChessType.EMPTY);
+                    if (rootChessType == currentChessType) {
                         result = newBeta = Math.min(newBeta, searchValue);
                     } else {
                         result = newAlpha = Math.max(newAlpha, searchValue);
@@ -85,23 +102,30 @@ public class AlphaBetaSearchAlgorithm {
                     }
                 }
             }
-            return (int) (result * SearchConst.DECAY_FACTOR);
-        });
-        chessboard.setChess(point, ChessType.EMPTY);
-        return value;
+            return result * SearchUtils.DECAY_FACTOR;
+        };
+        if (this.isEnableCache) {
+            return seachCache.get(currentPath, callable);
+        } else {
+            return callable.call();
+        }
     }
 
     public List<Point> nextMoves(Chessboard chessboard, ChessType chessType) {
         List<Point> emptyPointList = new ArrayList<>(
-                GlobalAnalyser.getEmptyPointsAround(chessboard, SearchConst.AROUND_CANDIDATE_RANGE));
-        Collections.shuffle(emptyPointList);
+                GlobalAnalyser.getEmptyPointsAround(chessboard, SearchUtils.AROUND_CANDIDATE_RANGE));
         return emptyPointList.stream().map(point -> ImmutablePair.of(point, evaluateValue(chessboard, point)))
-                .sorted((a, b) -> b.getValue() - a.getValue()).limit(SearchConst.MAX_CANDIDATE_NUM)
+                .sorted((a, b) -> b.getValue() - a.getValue()).limit(SearchUtils.MAX_CANDIDATE_NUM)
                 .map(pair -> pair.getKey()).collect(Collectors.toList());
     }
 
     public int evaluateValue(Chessboard chessboard, Point point) {
         return AlphaBetaSearchProphet.evaluatePointValue(chessboard, point);
+    }
+
+    public void clearCache() {
+        this.seachCache.invalidateAll();
+        Preconditions.checkState(this.seachCache.size() == 0);
     }
 
 }
