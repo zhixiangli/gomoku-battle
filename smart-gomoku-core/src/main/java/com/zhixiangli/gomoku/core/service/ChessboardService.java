@@ -104,13 +104,12 @@ public class ChessboardService {
         this.historyPoints.add(point);
         Chessboard chessboard = this.getChessboard();
         if (GameReferee.isWin(chessboard, point)) { // if win.
-            ChessState winner = ChessType.BLACK == this.currentChessType.get() ? ChessState.BLACK_WIN
-                    : ChessState.WHITE_WIN;
-            this.chessStateProperty.set(winner);
             LOGGER.info("GAME_WIN_HISTORY: {}", GomokuFormatter.encodePoints(historyPoints));
+            ChessState winner = ChessType.BLACK == currentChessType.get() ? ChessState.BLACK_WIN : ChessState.WHITE_WIN;
+            this.chessStateProperty.set(winner);
         } else if (GameReferee.isDraw(chessboard, point)) { // if draw.
-            this.chessStateProperty.set(ChessState.GAME_DRAW);
             LOGGER.info("GAME_DRAW_HISTORY: {}", GomokuFormatter.encodePoints(historyPoints));
+            this.chessStateProperty.set(ChessState.GAME_DRAW);
         } else {
             this.lastMovePoint.set(new Point(point));
             // finish this move, and change the current chess type and current
