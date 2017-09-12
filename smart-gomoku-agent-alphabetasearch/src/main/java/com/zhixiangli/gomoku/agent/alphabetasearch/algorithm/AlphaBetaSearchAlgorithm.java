@@ -43,7 +43,7 @@ public class AlphaBetaSearchAlgorithm {
     public AlphaBetaSearchAlgorithm(boolean isEnableCache) {
         this.isEnableCache = isEnableCache;
         this.seachCache = CacheBuilder.newBuilder().maximumSize(CacheConst.MAXIMUM_SIZE)
-                .expireAfterAccess(CacheConst.DURATION, TimeUnit.MINUTES).build();
+                .expireAfterAccess(CacheConst.DURATION_IN_MINUTE, TimeUnit.MINUTES).build();
     }
 
     public final double clearCacheAndSearch(int depth, double alpha, double beta, Chessboard chessboard, Point point,

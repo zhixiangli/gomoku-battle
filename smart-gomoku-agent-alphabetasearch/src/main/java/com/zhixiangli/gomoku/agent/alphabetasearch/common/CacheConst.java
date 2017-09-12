@@ -9,7 +9,7 @@ package com.zhixiangli.gomoku.agent.alphabetasearch.common;
  */
 public class CacheConst {
 
-    public static final int DURATION = 2;
+    public static final int DURATION_IN_MINUTE = 2;
 
     public static final long MAXIMUM_SIZE = 10000000;
 

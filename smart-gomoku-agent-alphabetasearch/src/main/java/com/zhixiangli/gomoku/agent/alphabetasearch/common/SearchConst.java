@@ -15,6 +15,8 @@ public class SearchConst {
 
     public static final int MAX_CANDIDATE_NUM = 15;
 
-    public static final int MAX_DEPTH = 5;
+    public static final int MIN_DEPTH = 4;
+
+    public static final int DURATION_IN_SECOND = 1;
 
 }
