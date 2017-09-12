@@ -5,6 +5,7 @@ package com.zhixiangli.gomoku.agent.alphabetasearch;
 
 import java.awt.Point;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.RandomUtils;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.zhixiangli.gomoku.agent.alphabetasearch.algorithm.AlphaBetaSearchAlgorithm;
 import com.zhixiangli.gomoku.agent.alphabetasearch.common.SearchConst;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
@@ -50,7 +52,15 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
         if (candidates.isEmpty()) {
             return new Point(GomokuConst.CHESSBOARD_SIZE / 2, GomokuConst.CHESSBOARD_SIZE / 2);
         } else {
-            return this.searchBestPoint(candidates, chessType, SearchConst.MAX_DEPTH);
+            Point point = null;
+            Stopwatch watch = Stopwatch.createStarted();
+            for (int depth = SearchConst.MIN_DEPTH; watch
+                    .elapsed(TimeUnit.SECONDS) <= SearchConst.DURATION_IN_SECOND; ++depth) {
+                point = this.searchBestPoint(candidates, chessType, depth);
+                LOGGER.info("alpha beta searched point: {}, depth: {}", point, depth);
+            }
+            LOGGER.info("alpha beta search cost: {}", watch.elapsed(TimeUnit.SECONDS));
+            return point;
         }
     }
 

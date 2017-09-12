@@ -8,13 +8,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 
@@ -42,13 +42,9 @@ public class PatternRecognizer {
     private static final PatternType[] WHITE_PATTERN_MAP = new PatternType[PATTERN_HASH_BOUND];
 
     static {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-
+        Stopwatch stopwatch = Stopwatch.createStarted();
         fillChessPatternTypes(new ArrayList<>());
-
-        stopWatch.stop();
-        LOGGER.info("fill chess pattern type finish. cost: " + stopWatch.getTime(TimeUnit.MILLISECONDS));
+        LOGGER.info("fill chess pattern type finish. cost: " + stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     private static final void fillChessPatternTypes(List<ChessType> pattern) {
