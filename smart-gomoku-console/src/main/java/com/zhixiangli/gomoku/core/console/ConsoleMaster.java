@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
-import com.zhixiangli.gomoku.core.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.console.common.ConsoleCommand;
 import com.zhixiangli.gomoku.core.console.common.ConsoleProcess;
+import com.zhixiangli.gomoku.core.console.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
 
 /**

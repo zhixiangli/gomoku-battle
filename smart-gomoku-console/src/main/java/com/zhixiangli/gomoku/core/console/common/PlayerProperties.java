@@ -1,13 +1,15 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.core.common;
+package com.zhixiangli.gomoku.core.console.common;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.zhixiangli.gomoku.core.common.GomokuConst;
 
 /**
  * @author zhixiangli
