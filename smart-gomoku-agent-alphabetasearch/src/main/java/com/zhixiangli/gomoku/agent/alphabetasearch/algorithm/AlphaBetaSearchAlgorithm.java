@@ -5,6 +5,7 @@ package com.zhixiangli.gomoku.agent.alphabetasearch.algorithm;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -17,12 +18,13 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.zhixiangli.gomoku.agent.alphabetasearch.common.CacheConst;
 import com.zhixiangli.gomoku.agent.alphabetasearch.common.ProphetConst;
-import com.zhixiangli.gomoku.agent.alphabetasearch.common.SearchUtils;
+import com.zhixiangli.gomoku.agent.alphabetasearch.common.SearchConst;
 import com.zhixiangli.gomoku.core.analysis.GameReferee;
 import com.zhixiangli.gomoku.core.analysis.GlobalAnalyser;
 import com.zhixiangli.gomoku.core.analysis.PatternType;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
+import com.zhixiangli.gomoku.core.common.GomokuFormatter;
 
 /**
  * @author zhixiangli
@@ -73,7 +75,7 @@ public class AlphaBetaSearchAlgorithm {
         Preconditions.checkArgument(chessboard.getChess(point) != ChessType.EMPTY);
         Preconditions.checkArgument(currentChessType != ChessType.EMPTY);
 
-        String currentPath = path + SearchUtils.encodePoint(point);
+        String currentPath = path + GomokuFormatter.encodePoint(point);
         Callable<Double> callable = () -> {
             double result = 0;
             if (GameReferee.isWin(chessboard, point)) {
@@ -102,7 +104,7 @@ public class AlphaBetaSearchAlgorithm {
                     }
                 }
             }
-            return result * SearchUtils.DECAY_FACTOR;
+            return result * SearchConst.DECAY_FACTOR;
         };
         if (this.isEnableCache) {
             return seachCache.get(currentPath, callable);
@@ -112,14 +114,15 @@ public class AlphaBetaSearchAlgorithm {
     }
 
     public List<Point> nextMoves(Chessboard chessboard, ChessType chessType) {
-        List<Point> emptyPointList = new ArrayList<>(
-                GlobalAnalyser.getEmptyPointsAround(chessboard, SearchUtils.AROUND_CANDIDATE_RANGE));
-        return emptyPointList.stream().map(point -> ImmutablePair.of(point, evaluateValue(chessboard, point)))
-                .sorted((a, b) -> b.getValue() - a.getValue()).limit(SearchUtils.MAX_CANDIDATE_NUM)
+        List<Point> candidates = new ArrayList<>(
+                GlobalAnalyser.getEmptyPointsAround(chessboard, SearchConst.AROUND_CANDIDATE_RANGE));
+        Collections.shuffle(candidates);
+        return candidates.stream().map(point -> ImmutablePair.of(point, evaluateValue(chessboard, point)))
+                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue())).limit(SearchConst.MAX_CANDIDATE_NUM)
                 .map(pair -> pair.getKey()).collect(Collectors.toList());
     }
 
-    public int evaluateValue(Chessboard chessboard, Point point) {
+    public double evaluateValue(Chessboard chessboard, Point point) {
         return AlphaBetaSearchProphet.evaluatePointValue(chessboard, point);
     }
 

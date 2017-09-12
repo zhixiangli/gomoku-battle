@@ -44,18 +44,18 @@ public class AlphaBetaSearchProphet {
         return value;
     }
 
-    public static final int evaluatePointValue(Chessboard chessboard, Point point) {
+    public static final double evaluatePointValue(Chessboard chessboard, Point point) {
         return evaluatePointValueByChessType(chessboard, point, ChessType.BLACK)
                 + evaluatePointValueByChessType(chessboard, point, ChessType.WHITE);
     }
 
-    public static final int evaluatePointValueByChessType(Chessboard chessboard, Point point, ChessType chessType) {
+    public static final double evaluatePointValueByChessType(Chessboard chessboard, Point point, ChessType chessType) {
         Map<PatternType, Integer> counter = GlobalAnalyser.getPatternStatistics(chessboard, point, chessType);
         return evaluateChessPatternType(counter);
     }
 
-    public static final int evaluateChessPatternType(Map<PatternType, Integer> counter) {
-        int value = 0;
+    public static final double evaluateChessPatternType(Map<PatternType, Integer> counter) {
+        double value = 0;
         // single pattern.
         for (Map.Entry<PatternType, Integer> entry : counter.entrySet()) {
             value += ProphetConst.EVALUATION.get(entry.getKey()) * entry.getValue();

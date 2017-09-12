@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.core.console;
+package com.zhixiangli.gomoku.core.console.common;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -30,10 +30,6 @@ public class ConsoleProcess {
     private Process process;
 
     public ConsoleProcess(String command) throws IOException {
-        if (StringUtils.isBlank(command)) {
-            return;
-        }
-
         ProcessBuilder builder = new ProcessBuilder(StringUtils.split(command));
         process = builder.start();
         OutputStream stdin = process.getOutputStream();

@@ -5,10 +5,8 @@ package com.zhixiangli.gomoku.core.console;
 
 import java.awt.Point;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
+import com.zhixiangli.gomoku.core.console.common.ConsoleCommand;
 
 /**
  * @author zhixiangli
@@ -42,14 +41,10 @@ public abstract class ConsoleAgent {
                     this.clear();
                     break;
                 case NEXT_BLACK:
+                    System.out.print(ConsoleCommand.format(ConsoleCommand.PUT, this.next(ChessType.BLACK)));
+                    break;
                 case NEXT_WHITE:
-                    StopWatch stopWatch = new StopWatch();
-                    stopWatch.start();
-                    Point point = this.next(
-                            commandPair.getKey() == ConsoleCommand.NEXT_BLACK ? ChessType.BLACK : ChessType.WHITE);
-                    stopWatch.stop();
-                    LOGGER.info("finish next point computing, cost {}", stopWatch.getTime(TimeUnit.MILLISECONDS));
-                    System.out.print(ConsoleCommand.format(ConsoleCommand.PUT, point));
+                    System.out.print(ConsoleCommand.format(ConsoleCommand.PUT, this.next(ChessType.WHITE)));
                     break;
                 case PLAY_BLACK:
                     this.play(ChessType.BLACK, commandPair.getValue());

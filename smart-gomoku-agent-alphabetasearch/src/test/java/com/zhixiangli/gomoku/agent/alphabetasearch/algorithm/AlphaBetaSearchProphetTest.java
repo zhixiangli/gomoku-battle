@@ -84,18 +84,18 @@ public class AlphaBetaSearchProphetTest {
         types.add(Arrays.asList(OTHERS));
 
         for (int i = 0; i + 1 < types.size(); ++i) {
-            int first = this.evaluateChessPatternType(types.get(i));
-            System.out.println(String.format("%s = %d", types.get(i), first));
-            int second = this.evaluateChessPatternType(types.get(i + 1));
+            double first = this.evaluateChessPatternType(types.get(i));
+            System.out.println(String.format("%s = %f", types.get(i), first));
+            double second = this.evaluateChessPatternType(types.get(i + 1));
             if (first < second) {
                 System.out.println(
-                        String.format("%s(%d) should >= %s(%d)", types.get(i), first, types.get(i + 1), second));
+                        String.format("%s(%f) should >= %s(%f)", types.get(i), first, types.get(i + 1), second));
             }
             Assert.assertTrue(first >= second);
         }
     }
 
-    private int evaluateChessPatternType(List<PatternType> type) {
+    private double evaluateChessPatternType(List<PatternType> type) {
         Map<PatternType, Integer> counter = new EnumMap<>(PatternType.class);
         type.stream().forEach(pattern -> counter.compute(pattern, (k, v) -> null == v ? 1 : v + 1));
         return AlphaBetaSearchProphet.evaluateChessPatternType(counter)

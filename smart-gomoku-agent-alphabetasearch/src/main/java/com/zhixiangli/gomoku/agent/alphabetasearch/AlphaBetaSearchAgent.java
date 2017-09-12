@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.agent.alphabetasearch.algorithm.AlphaBetaSearchAlgorithm;
-import com.zhixiangli.gomoku.agent.alphabetasearch.common.SearchUtils;
+import com.zhixiangli.gomoku.agent.alphabetasearch.common.SearchConst;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
@@ -50,7 +50,7 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
         if (candidates.isEmpty()) {
             return new Point(GomokuConst.CHESSBOARD_SIZE / 2, GomokuConst.CHESSBOARD_SIZE / 2);
         } else {
-            return this.searchBestPoint(candidates, chessType, SearchUtils.MAX_DEPTH);
+            return this.searchBestPoint(candidates, chessType, SearchConst.MAX_DEPTH);
         }
     }
 

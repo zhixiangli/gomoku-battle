@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.core.console;
+package com.zhixiangli.gomoku.core.console.common;
 
 import java.awt.Point;
 
@@ -53,7 +53,7 @@ public enum ConsoleCommand {
 
     public static final Pair<ConsoleCommand, Point> parse(String str) {
         for (ConsoleCommand command : ConsoleCommand.values()) {
-            if (StringUtils.startsWith(str, command.getText() + StringUtils.EMPTY)) {
+            if (StringUtils.startsWith(str, command.getText())) {
                 switch (command) {
                 case RESET:
                 case PUT:

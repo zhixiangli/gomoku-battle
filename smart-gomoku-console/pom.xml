@@ -6,11 +6,11 @@
 		<artifactId>gomoku</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>smart-gomoku-dashboard</artifactId>
+	<artifactId>smart-gomoku-console</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>com.zhixiangli</groupId>
-			<artifactId>smart-gomoku-console</artifactId>
+			<artifactId>smart-gomoku-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

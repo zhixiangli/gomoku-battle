@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 import com.zhixiangli.gomoku.core.common.PlayerProperties;
+import com.zhixiangli.gomoku.core.console.common.ConsoleCommand;
+import com.zhixiangli.gomoku.core.console.common.ConsoleProcess;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
 
 /**
@@ -40,7 +42,7 @@ import com.zhixiangli.gomoku.core.service.ChessboardService;
  * @author zhixiangli
  *
  */
-public class ConsoleMaster implements Runnable {
+public class ConsoleMaster {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleMaster.class);
 
@@ -57,26 +59,24 @@ public class ConsoleMaster implements Runnable {
         if (StringUtils.isNotBlank(PlayerProperties.playerWhiteCommand)) {
             whitePlayerProcess = new ConsoleProcess(PlayerProperties.playerWhiteCommand);
         }
-
-        chessboardService.addCurrentChessTypeChangeListener((observable, oldValue, newValue) -> {
-            Thread t = new Thread(() -> this.callForAction(newValue));
-            t.start();
-        });
+        // when chess type changed, notify the process to make a next move.
+        chessboardService.addCurrentChessTypeChangeListener(
+                (observable, oldValue, newValue) -> new Thread(() -> callForAction(newValue)).start());
     }
 
     private void callForAction(ChessType chessType) {
         try {
             switch (chessType) {
             case BLACK:
-                this.sendActionCommand(this.blackPlayerProcess, ConsoleCommand.PLAY_WHITE, ConsoleCommand.NEXT_BLACK);
+                sendActionCommand(blackPlayerProcess, ConsoleCommand.PLAY_WHITE, ConsoleCommand.NEXT_BLACK);
                 break;
             case WHITE:
-                this.sendActionCommand(this.whitePlayerProcess, ConsoleCommand.PLAY_BLACK, ConsoleCommand.NEXT_WHITE);
+                sendActionCommand(whitePlayerProcess, ConsoleCommand.PLAY_BLACK, ConsoleCommand.NEXT_WHITE);
                 break;
             case EMPTY:
             default: // game is over and clean the chessboard.
-                this.sendClearCommand(blackPlayerProcess);
-                this.sendClearCommand(whitePlayerProcess);
+                sendClearCommand(blackPlayerProcess);
+                sendClearCommand(whitePlayerProcess);
             }
         } catch (IOException e) {
             LOGGER.error("call for action error. {}", e);
@@ -92,11 +92,10 @@ public class ConsoleMaster implements Runnable {
         if (null != lastMovePoint) {
             process.send(ConsoleCommand.format(play, lastMovePoint));
         }
-        process.send(this.resetChessboard());
+        process.send(resetChessboard());
         process.send(ConsoleCommand.format(next));
         Pair<ConsoleCommand, Point> commandPair = ConsoleCommand.parse(process.receive());
-        this.chessboardService.takeMove(commandPair.getValue());
-
+        chessboardService.takeMove(commandPair.getValue());
     }
 
     private void sendClearCommand(ConsoleProcess process) throws IOException {
@@ -110,17 +109,6 @@ public class ConsoleMaster implements Runnable {
         return ConsoleCommand.format(ConsoleCommand.RESET,
                 new Point(GomokuConst.CHESSBOARD_SIZE, GomokuConst.CHESSBOARD_SIZE))
                 + chessboardService.getChessboard().toString();
-    }
-
-    @Override
-    public void run() {
-        while (true) {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-            }
-            LOGGER.info("dashboard console thread is alive.");
-        }
     }
 
 }
