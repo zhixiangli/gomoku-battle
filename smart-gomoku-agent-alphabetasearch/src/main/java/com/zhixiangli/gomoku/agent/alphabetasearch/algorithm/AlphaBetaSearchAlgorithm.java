@@ -4,13 +4,11 @@
 package com.zhixiangli.gomoku.agent.alphabetasearch.algorithm;
 
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import com.google.common.base.Preconditions;
@@ -24,6 +22,7 @@ import com.zhixiangli.gomoku.core.analysis.GlobalAnalyser;
 import com.zhixiangli.gomoku.core.analysis.PatternType;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
+import com.zhixiangli.gomoku.core.common.GomokuConst;
 import com.zhixiangli.gomoku.core.common.GomokuFormatter;
 
 /**
@@ -85,7 +84,7 @@ public class AlphaBetaSearchAlgorithm {
                 result = AlphaBetaSearchProphet.evaluateChessboardValue(chessboard, rootChessType);
             } else {
                 ChessType nextChessType = GameReferee.nextChessType(currentChessType);
-                List<Point> candidateMoves = nextMoves(chessboard, nextChessType);
+                Point[] candidateMoves = nextMoves(chessboard, nextChessType);
                 double newAlpha = alpha, newBeta = beta;
                 for (Point nextPoint : candidateMoves) {
                     // set chessboard.
@@ -113,13 +112,14 @@ public class AlphaBetaSearchAlgorithm {
         }
     }
 
-    public List<Point> nextMoves(Chessboard chessboard, ChessType chessType) {
-        List<Point> candidates = new ArrayList<>(
-                GlobalAnalyser.getEmptyPointsAround(chessboard, SearchConst.AROUND_CANDIDATE_RANGE));
-        Collections.shuffle(candidates);
-        return candidates.stream().map(point -> ImmutablePair.of(point, evaluateValue(chessboard, point)))
+    public Point[] nextMoves(Chessboard chessboard, ChessType chessType) {
+        Point[] candidates = GlobalAnalyser.getEmptyPointsAround(chessboard, SearchConst.AROUND_CANDIDATE_RANGE);
+        ArrayUtils.shuffle(candidates, GomokuConst.RANDOM);
+        Stream<Point> candidatesStream = Stream.of(candidates)
+                .map(point -> ImmutablePair.of(point, evaluateValue(chessboard, point)))
                 .sorted((a, b) -> Double.compare(b.getValue(), a.getValue())).limit(SearchConst.MAX_CANDIDATE_NUM)
-                .map(pair -> pair.getKey()).collect(Collectors.toList());
+                .map(pair -> pair.getKey());
+        return candidatesStream.toArray(Point[]::new);
     }
 
     public double evaluateValue(Chessboard chessboard, Point point) {

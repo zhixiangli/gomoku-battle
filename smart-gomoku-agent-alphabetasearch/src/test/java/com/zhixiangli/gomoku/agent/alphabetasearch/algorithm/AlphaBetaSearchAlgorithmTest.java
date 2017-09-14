@@ -60,7 +60,7 @@ public class AlphaBetaSearchAlgorithmTest {
     public void testCache() throws Exception {
         Chessboard newChessboard = chessboard.clone();
         ChessType chessType = ChessType.BLACK;
-        for (int depth = 0; depth <= SearchConst.MIN_DEPTH; ++depth) {
+        for (int depth = 0; depth <= SearchConst.MAX_DEPTH; ++depth) {
             for (Point point : Arrays.asList(new Point(5, 5), new Point(7, 6))) {
                 newChessboard.setChess(point, chessType);
                 double withCache = algorithmWithCache.clearCacheAndSearch(depth, -Double.MAX_VALUE, Double.MAX_VALUE,

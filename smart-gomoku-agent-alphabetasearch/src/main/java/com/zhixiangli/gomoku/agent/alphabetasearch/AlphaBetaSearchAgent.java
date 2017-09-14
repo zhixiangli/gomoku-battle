@@ -7,7 +7,9 @@ import java.awt.Point;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -47,26 +49,23 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
 
     @Override
     protected Point next(ChessType chessType) {
-        List<Point> candidates = alphaBetaAlgorithm.nextMoves(chessboard, chessType);
+        Point[] candidates = alphaBetaAlgorithm.nextMoves(chessboard, chessType);
 
-        if (candidates.isEmpty()) {
+        if (ArrayUtils.getLength(candidates) == 0) {
             return new Point(GomokuConst.CHESSBOARD_SIZE / 2, GomokuConst.CHESSBOARD_SIZE / 2);
         } else {
             Point point = null;
             Stopwatch watch = Stopwatch.createStarted();
-            for (int depth = SearchConst.MIN_DEPTH; watch
-                    .elapsed(TimeUnit.SECONDS) <= SearchConst.DURATION_IN_SECOND; ++depth) {
-                point = this.searchBestPoint(candidates, chessType, depth);
-                LOGGER.info("alpha beta searched point: {}, depth: {}", point, depth);
-            }
+            point = this.searchBestPoint(candidates, chessType, SearchConst.MAX_DEPTH);
             LOGGER.info("alpha beta search cost: {}", watch.elapsed(TimeUnit.SECONDS));
             return point;
         }
+
     }
 
-    private Point searchBestPoint(List<Point> candidates, ChessType chessType, int depth) {
+    private Point searchBestPoint(Point[] candidates, ChessType chessType, int depth) {
         this.alphaBetaAlgorithm.clearCache();
-        List<Pair<Point, Double>> pairs = candidates.parallelStream().map(point -> {
+        List<Pair<Point, Double>> pairs = Stream.of(candidates).parallel().map(point -> {
             Chessboard newChessboard = chessboard.clone();
             // set chessboard.
             newChessboard.setChess(point, chessType);

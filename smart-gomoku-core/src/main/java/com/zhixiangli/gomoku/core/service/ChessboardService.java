@@ -4,8 +4,6 @@
 package com.zhixiangli.gomoku.core.service;
 
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +14,6 @@ import com.zhixiangli.gomoku.core.chessboard.ChessState;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
-import com.zhixiangli.gomoku.core.common.GomokuFormatter;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -35,8 +32,6 @@ public class ChessboardService {
     public static final ChessboardService getInstance() {
         return CHESSBOARD_SERVICE;
     }
-
-    private List<Point> historyPoints;
 
     /**
      * chessboard property, if changed the UI will changed as well.
@@ -66,7 +61,6 @@ public class ChessboardService {
         this.currentChessType = new SimpleObjectProperty<>(ChessType.EMPTY);
         this.chessStateProperty = new SimpleObjectProperty<>(ChessState.GAME_READY);
         this.lastMovePoint = new SimpleObjectProperty<>();
-        this.historyPoints = new ArrayList<>();
     }
 
     public void restart() {
@@ -81,7 +75,6 @@ public class ChessboardService {
         this.currentChessType.set(ChessType.EMPTY);
         this.currentChessType.set(ChessType.BLACK);
         this.lastMovePoint.set(null);
-        this.historyPoints.clear();
     }
 
     /**
@@ -101,14 +94,11 @@ public class ChessboardService {
 
         // make move.
         this.chessboardProperty[point.x][point.y].set(currentChessType.get());
-        this.historyPoints.add(point);
         Chessboard chessboard = this.getChessboard();
         if (GameReferee.isWin(chessboard, point)) { // if win.
-            LOGGER.info("GAME_WIN_HISTORY: {}", GomokuFormatter.encodePoints(historyPoints));
             ChessState winner = ChessType.BLACK == currentChessType.get() ? ChessState.BLACK_WIN : ChessState.WHITE_WIN;
             this.chessStateProperty.set(winner);
         } else if (GameReferee.isDraw(chessboard, point)) { // if draw.
-            LOGGER.info("GAME_DRAW_HISTORY: {}", GomokuFormatter.encodePoints(historyPoints));
             this.chessStateProperty.set(ChessState.GAME_DRAW);
         } else {
             this.lastMovePoint.set(new Point(point));

@@ -4,12 +4,9 @@
 package com.zhixiangli.gomoku.core.analysis;
 
 import java.awt.Point;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
@@ -30,26 +27,37 @@ public class GlobalAnalyser {
      *            Chessboard.
      * @return point list.
      */
-    public static final Set<Point> getEmptyPointsAround(Chessboard chessboard, int range) {
-        Set<Point> pointSet = new HashSet<>();
-        int size = GomokuConst.CHESSBOARD_SIZE;
-        for (int row = 0; row < size; ++row) {
-            for (int column = 0; column < size; ++column) {
+    public static final Point[] getEmptyPointsAround(Chessboard chessboard, int range) {
+        boolean[][] isEmpty = new boolean[GomokuConst.CHESSBOARD_SIZE][GomokuConst.CHESSBOARD_SIZE];
+        int size = 0;
+        for (int row = 0; row < GomokuConst.CHESSBOARD_SIZE; ++row) {
+            for (int column = 0; column < GomokuConst.CHESSBOARD_SIZE; ++column) {
                 if (ChessType.EMPTY == chessboard.getChess(row, column)) {
                     continue;
                 }
-                int a = Math.max(0, row - range), b = Math.min(size - 1, row + range);
-                int c = Math.max(0, column - range), d = Math.min(size - 1, column + range);
+                int a = Math.max(0, row - range), b = Math.min(GomokuConst.CHESSBOARD_SIZE - 1, row + range);
+                int c = Math.max(0, column - range), d = Math.min(GomokuConst.CHESSBOARD_SIZE - 1, column + range);
                 for (int i = a; i <= b; ++i) {
                     for (int j = c; j <= d; ++j) {
-                        if (ChessType.EMPTY == chessboard.getChess(i, j)) {
-                            pointSet.add(new Point(i, j));
+                        if (!isEmpty[i][j] && ChessType.EMPTY == chessboard.getChess(i, j)) {
+                            isEmpty[i][j] = true;
+                            ++size;
                         }
                     }
                 }
             }
         }
-        return pointSet;
+        Point[] emptyPoints = new Point[size];
+        int index = 0;
+        for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
+            for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
+                if (isEmpty[i][j]) {
+                    emptyPoints[index++] = new Point(i, j);
+                }
+            }
+        }
+        Preconditions.checkState(index == size);
+        return emptyPoints;
     }
 
     /**
@@ -116,21 +124,21 @@ public class GlobalAnalyser {
     }
 
     public static final PatternType getChessPatternType(Chessboard chessboard, Point point, Point direction) {
-        List<ChessType> pattern = getChessTypeRange(chessboard, point, direction, GomokuConst.CONSECUTIVE_NUM);
+        ChessType[] pattern = getChessTypeRange(chessboard, point, direction, GomokuConst.CONSECUTIVE_NUM);
         return PatternRecognizer.getBestPatternType(pattern, chessboard.getChess(point));
     }
 
-    private static final List<ChessType> getChessTypeRange(Chessboard chessboard, Point point, Point direction,
-            int range) {
-        int x = point.x - direction.x * GomokuConst.CONSECUTIVE_NUM;
-        int y = point.y - direction.y * GomokuConst.CONSECUTIVE_NUM;
+    private static final ChessType[] getChessTypeRange(Chessboard chessboard, Point point, Point direction, int range) {
+        int x = point.x - direction.x * range;
+        int y = point.y - direction.y * range;
         int length = range * 2 + 1;
-        List<ChessType> pattern = new ArrayList<>();
+        ChessType[] pattern = new ChessType[length];
+        int size = 0;
         for (; length-- > 0; x += direction.x, y += direction.y) {
             if (GameReferee.isInChessboard(x, y)) {
-                pattern.add(chessboard.getChess(x, y));
+                pattern[size++] = chessboard.getChess(x, y);
             }
         }
-        return pattern;
+        return size == length ? pattern : Arrays.copyOf(pattern, size);
     }
 }

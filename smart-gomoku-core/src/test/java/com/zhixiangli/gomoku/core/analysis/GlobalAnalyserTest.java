@@ -38,7 +38,7 @@ public class GlobalAnalyserTest {
         this.chessboard.setChess(9, 0, ChessType.WHITE);
         this.chessboard.setChess(9, 1, ChessType.WHITE);
         this.chessboard.setChess(8, 1, ChessType.WHITE);
-        Set<Point> actual = GlobalAnalyser.getEmptyPointsAround(chessboard, 1);
+        Set<Point> actual = new HashSet<>(Arrays.asList(GlobalAnalyser.getEmptyPointsAround(chessboard, 1)));
         Set<Point> expected = new HashSet<>(
                 Arrays.asList(new Point(7, 0), new Point(7, 1), new Point(7, 2), new Point(8, 0), new Point(8, 2),
                         new Point(9, 2), new Point(10, 0), new Point(10, 1), new Point(10, 2)));

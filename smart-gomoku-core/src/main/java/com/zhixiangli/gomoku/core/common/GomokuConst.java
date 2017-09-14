@@ -4,6 +4,7 @@
 package com.zhixiangli.gomoku.core.common;
 
 import java.awt.Point;
+import java.util.Random;
 
 /**
  * constant.
@@ -27,5 +28,7 @@ public class GomokuConst {
      * the number of grid in the chessboard.
      */
     public static final int CHESSBOARD_SIZE = 15;
+
+    public static final Random RANDOM = new Random();
 
 }
