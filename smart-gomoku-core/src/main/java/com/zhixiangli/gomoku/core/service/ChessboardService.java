@@ -5,6 +5,7 @@ package com.zhixiangli.gomoku.core.service;
 
 import java.awt.Point;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,6 +102,8 @@ public class ChessboardService {
         } else if (GameReferee.isDraw(chessboard, point)) { // if draw.
             this.chessStateProperty.set(ChessState.GAME_DRAW);
         } else {
+            LOGGER.info("CURRENT GAME: {}",
+                    StringUtils.replace(chessboard.toString(), StringUtils.LF, StringUtils.EMPTY));
             this.lastMovePoint.set(new Point(point));
             // finish this move, and change the current chess type and current
             // player.
