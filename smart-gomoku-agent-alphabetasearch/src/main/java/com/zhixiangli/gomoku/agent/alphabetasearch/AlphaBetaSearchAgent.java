@@ -52,7 +52,10 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
         Point[] candidates = alphaBetaAlgorithm.nextMoves(chessboard, chessType);
 
         if (ArrayUtils.getLength(candidates) == 0) {
-            return new Point(GomokuConst.CHESSBOARD_SIZE / 2, GomokuConst.CHESSBOARD_SIZE / 2);
+            int x = (int) (GomokuConst.RANDOM.nextGaussian() + GomokuConst.CHESSBOARD_SIZE * 0.5);
+            int y = (int) (GomokuConst.RANDOM.nextGaussian() + GomokuConst.CHESSBOARD_SIZE * 0.5);
+            return new Point(Math.min(Math.max(x, 0), GomokuConst.CHESSBOARD_SIZE - 1),
+                    Math.min(Math.max(y, 0), GomokuConst.CHESSBOARD_SIZE - 1));
         } else {
             Point point = null;
             Stopwatch watch = Stopwatch.createStarted();
