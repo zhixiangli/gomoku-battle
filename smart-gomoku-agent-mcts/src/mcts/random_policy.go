@@ -43,22 +43,18 @@ func (p *RandomMonteCarloTreePolicy) Evaluate(root *MonteCarloTreeNode, childInd
 }
 
 func (p *RandomMonteCarloTreePolicy) AroundLocation(board *gomoku.Board, loc gomoku.Location) (locs []gomoku.Location) {
-	for i := -p.Range; i <= p.Range; i++ {
-		if loc.X+i < 0 {
-			continue
+	rowStart := loc.X - p.Range
+	if rowStart < 0 {
+		rowStart = 0
+	}
+	for i := rowStart; i < board.Row && i <= loc.X+p.Range; i++ {
+		columnStart := loc.Y - p.Range
+		if columnStart < 0 {
+			columnStart = 0
 		}
-		if loc.X+i >= board.Row {
-			break
-		}
-		for j := -p.Range; j <= p.Range; j++ {
-			if loc.Y+j < 0 {
-				continue
-			}
-			if loc.Y+j >= board.Column {
-				break
-			}
-			if board.Get(i+loc.X, j+loc.Y) == gomoku.Empty {
-				locs = append(locs, gomoku.Location{X: i + loc.X, Y: j + loc.Y})
+		for j := columnStart; j < board.Column && j <= loc.Y+p.Range; j++ {
+			if board.Get(i, j) == gomoku.Empty {
+				locs = append(locs, gomoku.Location{X: i, Y: j})
 			}
 		}
 	}
@@ -66,7 +62,7 @@ func (p *RandomMonteCarloTreePolicy) AroundLocation(board *gomoku.Board, loc gom
 }
 
 func (p *RandomMonteCarloTreePolicy) Around(board *gomoku.Board) (locs []gomoku.Location) {
-	repeatMap := make(map[gomoku.Location]int)
+	visited := make(map[gomoku.Location]bool)
 	for i := 0; i < board.Row; i++ {
 		for j := 0; j < board.Column; j++ {
 			if board.Get(i, j) == gomoku.Empty {
@@ -74,16 +70,16 @@ func (p *RandomMonteCarloTreePolicy) Around(board *gomoku.Board) (locs []gomoku.
 			}
 			around := p.AroundLocation(board, gomoku.Location{X: i, Y: j})
 			for k := range around {
-				_, ok := repeatMap[around[k]]
+				_, ok := visited[around[k]]
 				if !ok {
 					locs = append(locs, around[k])
-					repeatMap[around[k]]++
+					visited[around[k]] = true
 				}
 			}
 		}
 	}
 	if len(locs) == 0 {
-		locs = []gomoku.Location{gomoku.Location{X: board.Row / 2, Y: board.Column / 2}}
+		locs = []gomoku.Location{{X: board.Row / 2, Y: board.Column / 2}}
 	}
 	return
 }

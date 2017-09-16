@@ -48,12 +48,13 @@ func (p *referee) IsInBoard(board *Board, row int, column int) bool {
 
 func (p *referee) consecutiveCount(board *Board, loc Location, direction []int) int {
 	count := 1
-	for x, y := loc.X+direction[0], loc.Y+direction[1]; p.IsInBoard(board, x, y) && board.GetByLocation(loc) == board.Get(x, y); {
+	chessType := board.GetByLocation(loc)
+	for x, y := loc.X+direction[0], loc.Y+direction[1]; p.IsInBoard(board, x, y) && chessType == board.Get(x, y); {
 		x += direction[0]
 		y += direction[1]
 		count++
 	}
-	for x, y := loc.X-direction[0], loc.Y-direction[1]; p.IsInBoard(board, x, y) && board.GetByLocation(loc) == board.Get(x, y); {
+	for x, y := loc.X-direction[0], loc.Y-direction[1]; p.IsInBoard(board, x, y) && chessType == board.Get(x, y); {
 		x -= direction[0]
 		y -= direction[1]
 		count++
