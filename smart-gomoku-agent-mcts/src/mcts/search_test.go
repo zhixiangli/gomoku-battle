@@ -35,7 +35,7 @@ func TestMonteCarloTreeSearch_Next(t *testing.T) {
 	board.SetChessType(gomoku.Location{7, 9}, gomoku.Black)
 	policy := RandomMonteCarloTreePolicy{Range: 2}
 	searcher := &MonteCarloTreeSearch{&policy}
-	loc := searcher.Next(board, gomoku.White)
+	loc, _ := searcher.Next(board, gomoku.White)
 	first, second := gomoku.Location{7, 10}, gomoku.Location{7, 6}
 	if loc != first && loc != second {
 		t.Error()

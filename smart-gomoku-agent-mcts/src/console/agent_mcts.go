@@ -15,7 +15,8 @@ func (p *MonteCarloTreeAgent) Clear() {
 }
 
 func (p *MonteCarloTreeAgent) Next(chessType gomoku.ChessType) gomoku.Location {
-	return p.Searcher.Next(p.board, chessType)
+	next, _ := p.Searcher.Next(p.board, chessType)
+	return next
 }
 
 func (p *MonteCarloTreeAgent) Reset(board *gomoku.Board) {

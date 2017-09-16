@@ -1,8 +1,6 @@
 package mcts
 
 import (
-	"fmt"
-
 	"gomoku"
 )
 
@@ -10,14 +8,13 @@ type MonteCarloTreeSearch struct {
 	Policy MonteCarloTreePolicy
 }
 
-func (p *MonteCarloTreeSearch) Next(board *gomoku.Board, chessType gomoku.ChessType) gomoku.Location {
+func (p *MonteCarloTreeSearch) Next(board *gomoku.Board, chessType gomoku.ChessType) (gomoku.Location, float64) {
 	root := new(MonteCarloTreeNode)
 	for i := 0; i < 100000; i++ {
 		p.Search(board, chessType, root)
 	}
 	index, proba := p.BestChildNode(root)
-	fmt.Printf("%d %d: %f\n", root.childrenLoc[index].X, root.childrenLoc[index].Y, proba)
-	return root.childrenLoc[index]
+	return root.childrenLoc[index], proba
 }
 
 func (p *MonteCarloTreeSearch) BestChildNode(root *MonteCarloTreeNode) (index int, proba float64) {
