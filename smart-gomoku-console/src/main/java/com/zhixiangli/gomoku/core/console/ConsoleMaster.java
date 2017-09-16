@@ -94,8 +94,15 @@ public class ConsoleMaster {
         }
         process.send(resetChessboard());
         process.send(ConsoleCommand.format(next));
-        Pair<ConsoleCommand, Point> commandPair = ConsoleCommand.parse(process.receive());
-        chessboardService.takeMove(commandPair.getValue());
+        while (true) {
+            String received = process.receive();
+            Pair<ConsoleCommand, Point> parsed = ConsoleCommand.parse(received);
+            if (ConsoleCommand.PUT == parsed.getKey() && null != parsed.getValue()) {
+                chessboardService.takeMove(parsed.getValue());
+                break;
+            }
+            LOGGER.error("unknown received message: {}", received);
+        }
     }
 
     private void sendClearCommand(ConsoleProcess process) throws IOException {

@@ -71,7 +71,7 @@ public enum ConsoleCommand {
                 }
             }
         }
-        return null;
+        return ImmutablePair.of(null, null);
     }
 
 }
