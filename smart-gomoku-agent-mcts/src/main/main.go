@@ -27,7 +27,7 @@ func generateSample(row int, column int) {
 		}
 		board := parseBoard(str, row, column)
 		chessType := nextChessType(calcSteps(board))
-		fmt.Printf("%s\t%f\n", str, evaluate(board, chessType))
+		fmt.Printf("%s\t%d\t%f\n", str, chessType, evaluate(board, chessType))
 	}
 }
 
