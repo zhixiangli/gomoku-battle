@@ -13,6 +13,10 @@ type Location struct {
 	Y int
 }
 
+func (p *Location) HashCode() int {
+	return p.X*19 + p.Y
+}
+
 type Board struct {
 	Row    int
 	Column int

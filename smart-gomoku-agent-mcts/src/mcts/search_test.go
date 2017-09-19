@@ -41,3 +41,13 @@ func TestMonteCarloTreeSearch_Next(t *testing.T) {
 		t.Error()
 	}
 }
+
+func BenchmarkMonteCarloTreeSearch_Search(b *testing.B) {
+	policy := RandomMonteCarloTreePolicy{Range: 2}
+	searcher := &MonteCarloTreeSearch{&policy}
+	root := new(MonteCarloTreeNode)
+	board := gomoku.NewBoard(15, 15)
+	for i := 0; i < b.N; i++ {
+		searcher.Search(board, gomoku.Black, root)
+	}
+}

@@ -21,16 +21,17 @@ func (p *RandomMonteCarloTreePolicy) Simulate(board gomoku.Board, chessType gomo
 		// remove the location chosed
 		locations = append(locations[:nextIndex], locations[nextIndex+1:]...)
 		// make a move
-		if (&board).GetByLocation(loc) == gomoku.Empty {
-			(&board).SetChessType(loc, chessType)
-			// game over
-			if referee.IsWin(&board, loc) {
-				return 1, 1, chessType
-			}
-			// game on
-			chessType = referee.NextType(chessType)
-			locations = append(locations, p.AroundLocation(&board, loc)...)
+		if (&board).GetByLocation(loc) != gomoku.Empty {
+			continue
 		}
+		(&board).SetChessType(loc, chessType)
+		// game over
+		if referee.IsWin(&board, loc) {
+			return 1, 1, chessType
+		}
+		// game on
+		chessType = referee.NextType(chessType)
+		locations = append(locations, p.AroundLocation(&board, loc)...)
 	}
 	return 0, 1, gomoku.Empty
 }
@@ -42,7 +43,8 @@ func (p *RandomMonteCarloTreePolicy) Evaluate(root *MonteCarloTreeNode, childInd
 	return exploitation + exploration
 }
 
-func (p *RandomMonteCarloTreePolicy) AroundLocation(board *gomoku.Board, loc gomoku.Location) (locs []gomoku.Location) {
+func (p *RandomMonteCarloTreePolicy) AroundLocation(board *gomoku.Board, loc gomoku.Location) ([]gomoku.Location) {
+	locs := make([]gomoku.Location, 0, 4*p.Range*(p.Range+1))
 	rowStart := loc.X - p.Range
 	if rowStart < 0 {
 		rowStart = 0
@@ -58,11 +60,12 @@ func (p *RandomMonteCarloTreePolicy) AroundLocation(board *gomoku.Board, loc gom
 			}
 		}
 	}
-	return
+	return locs
 }
 
-func (p *RandomMonteCarloTreePolicy) Around(board *gomoku.Board) (locs []gomoku.Location) {
-	visited := make(map[gomoku.Location]bool)
+func (p *RandomMonteCarloTreePolicy) Around(board *gomoku.Board) ([]gomoku.Location) {
+	visited := make(map[int]bool)
+	locs := make([]gomoku.Location, 0, board.Row*board.Column-1)
 	for i := 0; i < board.Row; i++ {
 		for j := 0; j < board.Column; j++ {
 			if board.Get(i, j) == gomoku.Empty {
@@ -70,16 +73,17 @@ func (p *RandomMonteCarloTreePolicy) Around(board *gomoku.Board) (locs []gomoku.
 			}
 			around := p.AroundLocation(board, gomoku.Location{X: i, Y: j})
 			for k := range around {
-				_, ok := visited[around[k]]
+				h := around[k].HashCode()
+				_, ok := visited[h]
 				if !ok {
 					locs = append(locs, around[k])
-					visited[around[k]] = true
+					visited[h] = true
 				}
 			}
 		}
 	}
 	if len(locs) == 0 {
-		locs = []gomoku.Location{{X: board.Row / 2, Y: board.Column / 2}}
+		locs = append(locs, gomoku.Location{X: board.Row / 2, Y: board.Column / 2})
 	}
-	return
+	return locs
 }
