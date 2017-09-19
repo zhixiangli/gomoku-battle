@@ -9,6 +9,7 @@ import (
 
 	"gomoku"
 	"mcts"
+	"strings"
 )
 
 func bootstrapAgent() {
@@ -21,13 +22,19 @@ func bootstrapAgent() {
 func generateSample(row int, column int) {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
-		str := scanner.Text()
-		if len(str) != row*column {
+		input_str := scanner.Text()
+		input := strings.Split(input_str, "\t")
+		board_str := input[0]
+		if len(board_str) != row*column {
 			continue
 		}
-		board := parseBoard(str, row, column)
-		chessType := nextChessType(calcSteps(board))
-		fmt.Printf("%s\t%d\t%f\n", str, chessType, evaluate(board, chessType))
+
+		chessType := gomoku.Black
+		if input[1] == "W" {
+			chessType = gomoku.White
+		}
+
+		fmt.Printf("%s\t%f\n", input_str, evaluate(parseBoard(board_str, row, column), chessType))
 	}
 }
 
@@ -52,31 +59,6 @@ func parseBoard(str string, row int, column int) (board *gomoku.Board) {
 		}
 	}
 	return
-}
-
-func calcSteps(board *gomoku.Board) (black int, white int) {
-	black, white = 0, 0
-	for i := 0; i < board.Row; i++ {
-		for j := 0; j < board.Column; j++ {
-			switch board.Get(i, j) {
-			case gomoku.Black:
-				black++
-			case gomoku.White:
-				white++
-			}
-		}
-	}
-	return
-}
-
-func nextChessType(black int, white int) gomoku.ChessType {
-	if black == white {
-		return gomoku.Black
-	} else if black == white+1 {
-		return gomoku.White
-	} else {
-		return gomoku.Empty
-	}
 }
 
 func evaluate(board *gomoku.Board, chessType gomoku.ChessType) float64 {
