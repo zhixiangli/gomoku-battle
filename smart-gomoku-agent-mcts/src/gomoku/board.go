@@ -47,7 +47,7 @@ func (p *Board) updateEmptyCount(loc Location, newType ChessType) {
 }
 
 func (p *Board) SetRune(loc Location, ch rune) {
-	newType := toChessType(ch)
+	newType := ToChessType(ch)
 	p.updateEmptyCount(loc, newType)
 	p.board[loc.X][loc.Y] = newType
 }
@@ -89,7 +89,7 @@ func (p *Board) Equals(other *Board) bool {
 	return true
 }
 
-func toChessType(ch rune) ChessType {
+func ToChessType(ch rune) ChessType {
 	switch ch {
 	case 'B':
 		return Black

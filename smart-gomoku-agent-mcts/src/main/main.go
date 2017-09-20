@@ -28,26 +28,8 @@ func generateSample(row int, column int) {
 		if len(board_str) != row*column {
 			continue
 		}
-
-		chessType := gomoku.Black
-		if input[1] == "W" {
-			chessType = gomoku.White
-		}
-
+		chessType := gomoku.ToChessType(rune(input[1][0]))
 		fmt.Printf("%s\t%f\n", input_str, evaluate(parseBoard(board_str, row, column), chessType))
-	}
-}
-
-func main() {
-	mode := flag.Int("mode", 0, "0: bootstrap agent; 1: generate sample")
-	row := flag.Int("row", 15, "the number of rows of chessboard")
-	column := flag.Int("column", 15, "the number of columns of chessboard")
-	flag.Parse()
-
-	if *mode == 0 {
-		bootstrapAgent()
-	} else {
-		generateSample(*row, *column)
 	}
 }
 
@@ -66,4 +48,17 @@ func evaluate(board *gomoku.Board, chessType gomoku.ChessType) float64 {
 	searcher := &mcts.MonteCarloTreeSearch{&policy}
 	_, proba := searcher.Next(board, chessType)
 	return proba
+}
+
+func main() {
+	mode := flag.Int("mode", 0, "0: bootstrap agent; 1: generate sample")
+	row := flag.Int("row", 15, "the number of rows of chessboard")
+	column := flag.Int("column", 15, "the number of columns of chessboard")
+	flag.Parse()
+
+	if *mode == 0 {
+		bootstrapAgent()
+	} else {
+		generateSample(*row, *column)
+	}
 }
