@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+import configparser
 from enum import Enum, unique
 
 import numpy
@@ -32,23 +33,23 @@ class ChessChar(Enum):
         return chess_enum.value[1]
 
     @staticmethod
-    def get_index(chess_char):
+    def get_enum(chess_char):
         for chess_enum in ChessChar:
             if ChessChar.get_char(chess_enum) == chess_char:
-                return ChessChar.get_value(chess_enum)
+                return chess_enum
         return None
 
 
-class Utilities:
+class Toolkit:
     @staticmethod
     def parse_sample(sample):
-        board_str, chess_type, proba = sample.strip().split('\t')
-        board = Utilities.parse_board(board_str)
-        return board, [int(chess_type)], [float(proba)]
+        board_str, chess_ch, proba = sample.strip().split('\t')
+        board = Toolkit.parse_board(board_str)
+        return board, [ChessChar.get_value(ChessChar.get_enum(chess_ch))], [float(proba)]
 
     @staticmethod
     def parse_board(board_str):
-        return list(map(lambda ch: ChessChar.get_index(ch), list(board_str)))
+        return list(map(lambda ch: ChessChar.get_value(ChessChar.get_enum(ch)), list(board_str)))
 
     @staticmethod
     def parse_command(line):
@@ -61,19 +62,26 @@ class Utilities:
         return None, None, None
 
     @staticmethod
-    def format_command(cmd, pos):
-        return "%s %d %d\n" % (cmd, pos[0], pos[1]) if pos[0] and pos[1] else "%s\n" % cmd
+    def format_command(cmd, x, y):
+        return "%s %d %d\n" % (cmd, x, y) if x and y else "%s\n" % cmd
 
     @staticmethod
-    def format_board(board, row=15, column=15):
-        board = numpy.array(board, dtype="float")
-        board = board.reshape(board.shape[0], row, column, 1) / 3
-        return board
+    def format_board(board_array, row, column):
+        board = numpy.array(board_array, dtype="float")
+        board = board.reshape(board.shape[0], row, column, 1)
+        return board / numpy.amax(board)
 
     @staticmethod
-    def format_artificial(artificial):
-        return numpy.array(artificial, dtype="float") / 2
+    def format_artificial(artificial_array):
+        artificial = numpy.array(artificial_array, dtype="float")
+        return artificial / numpy.amax(artificial)
 
     @staticmethod
-    def format_proba(proba):
-        return numpy.array(proba, dtype="float")
+    def format_proba(proba_array):
+        return numpy.array(proba_array, dtype="float")
+
+    @staticmethod
+    def get_config(section, key):
+        config = configparser.ConfigParser()
+        config.read("../conf/dnn.conf")
+        return config.get(section, key)

@@ -3,7 +3,7 @@
 
 import dnn
 from abstract_agent import AbstractAgent
-from utilities import Utilities, ChessChar
+from toolkit import Toolkit, ChessChar
 
 
 class DNNAgent(AbstractAgent):
@@ -30,10 +30,10 @@ class DNNAgent(AbstractAgent):
                 continue
             new_board = board_str[:i] + chess_char + board_str[i + 1:]
 
-            proba = self.__dnn.predict([Utilities.parse_board(new_board)], [ChessChar.get_index(chess_char)])
+            proba = self.__dnn.predict([Toolkit.parse_board(new_board)],
+                                       [ChessChar.get_value(ChessChar.get_enum(chess_char))])
             if proba > best_proba:
-                best_proba = proba
-                index = i
+                best_proba, index = proba, i
         return best_proba, index / self._row, index % self._row
 
     def reset(self, board):
