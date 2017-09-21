@@ -25,7 +25,7 @@ func TestRandomMonteCarloTreePolicy_Around(t *testing.T) {
 }
 
 func TestRandomMonteCarloTreePolicy_Evaluate(t *testing.T) {
-	root := MonteCarloTreeNode{isSelected: true}
+	root := MonteCarloTreeNode{}
 	root.numOfGame, root.numOfWin = 1, 1
 	root.childrenLoc = []gomoku.Location{gomoku.Location{1, 2}, gomoku.Location{3, 4}}
 	root.childrenNode = make([]MonteCarloTreeNode, 2)

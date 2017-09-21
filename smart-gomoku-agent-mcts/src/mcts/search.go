@@ -9,7 +9,7 @@ type MonteCarloTreeSearch struct {
 }
 
 func (p *MonteCarloTreeSearch) Next(board *gomoku.Board, chessType gomoku.ChessType) (gomoku.Location, float64) {
-	root := &MonteCarloTreeNode{isSelected: true}
+	root := &MonteCarloTreeNode{}
 	for i := 0; i < 100000; i++ {
 		p.Search(board, chessType, root)
 	}
@@ -34,7 +34,7 @@ func (p *MonteCarloTreeSearch) Search(board *gomoku.Board, nextType gomoku.Chess
 	isLeaf := len(node.childrenLoc) == 0
 	referee := gomoku.GetReferee()
 	chessType := referee.NextType(nextType)
-	if isLeaf && !node.isSelected {
+	if isLeaf && node.numOfGame == 0 {
 		numOfWin, numOfGame, winType = p.Policy.Simulate(*board.Clone(), nextType)
 		node.BackPropagate(numOfWin, numOfGame, chessType, winType)
 		return
