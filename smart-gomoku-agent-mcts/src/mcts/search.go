@@ -9,7 +9,7 @@ type MonteCarloTreeSearch struct {
 }
 
 func (p *MonteCarloTreeSearch) Next(board *gomoku.Board, chessType gomoku.ChessType) (gomoku.Location, float64) {
-	root := &MonteCarloTreeNode{}
+	root := new(MonteCarloTreeNode)
 	for i := 0; i < 100000; i++ {
 		p.Search(board, chessType, root)
 	}
