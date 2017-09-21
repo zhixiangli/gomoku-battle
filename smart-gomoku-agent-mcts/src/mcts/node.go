@@ -11,6 +11,8 @@ type MonteCarloTreeNode struct {
 	numOfGame    int
 	childrenNode []MonteCarloTreeNode
 	childrenLoc  []gomoku.Location
+	isSelected   bool
+	value        float64
 }
 
 func (p *MonteCarloTreeNode) Select(policy MonteCarloTreePolicy) (selected *MonteCarloTreeNode, loc gomoku.Location) {
@@ -23,6 +25,7 @@ func (p *MonteCarloTreeNode) Select(policy MonteCarloTreePolicy) (selected *Mont
 			loc = p.childrenLoc[i]
 		}
 	}
+	selected.isSelected = true
 	return
 }
 

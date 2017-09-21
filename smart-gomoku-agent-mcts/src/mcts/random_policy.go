@@ -40,10 +40,10 @@ func (p *RandomMonteCarloTreePolicy) Evaluate(root *MonteCarloTreeNode, childInd
 	child := root.childrenNode[childIndex]
 	exploitation := float64(child.numOfWin) / float64(1+child.numOfGame)
 	exploration := math.Sqrt(math.Log2(float64(1+root.numOfGame)) * 2 / float64(1+child.numOfGame))
-	return exploitation + exploration
+	return exploitation + exploration + child.value
 }
 
-func (p *RandomMonteCarloTreePolicy) AroundLocation(board *gomoku.Board, loc gomoku.Location) ([]gomoku.Location) {
+func (p *RandomMonteCarloTreePolicy) AroundLocation(board *gomoku.Board, loc gomoku.Location) []gomoku.Location {
 	locs := make([]gomoku.Location, 0, 4*p.Range*(p.Range+1))
 	rowStart := loc.X - p.Range
 	if rowStart < 0 {
@@ -63,7 +63,7 @@ func (p *RandomMonteCarloTreePolicy) AroundLocation(board *gomoku.Board, loc gom
 	return locs
 }
 
-func (p *RandomMonteCarloTreePolicy) Around(board *gomoku.Board) ([]gomoku.Location) {
+func (p *RandomMonteCarloTreePolicy) Around(board *gomoku.Board) []gomoku.Location {
 	visited := make(map[int]bool)
 	locs := make([]gomoku.Location, 0, board.Row*board.Column-1)
 	for i := 0; i < board.Row; i++ {

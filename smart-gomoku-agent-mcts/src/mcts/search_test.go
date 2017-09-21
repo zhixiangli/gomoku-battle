@@ -9,7 +9,7 @@ import (
 func TestMonteCarloTreeSearch_Search(t *testing.T) {
 	policy := RandomMonteCarloTreePolicy{Range: 2}
 	searcher := &MonteCarloTreeSearch{&policy}
-	root := new(MonteCarloTreeNode)
+	root := &MonteCarloTreeNode{isSelected: true}
 	board := gomoku.NewBoard(15, 15)
 	board.SetChessType(gomoku.Location{7, 7}, gomoku.Black)
 	board.SetChessType(gomoku.Location{7, 8}, gomoku.Black)
@@ -45,7 +45,7 @@ func TestMonteCarloTreeSearch_Next(t *testing.T) {
 func BenchmarkMonteCarloTreeSearch_Search(b *testing.B) {
 	policy := RandomMonteCarloTreePolicy{Range: 2}
 	searcher := &MonteCarloTreeSearch{&policy}
-	root := new(MonteCarloTreeNode)
+	root := &MonteCarloTreeNode{isSelected: true}
 	board := gomoku.NewBoard(15, 15)
 	for i := 0; i < b.N; i++ {
 		searcher.Search(board, gomoku.Black, root)
