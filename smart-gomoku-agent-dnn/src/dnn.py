@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 #  -*- coding: utf-8 -*-
 
+import os
+
 import numpy
 from keras.callbacks import ModelCheckpoint
 from keras.layers import Conv2D, MaxPooling2D, Input, Dense, Flatten
@@ -35,18 +37,18 @@ class DeepNeuralNetwork:
     def predict(self, board_test_array, artificial_test_array):
         board_test = Toolkit.format_board(board_test_array, self.__row, self.__column)
         artificial_test = Toolkit.format_artificial(artificial_test_array)
-        proba_test = self.model.predict([board_test, artificial_test])
+        proba_test = self.__model.predict([board_test, artificial_test])
         return proba_test
 
     def __load_weights(self):
-        pass
-        # self.model.load_weights(self.__weights_filepath)
+        if os.path.exists(self.__weights_filepath):
+            self.__model.load_weights(self.__weights_filepath)
 
     def __build_model(self):
         board_input = Input(shape=(self.__row, self.__column, 1))
         board_out = Conv2D(32, (3, 3), activation="tanh")(board_input)
-        board_out = Conv2D(64, (3, 3), activation="tanh")(board_out)
-        board_out = MaxPooling2D(pool_size=(2, 2))(board_out)
+        board_out = Conv2D(32, (3, 3), activation="tanh")(board_out)
+        board_out = MaxPooling2D(pool_size=(2, 2), padding='same')(board_out)
         board_out = Flatten()(board_out)
         board_model = Model(board_input, board_out)
 
@@ -55,11 +57,12 @@ class DeepNeuralNetwork:
         artificial_model = Model(artificial_input, artificial_out)
 
         concatenated_out = concatenate([board_model(board_input), artificial_model(artificial_input)])
-        concatenated_out = Dense(64, activation="tanh", kernel_initializer="normal")(concatenated_out)
+        concatenated_out = Dense(128, activation="tanh", kernel_initializer="normal")(concatenated_out)
+        concatenated_out = Dense(128, activation="tanh", kernel_initializer="normal")(concatenated_out)
         concatenated_out = Dense(1, activation="tanh", kernel_initializer="normal")(concatenated_out)
         concatenated_model = Model([board_input, artificial_input], concatenated_out)
         concatenated_model.compile(loss="mean_squared_error", optimizer="adam")
-        self.model = concatenated_model
+        self.__model = concatenated_model
 
 
 if __name__ == "__main__":
