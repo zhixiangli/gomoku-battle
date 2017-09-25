@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import dnn
+import toolkit
 from abstract_agent import AbstractAgent
-from toolkit import Toolkit, ChessChar
+from toolkit import ChessChar
 
 
 class DNNAgent(AbstractAgent):
@@ -23,18 +24,22 @@ class DNNAgent(AbstractAgent):
         return x, y
 
     def __next(self, board_str, chess_char):
-        best_proba = -1
-        index = -1
-        for i in range(len(board_str)):
-            if board_str[i] != ChessChar.get_char(ChessChar.EMPTY):
-                continue
-            new_board = board_str[:i] + chess_char + board_str[i + 1:]
-
-            proba = self.__dnn.predict([Toolkit.parse_board(new_board)],
-                                       [ChessChar.get_value(ChessChar.get_enum(chess_char))])
-            if proba > best_proba:
-                best_proba, index = proba, i
-        return best_proba, index / self._row, index % self._row
+        best_proba, x, y = -1, -1, -1
+        chessboard = [list(board_str[i:i + toolkit.chess_column]) for i in
+                      range(0, toolkit.chess_column * toolkit.chess_row, toolkit.chess_row)]
+        for i in range(toolkit.chess_row):
+            for j in range(toolkit.chess_column):
+                if chessboard[i][j] != ChessChar.get_char(ChessChar.EMPTY):
+                    continue
+                chessboard[i][j] = chess_char
+                if toolkit.is_win(chessboard, i, j):
+                    return 1, i, j
+                proba = 1 - self.__dnn.predict([toolkit.restore_board("".join(sum(chessboard, [])))], [
+                    ChessChar.get_value(toolkit.next_type(ChessChar.get_enum_by_char(chess_char)))])
+                if proba > best_proba:
+                    best_proba, x, y = proba, i, j
+                chessboard[i][j] = ChessChar.get_char(ChessChar.EMPTY)
+        return best_proba, x, y
 
     def reset(self, board):
         self.__board = board

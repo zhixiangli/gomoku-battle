@@ -3,13 +3,13 @@
 
 import sys
 
-from toolkit import Command, Toolkit
+import toolkit
+from toolkit import Command
 
 
 class AbstractAgent:
     def __init__(self):
-        self._row = int(Toolkit.get_config("chess", "row"))
-        self._column = int(Toolkit.get_config("chess", "column"))
+        pass
 
     def __del__(self):
         pass
@@ -19,9 +19,9 @@ class AbstractAgent:
             line = sys.stdin.readline().strip()
             if not line:
                 break
-            cmd, x, y = Toolkit.parse_command(line)
+            cmd, x, y = toolkit.parse_command(line)
             if cmd == Command.RESET:
-                self._row, self._column, board_str = x, y, ""
+                _, _, board_str = x, y, ""
                 for i in range(x):
                     board_str += sys.stdin.readline().strip()
                 self.reset(board_str)
@@ -31,9 +31,9 @@ class AbstractAgent:
                 self.play_white(x, y)
             elif cmd == Command.NEXT_BLACK:
                 x, y = self.next_black()
-                print(Toolkit.format_command(Command.PUT.name, x, y))
+                print(toolkit.format_command(Command.PUT.name, x, y))
             elif cmd == Command.NEXT_WHITE:
                 x, y = self.next_white()
-                print(Toolkit.format_command(Command.PUT.name, x, y))
+                print(toolkit.format_command(Command.PUT.name, x, y))
             elif cmd == Command.CLEAR:
                 self.clear()
