@@ -19,7 +19,13 @@ A number of agent algorithms have been implemented, such as **Alpha-Beta Search*
 ## Launch Battle Platform
 + ```git clone https://github.com/zhixiangli/smart-gomoku.git```
 + ```cd smart-gomoku```
-+ ```mvn clean && mvn package```
++ ```sh battle.sh```
+
+## Configuration
+**AI Agent** can be changed by modifying the **player.properties**
+
++ **player.xxxxx.alias**: set an alias to the agent.
++ **player.xxxxx.cmd**: a shell script to start an agent. No agent will start if the command is empty. Every agent should implement the following command.
 
 ## Write Your Own AI Agent
 The console will create a subprocess for a AI agent.
@@ -42,7 +48,4 @@ PUT ROW COLUMN | agent -> console | ask console to put piece on the position(\$R
 
 AI | Description | Language | Command Processor
 ---|---|---|---
-[smart-gomoku-agent-alphabetasearch](https://github.com/zhixiangli/smart-gomoku/tree/master/smart-gomoku-agent-alphabetasearch) | Alpha-Beta Search Agent | Java | [AlphaBetaSearchAgent.java](https://github.com/zhixiangli/smart-gomoku/blob/master/smart-gomoku-agent-alphabetasearch/src/main/java/com/zhixiangli/gomoku/agent/alphabetasearch/AlphaBetaSearchAgent.java)
-[smart-gomoku-agent-mcts](https://github.com/zhixiangli/smart-gomoku/tree/master/smart-gomoku-agent-mcts) | Monte Carlo Tree Search Agent | Golang | [agent_abstract.go](https://github.com/zhixiangli/smart-gomoku/blob/master/smart-gomoku-agent-mcts/src/console/agent_abstract.go)
-[smart-gomoku-agent-dnn](https://github.com/zhixiangli/smart-gomoku/tree/master/smart-gomoku-agent-dnn) | Deep Neural Network Agent | Python | [abstract_agent.py](https://github.com/zhixiangli/smart-gomoku/blob/master/smart-gomoku-agent-dnn/src/abstract_agent.py)
-[gomoku-ai](https://github.com/ghnjk/gomoku-ai) | | C++ | 
+[alpha-beta-search](https://github.com/zhixiangli/smart-gomoku/tree/master/smart-gomoku-agent/alpha-beta-search) | Alpha-Beta Search Agent | Java | [AlphaBetaSearchAgent.java](https://github.com/zhixiangli/smart-gomoku/blob/master/smart-gomoku-agent/alpha-beta-search/src/main/java/com/zhixiangli/gomoku/agent/alphabetasearch/AlphaBetaSearchAgent.java)
