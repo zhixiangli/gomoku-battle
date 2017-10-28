@@ -2,16 +2,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.zhixiangli</groupId>
-	<artifactId>gomoku</artifactId>
+	<artifactId>alpha-gomoku</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>smart-gomoku-dashboard</module>
-		<module>smart-gomoku-core</module>
-		<module>smart-gomoku-console</module>
-		<module>smart-gomoku-agent/alpha-beta-search</module>
+		<module>alpha-gomoku-dashboard</module>
+		<module>alpha-gomoku-core</module>
+		<module>alpha-gomoku-console</module>
+		<module>alpha-gomoku-agent/alpha-beta-search</module>
 	</modules>
 
 	<properties>

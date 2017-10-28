@@ -31,7 +31,7 @@ public class DashboardApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         scene.getStylesheets().add(getClass().getResource("/gomoku_style.css").toExternalForm());
 
-        String title = String.format("SMART GOMOKU (©%d LI ZHIXIANG)", Calendar.getInstance().get(Calendar.YEAR));
+        String title = String.format("ALPHA GOMOKU (©%d LI ZHIXIANG)", Calendar.getInstance().get(Calendar.YEAR));
         primaryStage.setTitle(title);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);

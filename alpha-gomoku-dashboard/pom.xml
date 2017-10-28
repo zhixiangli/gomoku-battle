@@ -11,12 +11,12 @@
 
 	<packaging>jar</packaging>
 
-	<artifactId>smart-gomoku-console</artifactId>
+	<artifactId>alpha-gomoku-dashboard</artifactId>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.zhixiangli</groupId>
-			<artifactId>smart-gomoku-core</artifactId>
+			<artifactId>alpha-gomoku-console</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
@@ -29,7 +29,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.zhixiangli.gomoku.console.ConsoleBootstrap</mainClass>
+							<mainClass>com.zhixiangli.gomoku.dashboard.DashboardBootstrap</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
