@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.core.console;
+package com.zhixiangli.gomoku.console;
 
 import java.awt.Point;
 import java.io.FileNotFoundException;
@@ -12,11 +12,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.zhixiangli.gomoku.console.common.ConsoleCommand;
+import com.zhixiangli.gomoku.console.common.ConsoleProcess;
+import com.zhixiangli.gomoku.console.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
-import com.zhixiangli.gomoku.core.console.common.ConsoleCommand;
-import com.zhixiangli.gomoku.core.console.common.ConsoleProcess;
-import com.zhixiangli.gomoku.core.console.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
 
 /**
@@ -52,11 +52,14 @@ public class ConsoleMaster {
 
     private ConsoleProcess whitePlayerProcess;
 
-    public ConsoleMaster() throws FileNotFoundException, IOException {
+    public ConsoleMaster(String playProperties) throws FileNotFoundException, IOException {
+        PlayerProperties.parse(playProperties);
         if (StringUtils.isNotBlank(PlayerProperties.playerBlackCommand)) {
+            LOGGER.info("fork black player process: {}", PlayerProperties.playerBlackCommand);
             blackPlayerProcess = new ConsoleProcess(PlayerProperties.playerBlackCommand);
         }
         if (StringUtils.isNotBlank(PlayerProperties.playerWhiteCommand)) {
+            LOGGER.info("fork white player process: {}", PlayerProperties.playerWhiteCommand);
             whitePlayerProcess = new ConsoleProcess(PlayerProperties.playerWhiteCommand);
         }
         // when chess type changed, notify the process to make a next move.

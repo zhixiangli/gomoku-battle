@@ -24,7 +24,7 @@ import com.zhixiangli.gomoku.agent.alphabetasearch.common.SearchConst;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
-import com.zhixiangli.gomoku.core.console.ConsoleAgent;
+import com.zhixiangli.gomoku.console.ConsoleAgent;
 
 /**
  * @author zhixiangli

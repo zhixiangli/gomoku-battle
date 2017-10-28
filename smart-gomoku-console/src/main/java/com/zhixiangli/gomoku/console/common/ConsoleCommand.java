@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.core.console.common;
+package com.zhixiangli.gomoku.console.common;
 
 import java.awt.Point;
 

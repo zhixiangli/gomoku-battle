@@ -17,7 +17,9 @@ A number of agent algorithms have been implemented, such as **Alpha-Beta Search*
 + **smart-gomoku-agent**: Implemented AI agents in arbitrary algorithms in any language.
 
 ## Launch Battle Platform
-// TODO
++ ```git clone https://github.com/zhixiangli/smart-gomoku.git```
++ ```cd smart-gomoku```
++ ```mvn clean && mvn package```
 
 ## Write Your Own AI Agent
 The console will create a subprocess for a AI agent.

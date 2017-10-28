@@ -6,9 +6,9 @@ package com.zhixiangli.gomoku.dashboard.javafx;
 import java.awt.Point;
 import java.io.IOException;
 
+import com.zhixiangli.gomoku.console.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.chessboard.ChessState;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
-import com.zhixiangli.gomoku.core.console.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
 
 import javafx.fxml.FXML;

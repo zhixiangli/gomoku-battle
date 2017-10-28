@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zhixiangli.gomoku.core.console;
+package com.zhixiangli.gomoku.console;
 
 import java.awt.Point;
 import java.util.Scanner;
@@ -11,10 +11,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.zhixiangli.gomoku.console.common.ConsoleCommand;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
-import com.zhixiangli.gomoku.core.console.common.ConsoleCommand;
 
 /**
  * @author zhixiangli
