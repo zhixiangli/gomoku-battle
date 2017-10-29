@@ -38,6 +38,6 @@ func (p *Command) Parse(line string) (*string, *gomoku.Location) {
 	return nil, nil
 }
 
-func (p *Command) Format(cmd string, loc gomoku.Location) string {
+func (p *Command) Format(cmd string, loc *gomoku.Location) string {
 	return fmt.Sprintf("%s %d %d", cmd, loc.X, loc.Y)
 }

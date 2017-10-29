@@ -7,7 +7,7 @@ import (
 
 func TestCommand_Format(t *testing.T) {
 	command := Command{}
-	if "PLAY_BLACK 2 32" != command.Format(PlayBlack, gomoku.Location{2, 32}) {
+	if "PLAY_BLACK 2 32" != command.Format(PlayBlack, &gomoku.Location{2, 32}) {
 		t.Error()
 	}
 }

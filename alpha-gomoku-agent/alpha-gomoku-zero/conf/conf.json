@@ -1,0 +1,8 @@
+{
+  "LogPath":"./alpha-gomoku-zero.log",
+  "ConsecutiveNum":5,
+  "Row":15,
+  "Column":15,
+  "AroundRange":2,
+  "SearchCount":100000
+}

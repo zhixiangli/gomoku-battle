@@ -3,6 +3,7 @@ package mcts
 import (
 	"math"
 
+	"common"
 	"gomoku"
 )
 
@@ -14,21 +15,21 @@ type MonteCarloTreeNode struct {
 	value        float64
 }
 
-func (p *MonteCarloTreeNode) Select(policy MonteCarloTreePolicy) (selected *MonteCarloTreeNode, loc gomoku.Location) {
+func (p *MonteCarloTreeNode) Select(policy MCTSPolicy) (selected *MonteCarloTreeNode, loc *gomoku.Location) {
 	bestValue := -math.MaxFloat64
 	for i := range p.childrenNode {
 		currValue := policy.Evaluate(p, i)
 		if bestValue < currValue {
 			bestValue = currValue
 			selected = &p.childrenNode[i]
-			loc = p.childrenLoc[i]
+			loc = &p.childrenLoc[i]
 		}
 	}
 	return
 }
 
-func (p *MonteCarloTreeNode) Expand(board *gomoku.Board, chessType gomoku.ChessType, policy MonteCarloTreePolicy) {
-	p.childrenLoc = policy.Around(board)
+func (p *MonteCarloTreeNode) Expand(board *gomoku.Board, chessType gomoku.ChessType, policy MCTSPolicy) {
+	p.childrenLoc = policy.Around(board, common.Conf.AroundRange)
 	p.childrenNode = make([]MonteCarloTreeNode, len(p.childrenLoc))
 	for i := range p.childrenLoc {
 		p.childrenNode[i] = MonteCarloTreeNode{}
