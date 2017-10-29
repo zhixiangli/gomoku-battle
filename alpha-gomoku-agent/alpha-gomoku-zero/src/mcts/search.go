@@ -3,25 +3,27 @@ package mcts
 import (
 	"common"
 	"gomoku"
+	"log"
 )
 
 type MCTS struct {
 	Policy MCTSPolicy
 }
 
-func (this *MCTS) Next(board *gomoku.Board, chessType gomoku.ChessType) (gomoku.Location, float64) {
+func (this *MCTS) Next(board *gomoku.Board, chessType gomoku.ChessType) (*gomoku.Location, float64) {
 	root := new(MonteCarloTreeNode)
 	for i := 0; i < common.Conf.SearchCount; i++ {
 		this.Search(board, chessType, root)
 	}
 	index, proba := this.BestChildNode(root)
+	log.Printf("MCTS_PROBA|%s|%c|%f", board.ToString(), gomoku.ChessTypeToRune(chessType), proba)
 	return root.childrenLoc[index], proba
 }
 
 func (this *MCTS) BestChildNode(root *MonteCarloTreeNode) (index int, proba float64) {
 	proba = -1
 	for i := range root.childrenNode {
-		child := &root.childrenNode[i]
+		child := root.childrenNode[i]
 		rate := float64(child.numOfWin) / float64(child.numOfGame)
 		if proba < rate {
 			proba = rate

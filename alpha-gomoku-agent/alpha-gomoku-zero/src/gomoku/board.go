@@ -1,6 +1,9 @@
 package gomoku
 
-import "common"
+import (
+	"bytes"
+	"common"
+)
 
 // chess type
 type ChessType int
@@ -11,7 +14,7 @@ const (
 	White
 )
 
-func ToChessType(ch rune) ChessType {
+func RuneToChessType(ch rune) ChessType {
 	switch ch {
 	case 'B':
 		return Black
@@ -21,6 +24,17 @@ func ToChessType(ch rune) ChessType {
 		return Empty
 	default:
 		return Empty
+	}
+}
+
+func ChessTypeToRune(t ChessType) rune {
+	switch t {
+	case Black:
+		return 'B'
+	case White:
+		return 'W'
+	default:
+		return '.'
 	}
 }
 
@@ -53,7 +67,7 @@ func NewBoard() *Board {
 }
 
 func (this *Board) SetRune(loc *Location, ch rune) {
-	newType := ToChessType(ch)
+	newType := RuneToChessType(ch)
 	this.updateEmptyCount(loc, newType)
 	this.board[loc.X][loc.Y] = newType
 }
@@ -90,6 +104,16 @@ func (this *Board) Equals(other *Board) bool {
 		}
 	}
 	return true
+}
+
+func (this *Board) ToString() string {
+	var buffer bytes.Buffer
+	for i := 0; i < common.Conf.Row; i++ {
+		for j := 0; j < common.Conf.Column; j++ {
+			buffer.WriteRune(ChessTypeToRune(this.board[i][j]))
+		}
+	}
+	return buffer.String()
 }
 
 func (this *Board) updateEmptyCount(loc *Location, newType ChessType) {

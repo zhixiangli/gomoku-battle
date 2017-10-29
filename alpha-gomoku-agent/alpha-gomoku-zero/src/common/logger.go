@@ -5,11 +5,19 @@ import (
 	"os"
 )
 
-func InitLogger(logPath string) error {
-	file, err := os.OpenFile(logPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+var (
+	logFile *os.File
+)
+
+func InitLogger(logPath string) (err error) {
+	logFile, err = os.OpenFile(logPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		return err
+		return
 	}
-	log.SetOutput(file)
-	return nil
+	log.SetOutput(logFile)
+	return
+}
+
+func DelLogger() {
+	logFile.Close()
 }

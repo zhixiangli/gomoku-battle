@@ -64,7 +64,7 @@ func (this *MCTSConsole) Clear() {
 
 func (this *MCTSConsole) Next(chessType gomoku.ChessType) *gomoku.Location {
 	next, _ := this.Searcher.Next(this.board, chessType)
-	return &next
+	return next
 }
 
 func (this *MCTSConsole) Reset(board *gomoku.Board) {

@@ -37,7 +37,7 @@ func TestMCTS_Next(t *testing.T) {
 	searcher := &MCTS{&policy}
 	loc, _ := searcher.Next(board, gomoku.White)
 	first, second := gomoku.Location{7, 10}, gomoku.Location{7, 6}
-	if loc != first && loc != second {
+	if *loc != first && *loc != second {
 		t.Error()
 	}
 }

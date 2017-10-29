@@ -8,11 +8,11 @@ import (
 )
 
 type MonteCarloTreeNode struct {
-	numOfWin     int
-	numOfGame    int
-	childrenNode []MonteCarloTreeNode
-	childrenLoc  []gomoku.Location
-	value        float64
+	numOfWin       int
+	numOfGame      int
+	childrenNode   []*MonteCarloTreeNode
+	childrenLoc    []*gomoku.Location
+	estimatedValue float64
 }
 
 func (p *MonteCarloTreeNode) Select(policy MCTSPolicy) (selected *MonteCarloTreeNode, loc *gomoku.Location) {
@@ -21,8 +21,8 @@ func (p *MonteCarloTreeNode) Select(policy MCTSPolicy) (selected *MonteCarloTree
 		currValue := policy.Evaluate(p, i)
 		if bestValue < currValue {
 			bestValue = currValue
-			selected = &p.childrenNode[i]
-			loc = &p.childrenLoc[i]
+			selected = p.childrenNode[i]
+			loc = p.childrenLoc[i]
 		}
 	}
 	return
@@ -30,9 +30,9 @@ func (p *MonteCarloTreeNode) Select(policy MCTSPolicy) (selected *MonteCarloTree
 
 func (p *MonteCarloTreeNode) Expand(board *gomoku.Board, chessType gomoku.ChessType, policy MCTSPolicy) {
 	p.childrenLoc = policy.Around(board, common.Conf.AroundRange)
-	p.childrenNode = make([]MonteCarloTreeNode, len(p.childrenLoc))
+	p.childrenNode = make([]*MonteCarloTreeNode, len(p.childrenLoc))
 	for i := range p.childrenLoc {
-		p.childrenNode[i] = MonteCarloTreeNode{}
+		p.childrenNode[i] = policy.NewNode(board)
 	}
 }
 

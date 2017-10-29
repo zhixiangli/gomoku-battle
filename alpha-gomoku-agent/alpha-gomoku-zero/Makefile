@@ -1,4 +1,4 @@
-GOPATH := $(PWD)/:$(GOPATH)
+GOPATH=$(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
 GOCMD=$(shell which go)
 GOBUILD=$(GOCMD) build
@@ -7,7 +7,6 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 
 BINARY_NAME=alpha_gomoku_zero
-SRC=$(shell find src -name *.go -type f)
 
 all: test build
 

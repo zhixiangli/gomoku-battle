@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	common.InitConfig("../../conf/conf.json")
+	common.InitConfig("../../conf/alpha-gomoku-zero.json")
 }
 
 func TestDNNPolicy_Around(t *testing.T) {
@@ -18,11 +18,11 @@ func TestDNNPolicy_Around(t *testing.T) {
 	board.SetChessType(&gomoku.Location{8, 1}, gomoku.Black)
 	policy := DNNPolicy{}
 	actual := policy.Around(board, 1)
-	expected := []gomoku.Location{gomoku.Location{7, 0}, gomoku.Location{7, 1}, gomoku.Location{7, 2}, gomoku.Location{8, 0}, gomoku.Location{8, 2}, gomoku.Location{9, 2}, gomoku.Location{10, 0}, gomoku.Location{10, 1}, gomoku.Location{10, 2}}
+	expected := []gomoku.Location{{7, 0}, {7, 1}, {7, 2}, {8, 0}, {8, 2}, {9, 2}, {10, 0}, {10, 1}, {10, 2}}
 	if len(actual) != len(expected) {
 		t.Error()
 		for i := range actual {
-			if actual[i] != expected[i] {
+			if *actual[i] != expected[i] {
 				t.Error()
 			}
 		}
@@ -32,8 +32,11 @@ func TestDNNPolicy_Around(t *testing.T) {
 func TestDNNPolicy_Evaluate(t *testing.T) {
 	root := MonteCarloTreeNode{}
 	root.numOfGame, root.numOfWin = 1, 1
-	root.childrenLoc = []gomoku.Location{gomoku.Location{1, 2}, gomoku.Location{3, 4}}
-	root.childrenNode = make([]MonteCarloTreeNode, 2)
+	root.childrenLoc = []*gomoku.Location{{1, 2}, {3, 4}}
+	root.childrenNode = make([]*MonteCarloTreeNode, 2)
+	for i := range root.childrenNode {
+		root.childrenNode[i] = new(MonteCarloTreeNode)
+	}
 	policy := DNNPolicy{}
 	value := policy.Evaluate(&root, 0)
 	if value <= 0 {

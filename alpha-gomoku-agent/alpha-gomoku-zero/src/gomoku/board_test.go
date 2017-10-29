@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	common.InitConfig("../../conf/conf.json")
+	common.InitConfig("../../conf/alpha-gomoku-zero.json")
 }
 
 func TestBoard_Get(t *testing.T) {

@@ -14,10 +14,19 @@ func startConsole() {
 	template.Start(&mcts)
 }
 
-func main() {
-	confPath := flag.String("conf", "../../conf/conf.json", "config path")
+func init() {
+	confPath := flag.String("conf", "../../conf/alpha-gomoku-zero.json", "config path")
 	flag.Parse()
 	common.InitConfig(*confPath)
+	common.InitLogger(common.Conf.LogPath)
+}
+
+func del() {
+	common.DelLogger()
+}
+
+func main() {
+	defer del()
 
 	startConsole()
 }
