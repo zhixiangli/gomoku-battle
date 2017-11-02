@@ -15,10 +15,10 @@ type MCTSPolicy interface {
 	NewNode(*gomoku.Board) *MonteCarloTreeNode
 }
 
-type DNNPolicy struct {
+type RandomPolicy struct {
 }
 
-func (this *DNNPolicy) Simulate(board gomoku.Board, chessType gomoku.ChessType) (numOfWin int, numOfGame int, winner gomoku.ChessType) {
+func (this *RandomPolicy) Simulate(board gomoku.Board, chessType gomoku.ChessType) (numOfWin int, numOfGame int, winner gomoku.ChessType) {
 	locations := this.Around(&board, common.Conf.AroundRange)
 	referee := gomoku.Referee
 	for len(locations) > 0 {
@@ -43,14 +43,14 @@ func (this *DNNPolicy) Simulate(board gomoku.Board, chessType gomoku.ChessType) 
 	return 0, 1, gomoku.Empty
 }
 
-func (this *DNNPolicy) Evaluate(root *MonteCarloTreeNode, childIndex int) float64 {
+func (this *RandomPolicy) Evaluate(root *MonteCarloTreeNode, childIndex int) float64 {
 	child := root.childrenNode[childIndex]
 	exploitation := float64(child.numOfWin) / float64(1+child.numOfGame)
 	exploration := math.Sqrt(math.Log2(float64(1+root.numOfGame)) * 2 / float64(1+child.numOfGame))
 	return exploitation + exploration + child.estimatedValue + rand.Float64()/1e6
 }
 
-func (this *DNNPolicy) AroundLocation(board *gomoku.Board, loc *gomoku.Location, arroundRange int) []*gomoku.Location {
+func (this *RandomPolicy) AroundLocation(board *gomoku.Board, loc *gomoku.Location, arroundRange int) []*gomoku.Location {
 	locs := make([]*gomoku.Location, 0, 4*arroundRange*(arroundRange+1))
 	rowStart := loc.X - arroundRange
 	if rowStart < 0 {
@@ -70,7 +70,7 @@ func (this *DNNPolicy) AroundLocation(board *gomoku.Board, loc *gomoku.Location,
 	return locs
 }
 
-func (this *DNNPolicy) Around(board *gomoku.Board, arroundRange int) []*gomoku.Location {
+func (this *RandomPolicy) Around(board *gomoku.Board, arroundRange int) []*gomoku.Location {
 	visited := make(map[int]bool)
 	locs := make([]*gomoku.Location, 0, common.Conf.Row*common.Conf.Column-1)
 	for i := 0; i < common.Conf.Row; i++ {
@@ -94,6 +94,6 @@ func (this *DNNPolicy) Around(board *gomoku.Board, arroundRange int) []*gomoku.L
 	return locs
 }
 
-func (this *DNNPolicy) NewNode(*gomoku.Board) *MonteCarloTreeNode {
+func (this *RandomPolicy) NewNode(*gomoku.Board) *MonteCarloTreeNode {
 	return &MonteCarloTreeNode{estimatedValue: 0}
 }

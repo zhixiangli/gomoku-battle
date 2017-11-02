@@ -7,7 +7,7 @@ import (
 )
 
 func TestMCTS_Search(t *testing.T) {
-	policy := DNNPolicy{}
+	policy := RandomPolicy{}
 	searcher := &MCTS{&policy}
 	root := new(MonteCarloTreeNode)
 	board := gomoku.NewBoard()
@@ -33,7 +33,7 @@ func TestMCTS_Next(t *testing.T) {
 	board.SetChessType(&gomoku.Location{7, 7}, gomoku.Black)
 	board.SetChessType(&gomoku.Location{7, 8}, gomoku.Black)
 	board.SetChessType(&gomoku.Location{7, 9}, gomoku.Black)
-	policy := DNNPolicy{}
+	policy := RandomPolicy{}
 	searcher := &MCTS{&policy}
 	loc, _ := searcher.Next(board, gomoku.White)
 	first, second := gomoku.Location{7, 10}, gomoku.Location{7, 6}
@@ -43,7 +43,7 @@ func TestMCTS_Next(t *testing.T) {
 }
 
 func BenchmarkMCTS_Search(b *testing.B) {
-	policy := DNNPolicy{}
+	policy := RandomPolicy{}
 	searcher := &MCTS{&policy}
 	root := new(MonteCarloTreeNode)
 	board := gomoku.NewBoard()

@@ -19,7 +19,8 @@ A number of agent algorithms have been implemented, such as **Alpha-Beta Search*
 ## Launch Battle Platform
 + ```git clone https://github.com/zhixiangli/alpha-gomoku.git```
 + ```cd alpha-gomoku```
-+ ```sh battle.sh```
++ ```sh build.sh```
++ ```sh battle.sh ./conf/battle.properties```
 
 ## Configuration
 **AI Agent** can be changed by modifying the **player.properties**
