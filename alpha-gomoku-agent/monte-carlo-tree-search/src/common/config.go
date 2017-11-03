@@ -11,7 +11,8 @@ type Config struct {
 	Row            int
 	Column         int
 	AroundRange    int
-	SearchCount    int
+	SearchSecond   int
+	SearchStep     int
 }
 
 var Conf *Config

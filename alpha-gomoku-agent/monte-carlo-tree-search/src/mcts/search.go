@@ -1,50 +1,93 @@
 package mcts
 
 import (
+	"math"
+
 	"common"
 	"gomoku"
 	"log"
 )
 
-type MCTS struct {
-	Policy MCTSPolicy
+type MonteCarloTreeNode struct {
+	numOfWin       int
+	numOfGame      int
+	estimatedValue float64
+	childrenNode   []*MonteCarloTreeNode
+	childrenLoc    []*gomoku.Location
 }
 
-func (this *MCTS) Next(board *gomoku.Board, chessType gomoku.ChessType) (*gomoku.Location, float64) {
-	root := new(MonteCarloTreeNode)
-	for i := 0; i < common.Conf.SearchCount; i++ {
-		this.Search(board, chessType, root)
+func (p *MonteCarloTreeNode) Select(policy MCTSPolicy) (selected *MonteCarloTreeNode, loc *gomoku.Location) {
+	bestValue := -math.MaxFloat64
+	for i := range p.childrenNode {
+		currValue := policy.Evaluate(p, i)
+		if bestValue < currValue {
+			bestValue = currValue
+			selected = p.childrenNode[i]
+			loc = p.childrenLoc[i]
+		}
 	}
-	index, proba := this.BestChildNode(root)
-	log.Printf("MCTS_PROBA|%s|%c|%f", board.ToString(), gomoku.ChessTypeToRune(chessType), proba)
-	return root.childrenLoc[index], proba
+	return
 }
 
-func (this *MCTS) BestChildNode(root *MonteCarloTreeNode) (index int, proba float64) {
-	proba = -1
-	for i := range root.childrenNode {
-		child := root.childrenNode[i]
+func (p *MonteCarloTreeNode) Expand(board *gomoku.Board, chessType gomoku.ChessType, policy MCTSPolicy) {
+	p.childrenLoc = policy.Around(board, common.Conf.AroundRange)
+	p.childrenNode = make([]*MonteCarloTreeNode, len(p.childrenLoc))
+	for i := range p.childrenLoc {
+		p.childrenNode[i] = policy.NewNode(board)
+	}
+}
+
+func (p *MonteCarloTreeNode) BackPropagate(numOfWin int, numOfGame int, selfType gomoku.ChessType, winType gomoku.ChessType) {
+	p.numOfGame += numOfGame
+	if selfType == winType {
+		p.numOfWin += numOfWin
+	}
+}
+
+type MonteCarloTree struct {
+	Root         *MonteCarloTreeNode
+	SearchPolicy MCTSPolicy
+}
+
+func (this *MonteCarloTree) GetBestMove() (*gomoku.Location, float64) {
+	index, proba := 0, 0.0
+	for i := range this.Root.childrenNode {
+		child := this.Root.childrenNode[i]
 		rate := float64(child.numOfWin) / float64(child.numOfGame)
 		if proba < rate {
 			proba = rate
 			index = i
 		}
 	}
-	return
+	bestChild := this.Root.childrenNode[index]
+	loc := this.Root.childrenLoc[index]
+	log.Printf("root state: %d/%d=%f", this.Root.numOfWin, this.Root.numOfGame, float64(this.Root.numOfWin)/float64(this.Root.numOfGame))
+	log.Printf("best child: %d/%d=%f", bestChild.numOfWin, bestChild.numOfGame, proba)
+	return loc, proba
 }
 
-func (this *MCTS) Search(board *gomoku.Board, nextType gomoku.ChessType, node *MonteCarloTreeNode) (numOfWin int, numOfGame int, winType gomoku.ChessType) {
+func (this *MonteCarloTree) NextRoot(loc *gomoku.Location) {
+	for i := range this.Root.childrenLoc {
+		if *this.Root.childrenLoc[i] == *loc {
+			this.Root = this.Root.childrenNode[i]
+			return
+		}
+	}
+	this.Root = new(MonteCarloTreeNode)
+}
+
+func (this *MonteCarloTree) Search(board *gomoku.Board, nextType gomoku.ChessType, node *MonteCarloTreeNode) (numOfWin int, numOfGame int, winType gomoku.ChessType) {
 	isLeaf := len(node.childrenLoc) == 0
 	chessType := gomoku.Referee.NextType(nextType)
 	if isLeaf && node.numOfGame == 0 {
-		numOfWin, numOfGame, winType = this.Policy.Simulate(*board.Clone(), nextType)
+		numOfWin, numOfGame, winType = this.SearchPolicy.Simulate(*board.Clone(), nextType)
 		node.BackPropagate(numOfWin, numOfGame, chessType, winType)
 		return
 	}
 	if isLeaf { // expand leaf
-		node.Expand(board, nextType, this.Policy)
+		node.Expand(board, nextType, this.SearchPolicy)
 	}
-	nextNode, loc := node.Select(this.Policy)
+	nextNode, loc := node.Select(this.SearchPolicy)
 	board.SetChessType(loc, nextType)
 	// check if is over
 	if gomoku.Referee.IsDraw(board) {
@@ -55,7 +98,7 @@ func (this *MCTS) Search(board *gomoku.Board, nextType gomoku.ChessType, node *M
 		nextNode.BackPropagate(numOfWin, numOfGame, nextType, winType)
 	} else {
 		if isLeaf {
-			numOfWin, numOfGame, winType = this.Policy.Simulate(*board.Clone(), chessType)
+			numOfWin, numOfGame, winType = this.SearchPolicy.Simulate(*board.Clone(), chessType)
 			nextNode.BackPropagate(numOfWin, numOfGame, nextType, winType)
 		} else {
 			numOfWin, numOfGame, winType = this.Search(board, chessType, nextNode)

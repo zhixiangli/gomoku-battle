@@ -6,48 +6,32 @@ import (
 	"gomoku"
 )
 
-func TestMCTS_Search(t *testing.T) {
+func TestMonteCarloTree_Search(t *testing.T) {
 	policy := RandomPolicy{}
-	searcher := &MCTS{&policy}
-	root := new(MonteCarloTreeNode)
+	tree := &MonteCarloTree{new(MonteCarloTreeNode), &policy}
 	board := gomoku.NewBoard()
 	board.SetChessType(&gomoku.Location{7, 7}, gomoku.Black)
 	board.SetChessType(&gomoku.Location{7, 8}, gomoku.Black)
 	board.SetChessType(&gomoku.Location{7, 9}, gomoku.Black)
 	newBoard := board.Clone()
 	for i := 0; i < 10000; i++ {
-		searcher.Search(newBoard, gomoku.White, root)
+		tree.Search(newBoard, gomoku.White, tree.Root)
 		if !board.Equals(newBoard) {
 			t.Error()
 		}
 	}
-	index, proba := searcher.BestChildNode(root)
-	t.Logf("%d %d: %f\n", root.childrenLoc[index].X, root.childrenLoc[index].Y, proba)
+	loc, proba := tree.GetBestMove()
+	t.Logf("%d %d: %f\n", loc.X, loc.Y, proba)
 	if proba >= 0.5 {
 		t.Error()
 	}
 }
 
-func TestMCTS_Next(t *testing.T) {
-	board := gomoku.NewBoard()
-	board.SetChessType(&gomoku.Location{7, 7}, gomoku.Black)
-	board.SetChessType(&gomoku.Location{7, 8}, gomoku.Black)
-	board.SetChessType(&gomoku.Location{7, 9}, gomoku.Black)
+func BenchmarkMonteCarloTree_Search(b *testing.B) {
 	policy := RandomPolicy{}
-	searcher := &MCTS{&policy}
-	loc, _ := searcher.Next(board, gomoku.White)
-	first, second := gomoku.Location{7, 10}, gomoku.Location{7, 6}
-	if *loc != first && *loc != second {
-		t.Error()
-	}
-}
-
-func BenchmarkMCTS_Search(b *testing.B) {
-	policy := RandomPolicy{}
-	searcher := &MCTS{&policy}
-	root := new(MonteCarloTreeNode)
+	tree := &MonteCarloTree{new(MonteCarloTreeNode), &policy}
 	board := gomoku.NewBoard()
 	for i := 0; i < b.N; i++ {
-		searcher.Search(board, gomoku.Black, root)
+		tree.Search(board, gomoku.Black, tree.Root)
 	}
 }

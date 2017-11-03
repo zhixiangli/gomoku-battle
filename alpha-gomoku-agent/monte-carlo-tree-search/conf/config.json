@@ -4,5 +4,6 @@
   "Row":15,
   "Column":15,
   "AroundRange":2,
-  "SearchCount":100000
+  "SearchSecond":20,
+  "SearchStep":10000
 }

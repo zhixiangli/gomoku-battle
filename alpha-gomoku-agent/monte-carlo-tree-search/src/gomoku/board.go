@@ -68,12 +68,12 @@ func NewBoard() *Board {
 
 func (this *Board) SetRune(loc *Location, ch rune) {
 	newType := RuneToChessType(ch)
-	this.updateEmptyCount(loc, newType)
+	this.UpdateEmptyCount(loc, newType)
 	this.board[loc.X][loc.Y] = newType
 }
 
 func (this *Board) SetChessType(loc *Location, chessType ChessType) {
-	this.updateEmptyCount(loc, chessType)
+	this.UpdateEmptyCount(loc, chessType)
 	this.board[loc.X][loc.Y] = chessType
 }
 
@@ -116,7 +116,7 @@ func (this *Board) ToString() string {
 	return buffer.String()
 }
 
-func (this *Board) updateEmptyCount(loc *Location, newType ChessType) {
+func (this *Board) UpdateEmptyCount(loc *Location, newType ChessType) {
 	oldType := this.board[loc.X][loc.Y]
 	if oldType == Empty && newType != Empty {
 		this.nonEmptyCount++
