@@ -2,16 +2,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.zhixiangli</groupId>
-	<artifactId>alpha-gomoku</artifactId>
+	<artifactId>gomoku-battle</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>alpha-gomoku-dashboard</module>
-		<module>alpha-gomoku-core</module>
-		<module>alpha-gomoku-console</module>
-		<module>alpha-gomoku-agent/alpha-beta-search</module>
+		<module>gomoku-battle-dashboard</module>
+		<module>gomoku-battle-core</module>
+		<module>gomoku-battle-console</module>
 	</modules>
 
 	<properties>

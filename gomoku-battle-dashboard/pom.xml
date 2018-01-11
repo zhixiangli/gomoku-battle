@@ -5,18 +5,18 @@
 
 	<parent>
 		<groupId>com.zhixiangli</groupId>
-		<artifactId>alpha-gomoku</artifactId>
+		<artifactId>gomoku-battle</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
 	<packaging>jar</packaging>
 
-	<artifactId>alpha-gomoku-dashboard</artifactId>
+	<artifactId>gomoku-battle-dashboard</artifactId>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.zhixiangli</groupId>
-			<artifactId>alpha-gomoku-console</artifactId>
+			<artifactId>gomoku-battle-console</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

@@ -1,24 +1,20 @@
-# Alpha Gomoku
+# GOMOKU BATTLE
 
 ## Overview
 
-**Alpha Gomoku** is a cross-language cross-system **battle platform** with lots of AI agent.
-
-A number of agent algorithms have been implemented, such as **Alpha-Beta Search** (Alpha-Beta Pruning), **MCTS** (Monte Carlo Tree Search), **DNN** (Deep Neural Network), and so on.
+**Gomoku Battle** is a cross-language cross-system **battle platform** with lots of AI agent.
 
 ## Structure
 
-+ **alpha-gomoku-core**: Basic gomoku library.
++ **gomoku-battle-core**: Basic gomoku library.
 
-+ **alpha-gomoku-console**: Console is a referee between AI agents. It also sends and receives commands to set up communication with AI agents.
++ **gomoku-battle-console**: Console is a referee between AI agents. It also sends and receives commands to set up communication with AI agents.
 
-+ **alpha-gomoku-dashboard**: Dashboard is a viewer of a situation of chessboard.
-
-+ **alpha-gomoku-agent**: Implemented AI agents in arbitrary algorithms in any language.
++ **gomoku-battle-dashboard**: Dashboard is a viewer of a situation of chessboard.
 
 ## Launch Battle Platform
-+ ```git clone https://github.com/zhixiangli/alpha-gomoku.git```
-+ ```cd alpha-gomoku```
++ ```git clone https://github.com/zhixiangli/gomoku-battle.git```
++ ```cd gomoku-battle```
 + ```sh build.sh```
 + ```sh battle.sh ./conf/battle.properties```
 
@@ -49,4 +45,4 @@ PUT ROW COLUMN | agent -> console | ask console to put piece on the position(\$R
 
 AI | Description | Language | Command Processor
 ---|---|---|---
-[alpha-beta-search](https://github.com/zhixiangli/alpha-gomoku/tree/master/alpha-gomoku-agent/alpha-beta-search) | Alpha-Beta Search Agent | Java | [AlphaBetaSearchAgent.java](https://github.com/zhixiangli/alpha-gomoku/blob/master/alpha-gomoku-agent/alpha-beta-search/src/main/java/com/zhixiangli/gomoku/agent/alphabetasearch/AlphaBetaSearchAgent.java)
+[alpha-beta-search](https://github.com/zhixiangli/gomoku-battle/tree/master/gomoku-battle-agent/alpha-beta-search) | Alpha-Beta Search Agent | Java | [AlphaBetaSearchAgent.java](https://github.com/zhixiangli/gomoku-battle/blob/master/gomoku-battle-agent/alpha-beta-search/src/main/java/com/zhixiangli/gomoku/agent/alphabetasearch/AlphaBetaSearchAgent.java)
