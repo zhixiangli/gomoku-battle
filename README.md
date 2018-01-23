@@ -31,15 +31,22 @@ The communication commands between console and AI agent is by **stdin** and **st
 
 The following is the definition of commands.
 
-Command | Data Flow | Description
---------|-----------|------------
-CLEAR | console -> agent | ask the agent to clear the chessboard
-NEXT_WHITE | console -> agent | ask the agent to calculate the next move where the white go
-NEXT_BLACK | console -> agent | ask the agent to calculate the next move where the black go
-RESET ROW COLUMN | console -> agent | ask the agent to reset the chessboard with \$ROW row and \$COLUMN column. There will be \$ROW line following, and each line contains \$COLUMN characters (white: 'W', black: 'B', empty: '.'). **This command is always sent before NEXT_XXXXX command.**
-PLAY_BLACK ROW COLUMN | console -> agent | ask agent to put black piece on the position(\$ROW, \$COLUMN) of the chessboard
-PLAY_WHITE ROW COLUMN | console -> agent | ask agent to put white piece on the position(\$ROW, \$COLUMN) of the chessboard
-PUT ROW COLUMN | agent -> console | ask console to put piece on the position(\$ROW, \$COLUMN) of the chessboard
+### Request
+Field | Description
+------|------------
+command | NEXT\_BLACK or NEXT\_WHITE
+rows | the number of rows in chessboard
+columns | the number of columns in chessboard
+chessboard | similar to SGF
+
+#### Example
+{"command":"NEXT_BLACK","rows":15,"columns":15,"chessboard":"B[96];W[a5];B[a4];W[95]"}
+
+### Response
+return the position to make a move
+
+#### Example
+{"rowIndex":3,"columnIndex":10}
 
 ## AI Agent Example
 

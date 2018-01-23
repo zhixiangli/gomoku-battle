@@ -43,12 +43,8 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
     }
 
     @Override
-    protected void clear() {
-        this.chessboard = null;
-    }
-
-    @Override
-    protected Point next(ChessType chessType) {
+    protected Point next(Chessboard chessboard, ChessType chessType) {
+        this.chessboard = chessboard;
         Point[] candidates = alphaBetaAlgorithm.nextMoves(chessboard, chessType);
 
         if (ArrayUtils.getLength(candidates) == 0) {
@@ -89,15 +85,6 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
         List<Pair<Point, Double>> resultPoints = pairs.stream()
                 .filter(pair -> Double.compare(bestValue, pair.getValue()) == 0).collect(Collectors.toList());
         return resultPoints.get(RandomUtils.nextInt(0, resultPoints.size())).getKey();
-    }
-
-    @Override
-    protected void reset(Chessboard chessboard) {
-        this.chessboard = chessboard;
-    }
-
-    @Override
-    protected void play(ChessType chessType, Point point) {
     }
 
     public static void main(String[] args) {

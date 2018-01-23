@@ -4,8 +4,11 @@
 package com.zhixiangli.gomoku.core.service;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +49,8 @@ public class ChessboardService {
 
     private SimpleObjectProperty<Point> lastMovePoint;
 
+    private List<Pair<ChessType, Point>> history;
+
     /**
      * chessboard state property, game on, draw, black win, white win.
      */
@@ -62,6 +67,7 @@ public class ChessboardService {
         this.currentChessType = new SimpleObjectProperty<>(ChessType.EMPTY);
         this.chessStateProperty = new SimpleObjectProperty<>(ChessState.GAME_READY);
         this.lastMovePoint = new SimpleObjectProperty<>();
+        this.history = new ArrayList<>();
     }
 
     public void restart() {
@@ -76,6 +82,7 @@ public class ChessboardService {
         this.currentChessType.set(ChessType.EMPTY);
         this.currentChessType.set(ChessType.BLACK);
         this.lastMovePoint.set(null);
+        this.history.clear();
     }
 
     /**
@@ -105,6 +112,7 @@ public class ChessboardService {
             LOGGER.info("CURRENT GAME: {}",
                     StringUtils.replace(chessboard.toString(), StringUtils.LF, StringUtils.EMPTY));
             this.lastMovePoint.set(new Point(point));
+            this.history.add(Pair.of(this.currentChessType.get(), new Point(point)));
             // finish this move, and change the current chess type and current
             // player.
             this.currentChessType.set(GameReferee.nextChessType(this.currentChessType.get()));
@@ -148,6 +156,13 @@ public class ChessboardService {
 
     public ChessType getCurrentChessType() {
         return this.currentChessType.get();
+    }
+
+    /**
+     * @return the history
+     */
+    public List<Pair<ChessType, Point>> getHistory() {
+        return history;
     }
 
 }

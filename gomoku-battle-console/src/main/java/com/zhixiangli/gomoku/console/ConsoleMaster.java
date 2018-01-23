@@ -6,38 +6,25 @@ package com.zhixiangli.gomoku.console;
 import java.awt.Point;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
 import com.zhixiangli.gomoku.console.common.ConsoleCommand;
 import com.zhixiangli.gomoku.console.common.ConsoleProcess;
+import com.zhixiangli.gomoku.console.common.ConsoleRequest;
+import com.zhixiangli.gomoku.console.common.ConsoleResponse;
 import com.zhixiangli.gomoku.console.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
+import com.zhixiangli.gomoku.core.common.GomokuFormatter;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
 
 /**
- * 
- * From Dashboard to AI:
- * 
- * CLEAR
- * 
- * NEXT_WHITE
- * 
- * NEXT_BLACK
- * 
- * RESET CHESSBOARD_SIZE CHESSBOARD_SIZE
- * 
- * PLAY_BLACK ROW COLUMN
- * 
- * PLAY_WHITE ROW COLUMN
- * 
- * From AI to Dashboard:
- * 
- * PUT ROW COLUMN
  * 
  * @author zhixiangli
  *
@@ -71,54 +58,36 @@ public class ConsoleMaster {
         try {
             switch (chessType) {
             case BLACK:
-                sendActionCommand(blackPlayerProcess, ConsoleCommand.PLAY_WHITE, ConsoleCommand.NEXT_BLACK);
+                sendActionCommand(blackPlayerProcess, ConsoleCommand.NEXT_BLACK);
                 break;
             case WHITE:
-                sendActionCommand(whitePlayerProcess, ConsoleCommand.PLAY_BLACK, ConsoleCommand.NEXT_WHITE);
+                sendActionCommand(whitePlayerProcess, ConsoleCommand.NEXT_WHITE);
                 break;
             case EMPTY:
-            default: // game is over and clean the chessboard.
-                sendClearCommand(blackPlayerProcess);
-                sendClearCommand(whitePlayerProcess);
+            default:
             }
         } catch (IOException e) {
             LOGGER.error("call for action error. {}", e);
         }
     }
 
-    private void sendActionCommand(ConsoleProcess process, ConsoleCommand play, ConsoleCommand next)
-            throws IOException {
+    private void sendActionCommand(ConsoleProcess process, ConsoleCommand next) throws IOException {
         if (null == process) {
             return;
         }
-        Point lastMovePoint = chessboardService.getLastMovePoint();
-        if (null != lastMovePoint) {
-            process.send(ConsoleCommand.format(play, lastMovePoint));
-        }
-        process.send(resetChessboard());
-        process.send(ConsoleCommand.format(next));
-        while (true) {
-            String received = process.receive();
-            Pair<ConsoleCommand, Point> parsed = ConsoleCommand.parse(received);
-            if (ConsoleCommand.PUT == parsed.getKey() && null != parsed.getValue()) {
-                chessboardService.takeMove(parsed.getValue());
-                break;
-            }
-            LOGGER.error("unknown received message: {}", received);
-        }
+        ConsoleRequest req = new ConsoleRequest(next, GomokuConst.CHESSBOARD_SIZE, GomokuConst.CHESSBOARD_SIZE,
+                this.getSGF());
+        process.send(new Gson().toJson(req) + StringUtils.LF);
+
+        String received = process.receive();
+        ConsoleResponse resp = new Gson().fromJson(received, ConsoleResponse.class);
+        chessboardService.takeMove(new Point(resp.getRowIndex(), resp.getColumnIndex()));
     }
 
-    private void sendClearCommand(ConsoleProcess process) throws IOException {
-        if (null == process) {
-            return;
-        }
-        process.send(ConsoleCommand.format(ConsoleCommand.CLEAR));
+    private String getSGF() {
+        List<String> history = this.chessboardService.getHistory().stream().map(pair -> String.format("%c[%s]",
+                pair.getKey().getChessChar(), GomokuFormatter.encodePoint(pair.getValue())))
+                .collect(Collectors.toList());
+        return StringUtils.join(history, ";");
     }
-
-    private String resetChessboard() {
-        return ConsoleCommand.format(ConsoleCommand.RESET,
-                new Point(GomokuConst.CHESSBOARD_SIZE, GomokuConst.CHESSBOARD_SIZE))
-                + chessboardService.getChessboard().toString();
-    }
-
 }

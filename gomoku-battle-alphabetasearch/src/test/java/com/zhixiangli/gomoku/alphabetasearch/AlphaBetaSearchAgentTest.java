@@ -52,9 +52,8 @@ public class AlphaBetaSearchAgentTest {
         chessboard.setChess(3, 6, ChessType.WHITE);
         chessboard.setChess(4, 3, ChessType.BLACK);
         chessboard.setChess(4, 5, ChessType.WHITE);
-        this.agent.reset(chessboard);
 
-        Point point = this.agent.next(ChessType.WHITE);
+        Point point = this.agent.next(chessboard, ChessType.WHITE);
         Assert.assertTrue(new Point(5, 2).equals(point) || new Point(1, 6).equals(point));
     }
 
