@@ -24,6 +24,7 @@ import com.zhixiangli.gomoku.alphabetasearch.common.SearchConst;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
+import com.zhixiangli.gomoku.core.common.GomokuFormatter;
 import com.zhixiangli.gomoku.console.ConsoleAgent;
 
 /**
@@ -43,8 +44,8 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
     }
 
     @Override
-    protected Point next(Chessboard chessboard, ChessType chessType) {
-        this.chessboard = chessboard;
+    protected Point next(String sgf, ChessType chessType) {
+        this.chessboard = GomokuFormatter.toChessboard(sgf);
         Point[] candidates = alphaBetaAlgorithm.nextMoves(chessboard, chessType);
 
         if (ArrayUtils.getLength(candidates) == 0) {

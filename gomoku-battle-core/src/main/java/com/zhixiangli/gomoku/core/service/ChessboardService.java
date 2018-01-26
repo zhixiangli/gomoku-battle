@@ -109,8 +109,6 @@ public class ChessboardService {
         } else if (GameReferee.isDraw(chessboard, point)) { // if draw.
             this.chessStateProperty.set(ChessState.GAME_DRAW);
         } else {
-            LOGGER.info("CURRENT GAME: {}",
-                    StringUtils.replace(chessboard.toString(), StringUtils.LF, StringUtils.EMPTY));
             this.lastMovePoint.set(new Point(point));
             this.history.add(Pair.of(this.currentChessType.get(), new Point(point)));
             // finish this move, and change the current chess type and current

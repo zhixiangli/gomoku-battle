@@ -9,9 +9,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zhixiangli.gomoku.alphabetasearch.AlphaBetaSearchAgent;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
-import com.zhixiangli.gomoku.core.chessboard.Chessboard;
 
 /**
  * @author zhixiangli
@@ -46,14 +44,8 @@ public class AlphaBetaSearchAgentTest {
          * ...............
          * 
          */
-        Chessboard chessboard = new Chessboard();
-        chessboard.setChess(2, 5, ChessType.BLACK);
-        chessboard.setChess(3, 4, ChessType.BLACK);
-        chessboard.setChess(3, 6, ChessType.WHITE);
-        chessboard.setChess(4, 3, ChessType.BLACK);
-        chessboard.setChess(4, 5, ChessType.WHITE);
 
-        Point point = this.agent.next(chessboard, ChessType.WHITE);
+        Point point = this.agent.next("B[25];W[36];B[34];W[45];B[43]", ChessType.WHITE);
         Assert.assertTrue(new Point(5, 2).equals(point) || new Point(1, 6).equals(point));
     }
 

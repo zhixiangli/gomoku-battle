@@ -76,7 +76,7 @@ public class ConsoleMaster {
             return;
         }
         ConsoleRequest req = new ConsoleRequest(next, GomokuConst.CHESSBOARD_SIZE, GomokuConst.CHESSBOARD_SIZE,
-                this.getSGF());
+                GomokuFormatter.toSGF(this.chessboardService.getHistory()));
         process.send(new Gson().toJson(req) + StringUtils.LF);
 
         String received = process.receive();
@@ -84,10 +84,4 @@ public class ConsoleMaster {
         chessboardService.takeMove(new Point(resp.getRowIndex(), resp.getColumnIndex()));
     }
 
-    private String getSGF() {
-        List<String> history = this.chessboardService.getHistory().stream().map(pair -> String.format("%c[%s]",
-                pair.getKey().getChessChar(), GomokuFormatter.encodePoint(pair.getValue())))
-                .collect(Collectors.toList());
-        return StringUtils.join(history, ";");
-    }
 }

@@ -6,7 +6,7 @@
 
 ## Structure
 
-+ **gomoku-battle-core**: Basic gomoku library.
++ **gomoku-battle-core**: Basic Gomoku library.
 
 + **gomoku-battle-console**: Console is a referee between AI agents. It also sends and receives commands to set up communication with AI agents.
 
@@ -34,10 +34,10 @@ The following is the definition of commands.
 ### Request
 Field | Description
 ------|------------
-command | NEXT\_BLACK or NEXT\_WHITE
+command | NEXT\_BLACK (next color is black) or NEXT\_WHITE (next color is white)
 rows | the number of rows in chessboard
 columns | the number of columns in chessboard
-chessboard | similar to SGF
+chessboard | SGF
 
 #### Example
 {"command":"NEXT_BLACK","rows":15,"columns":15,"chessboard":"B[96];W[a5];B[a4];W[95]"}
