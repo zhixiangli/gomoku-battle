@@ -7,7 +7,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,9 +104,11 @@ public class ChessboardService {
         Chessboard chessboard = this.getChessboard();
         if (GameReferee.isWin(chessboard, point)) { // if win.
             ChessState winner = ChessType.BLACK == currentChessType.get() ? ChessState.BLACK_WIN : ChessState.WHITE_WIN;
+            LOGGER.info("game over, winner: {}", winner);
             this.chessStateProperty.set(winner);
         } else if (GameReferee.isDraw(chessboard, point)) { // if draw.
             this.chessStateProperty.set(ChessState.GAME_DRAW);
+            LOGGER.info("game over, draw");
         } else {
             this.lastMovePoint.set(new Point(point));
             this.history.add(Pair.of(this.currentChessType.get(), new Point(point)));
@@ -115,7 +116,7 @@ public class ChessboardService {
             // player.
             this.currentChessType.set(GameReferee.nextChessType(this.currentChessType.get()));
         }
-        LOGGER.info("finish moving: {} {}", point, this.chessStateProperty.get());
+        LOGGER.info("finish moving: {}", point);
     }
 
     public void addChessStateChangeListener(ChangeListener<ChessState> listener) {

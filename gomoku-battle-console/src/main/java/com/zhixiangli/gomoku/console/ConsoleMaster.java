@@ -6,8 +6,6 @@ package com.zhixiangli.gomoku.console;
 import java.awt.Point;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
