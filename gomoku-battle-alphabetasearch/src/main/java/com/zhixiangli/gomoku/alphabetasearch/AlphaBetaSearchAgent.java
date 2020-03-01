@@ -39,7 +39,7 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
     @Override
     protected Point next(final String sgf, final ChessType chessType) {
         final Chessboard chessboard = GomokuFormatter.toChessboard(sgf);
-        final Point[] candidates = alphaBetaAlgorithm.nextMoves(chessboard, chessType);
+        final Point[] candidates = alphaBetaAlgorithm.nextMoves(chessboard);
 
         if (ArrayUtils.getLength(candidates) == 0) {
             final int x = (int) (GomokuConst.RANDOM.nextGaussian() + (GomokuConst.CHESSBOARD_SIZE * 0.5));
@@ -48,14 +48,14 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
                     Math.min(Math.max(y, 0), GomokuConst.CHESSBOARD_SIZE - 1));
         } else {
             final Stopwatch watch = Stopwatch.createStarted();
-            final Point point = searchBestPoint(candidates, chessboard, chessType, SearchConst.MAX_DEPTH);
+            final Point point = searchBestPoint(candidates, chessboard, chessType);
             LOGGER.info("alpha beta search cost: {}", watch.elapsed(TimeUnit.SECONDS));
             return point;
         }
 
     }
 
-    private Point searchBestPoint(final Point[] candidates, final Chessboard chessboard, final ChessType chessType, final int depth) {
+    private Point searchBestPoint(final Point[] candidates, final Chessboard chessboard, final ChessType chessType) {
         alphaBetaAlgorithm.clearCache();
         final List<Pair<Point, Double>> pairs = Stream.of(candidates).parallel().map(point -> {
             final Chessboard newChessboard = chessboard.clone();
@@ -63,7 +63,7 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
             newChessboard.setChess(point, chessType);
             double value = -Double.MAX_VALUE;
             try {
-                value = alphaBetaAlgorithm.search(depth, -Double.MAX_VALUE, Double.MAX_VALUE, newChessboard, point,
+                value = alphaBetaAlgorithm.search(SearchConst.MAX_DEPTH, -Double.MAX_VALUE, Double.MAX_VALUE, newChessboard, point,
                         chessType, chessType, StringUtils.EMPTY);
             } catch (Exception e) {
                 LOGGER.error("alpha beta search error", e);

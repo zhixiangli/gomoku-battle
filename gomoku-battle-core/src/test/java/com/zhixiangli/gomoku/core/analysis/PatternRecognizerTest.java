@@ -65,6 +65,9 @@ public class PatternRecognizerTest {
 
         Assert.assertEquals(PatternType.HALF_OPEN_TWO, PatternRecognizer
                 .getBestPatternType(new ChessType[]{WHITE, BLACK, EMPTY, BLACK, EMPTY, EMPTY, WHITE, BLACK}, BLACK));
+
+        Assert.assertEquals(PatternType.OTHERS, PatternRecognizer
+                .getBestPatternType(new ChessType[]{BLACK, BLACK, BLACK, BLACK}, BLACK));
     }
 
 }

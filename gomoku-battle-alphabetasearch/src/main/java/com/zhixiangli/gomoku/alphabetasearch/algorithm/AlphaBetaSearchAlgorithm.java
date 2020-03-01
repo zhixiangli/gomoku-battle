@@ -76,7 +76,7 @@ public class AlphaBetaSearchAlgorithm {
                 result = AlphaBetaSearchProphet.evaluateChessboardValue(chessboard, rootChessType);
             } else {
                 final ChessType nextChessType = GameReferee.nextChessType(currentChessType);
-                final Point[] candidateMoves = nextMoves(chessboard, nextChessType);
+                final Point[] candidateMoves = nextMoves(chessboard);
                 double newAlpha = alpha, newBeta = beta;
                 for (final Point nextPoint : candidateMoves) {
                     // set chessboard.
@@ -104,7 +104,7 @@ public class AlphaBetaSearchAlgorithm {
         }
     }
 
-    public Point[] nextMoves(final Chessboard chessboard, final ChessType chessType) {
+    public Point[] nextMoves(final Chessboard chessboard) {
         final Point[] candidates = GlobalAnalyser.getEmptyPointsAround(chessboard, SearchConst.AROUND_CANDIDATE_RANGE);
         ArrayUtils.shuffle(candidates, GomokuConst.RANDOM);
         final Stream<Point> candidatesStream = Stream.of(candidates)

@@ -60,6 +60,9 @@ public class PatternRecognizer {
     }
 
     public static PatternType getBestPatternType(final ChessType[] pattern, final ChessType consideredChessType) {
+        if (pattern.length < GomokuConst.CONSECUTIVE_NUM) { // if it is insufficient to win
+            return PatternType.OTHERS;
+        }
         if (pattern.length <= PATTERN_MAX_LENGTH) {
             return PatternRecognizer.getPatternType(pattern, consideredChessType);
         }
