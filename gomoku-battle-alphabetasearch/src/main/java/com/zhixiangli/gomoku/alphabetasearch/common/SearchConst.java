@@ -1,11 +1,7 @@
-/**
- * 
- */
 package com.zhixiangli.gomoku.alphabetasearch.common;
 
 /**
  * @author zhixiangli
- *
  */
 public class SearchConst {
 
@@ -17,4 +13,6 @@ public class SearchConst {
 
     public static final int MAX_DEPTH = 5;
 
+    private SearchConst() {
+    }
 }

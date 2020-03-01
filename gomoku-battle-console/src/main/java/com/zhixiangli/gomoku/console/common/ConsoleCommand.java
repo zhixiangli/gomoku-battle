@@ -1,11 +1,7 @@
-/**
- * 
- */
 package com.zhixiangli.gomoku.console.common;
 
 /**
  * @author zhixiangli
- *
  */
 public enum ConsoleCommand {
 
@@ -15,9 +11,9 @@ public enum ConsoleCommand {
 
     ;
 
-    private String text;
+    private final String text;
 
-    private ConsoleCommand(String text) {
+    ConsoleCommand(final String text) {
         this.text = text;
     }
 

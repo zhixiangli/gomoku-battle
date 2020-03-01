@@ -1,23 +1,19 @@
-/**
- * 
- */
 package com.zhixiangli.gomoku.dashboard.javafx;
-
-import java.awt.Point;
-import java.io.IOException;
 
 import com.zhixiangli.gomoku.console.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.chessboard.ChessState;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 
+import java.awt.Point;
+import java.io.IOException;
+
 /**
  * gomoku controller.
- * 
+ *
  * @author lizhixiang
  */
 public class DashboardController {
@@ -40,13 +36,10 @@ public class DashboardController {
     @FXML
     private GridPane chessboardGridPane;
 
-    private ChessboardService chessboardService = ChessboardService.getInstance();
+    private final ChessboardService chessboardService = ChessboardService.getInstance();
 
     /**
-     * 
      * initialize.
-     * 
-     * @throws IOException
      */
     @FXML
     public void initialize() throws IOException {
@@ -83,7 +76,7 @@ public class DashboardController {
         chessboardGridPane.getChildren().clear();
         for (int row = 0; row < GomokuConst.CHESSBOARD_SIZE; ++row) {
             for (int column = 0; column < GomokuConst.CHESSBOARD_SIZE; ++column) {
-                Point point = new Point(row, column);
+                final Point point = new Point(row, column);
                 chessboardGridPane.add(new DashboardCellPane(point), column, row);
             }
         }

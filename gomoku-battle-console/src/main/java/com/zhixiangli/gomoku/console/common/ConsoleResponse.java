@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.zhixiangli.gomoku.console.common;
 
@@ -13,7 +13,7 @@ public class ConsoleResponse {
 
     private int columnIndex;
 
-    public ConsoleResponse(int rowIndex, int columnIndex) {
+    public ConsoleResponse(final int rowIndex, final int columnIndex) {
         super();
         this.rowIndex = rowIndex;
         this.columnIndex = columnIndex;
@@ -30,7 +30,7 @@ public class ConsoleResponse {
      * @param rowIndex
      *            the rowIndex to set
      */
-    public void setRowIndex(int rowIndex) {
+    public void setRowIndex(final int rowIndex) {
         this.rowIndex = rowIndex;
     }
 
@@ -45,7 +45,7 @@ public class ConsoleResponse {
      * @param columnIndex
      *            the columnIndex to set
      */
-    public void setColumnIndex(int columnIndex) {
+    public void setColumnIndex(final int columnIndex) {
         this.columnIndex = columnIndex;
     }
 

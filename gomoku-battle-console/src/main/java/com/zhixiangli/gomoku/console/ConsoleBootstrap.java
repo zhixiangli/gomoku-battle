@@ -1,28 +1,23 @@
-/**
- * 
- */
 package com.zhixiangli.gomoku.console;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
 
 import com.zhixiangli.gomoku.console.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.chessboard.ChessState;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
+import java.io.IOException;
 
 /**
  * @author zhixiangli
- *
  */
 public class ConsoleBootstrap extends ConsoleMaster implements Runnable {
 
-    private ChessboardService chessboardService = ChessboardService.getInstance();
+    private final ChessboardService chessboardService = ChessboardService.getInstance();
 
-    public ConsoleBootstrap(String playProperties) throws FileNotFoundException, IOException {
+    public ConsoleBootstrap(final String playProperties) throws IOException {
         super(playProperties);
     }
 
@@ -31,26 +26,26 @@ public class ConsoleBootstrap extends ConsoleMaster implements Runnable {
     }
 
     public Thread startDaemon() {
-        Thread t = new Thread(this);
+        final Thread t = new Thread(this);
         t.setDaemon(true);
         t.start();
         return t;
     }
 
     public void startLoop() throws InterruptedException {
-        this.chessboardService.addChessStateChangeListener((observable, oldValue, newValue) -> {
+        chessboardService.addChessStateChangeListener((observable, oldValue, newValue) -> {
             if (newValue != ChessState.GAME_ON) {
-                this.chessboardService.restart();
+                chessboardService.restart();
             }
         });
-        this.chessboardService.restart();
-        this.startDaemon().join();
+        chessboardService.restart();
+        startDaemon().join();
     }
 
-    public static void main(String[] args) throws Exception {
-        Options options = new Options();
+    public static void main(final String[] args) throws ParseException, IOException, InterruptedException {
+        final Options options = new Options();
         options.addOption(PlayerProperties.PLAYER_CONF, true, "player properties path");
-        CommandLine cmd = new DefaultParser().parse(options, args);
+        final CommandLine cmd = new DefaultParser().parse(options, args);
         new ConsoleBootstrap(cmd.getOptionValue(PlayerProperties.PLAYER_CONF)).startLoop();
     }
 

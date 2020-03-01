@@ -1,9 +1,4 @@
-/**
- * 
- */
 package com.zhixiangli.gomoku.console.common;
-
-import java.io.File;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
@@ -11,9 +6,10 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 /**
  * @author zhixiangli
- *
  */
 public class PlayerProperties {
 
@@ -29,15 +25,18 @@ public class PlayerProperties {
 
     public static String playerWhiteAlias;
 
-    public static void parse(String configPath) {
+    private PlayerProperties() {
+    }
+
+    public static void parse(final String configPath) {
         try {
-            PropertiesConfiguration playerConfig = new Configurations().properties(new File(configPath));
+            final PropertiesConfiguration playerConfig = new Configurations().properties(new File(configPath));
             playerBlackCommand = playerConfig.getString("player.black.cmd");
             playerBlackAlias = playerConfig.getString("player.black.alias");
             playerWhiteCommand = playerConfig.getString("player.white.cmd");
             playerWhiteAlias = playerConfig.getString("player.white.alias");
-        } catch (ConfigurationException e) {
-            LOGGER.error("load player config error {}", e);
+        } catch (final ConfigurationException e) {
+            LOGGER.error("load player config error", e);
         }
     }
 

@@ -1,11 +1,7 @@
-/**
- * 
- */
 package com.zhixiangli.gomoku.console.common;
 
 /**
  * @author lizx
- *
  */
 public class ConsoleRequest {
 
@@ -17,7 +13,7 @@ public class ConsoleRequest {
 
     private String chessboard;
 
-    public ConsoleRequest(ConsoleCommand command, int rows, int columns, String chessboard) {
+    public ConsoleRequest(final ConsoleCommand command, final int rows, final int columns, final String chessboard) {
         super();
         this.command = command;
         this.rows = rows;
@@ -33,10 +29,9 @@ public class ConsoleRequest {
     }
 
     /**
-     * @param command
-     *            the command to set
+     * @param command the command to set
      */
-    public void setCommand(ConsoleCommand command) {
+    public void setCommand(final ConsoleCommand command) {
         this.command = command;
     }
 
@@ -48,8 +43,7 @@ public class ConsoleRequest {
     }
 
     /**
-     * @param rows
-     *            the rows to set
+     * @param rows the rows to set
      */
     public void setRows(int rows) {
         this.rows = rows;
@@ -63,10 +57,9 @@ public class ConsoleRequest {
     }
 
     /**
-     * @param columns
-     *            the columns to set
+     * @param columns the columns to set
      */
-    public void setColumns(int columns) {
+    public void setColumns(final int columns) {
         this.columns = columns;
     }
 
@@ -78,10 +71,9 @@ public class ConsoleRequest {
     }
 
     /**
-     * @param chessboard
-     *            the chessboard to set
+     * @param chessboard the chessboard to set
      */
-    public void setChessboard(String chessboard) {
+    public void setChessboard(final String chessboard) {
         this.chessboard = chessboard;
     }
 

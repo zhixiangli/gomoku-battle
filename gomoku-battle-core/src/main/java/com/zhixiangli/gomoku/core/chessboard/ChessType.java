@@ -1,13 +1,9 @@
-/**
- * 
- */
 package com.zhixiangli.gomoku.core.chessboard;
 
 /**
  * chess type.
- * 
- * @author lizhixiang
  *
+ * @author lizhixiang
  */
 public enum ChessType {
 
@@ -19,15 +15,15 @@ public enum ChessType {
 
     ;
 
-    private char chessChar;
+    private final char chessChar;
 
-    private ChessType(char chessChar) {
+    ChessType(final char chessChar) {
         this.chessChar = chessChar;
     }
 
-    public static ChessType getChessType(char ch) {
-        for (ChessType chessType : ChessType.values()) {
-            if (ch == chessType.getChessChar()) {
+    public static ChessType getChessType(final char ch) {
+        for (final ChessType chessType : ChessType.values()) {
+            if (ch == chessType.chessChar) {
                 return chessType;
             }
         }

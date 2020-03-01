@@ -1,16 +1,11 @@
-/**
- * 
- */
 package com.zhixiangli.gomoku.core.analysis;
 
 /**
- * 
  * WARNING!!!
- * 
+ * <p>
  * ENUM IS ORDER BY ITS VALUE.
- * 
- * @author zhixiangli
  *
+ * @author zhixiangli
  */
 public enum PatternType {
 
@@ -18,7 +13,7 @@ public enum PatternType {
 
     /**
      * at least 1 position to form THREE_HALF.
-     * 
+     * <p>
      * ...oox, ..o.ox
      */
     HALF_OPEN_TWO(2),
@@ -35,14 +30,14 @@ public enum PatternType {
 
     /**
      * at least 1 position to form THREE_LIVE.
-     * 
+     * <p>
      * ..oo..
      */
     OPEN_TWO(2),
 
     /**
      * at least 1 position to form FOUR_HALF.
-     * 
+     * <p>
      * ..ooox, .o.oox, .oo.ox, o..oo, o.o.o, x.ooo.x
      */
     HALF_OPEN_THREE(3),
@@ -54,21 +49,21 @@ public enum PatternType {
 
     /**
      * at least 1 position to form FOUR_LIVE.
-     * 
+     * <p>
      * ..ooo.
      */
     OPEN_THREE(3),
 
     /**
      * only 1 position to form FIVE.
-     * 
+     * <p>
      * .oooox, o.ooo, oo.oo,
      */
     HALF_OPEN_FOUR(4),
 
     /**
      * 2 positions to form FIVE.
-     * 
+     * <p>
      * .oooo.
      */
     OPEN_FOUR(4),
@@ -80,9 +75,9 @@ public enum PatternType {
 
     ;
 
-    private int chessNum;
+    private final int chessNum;
 
-    private PatternType(int chessNum) {
+    PatternType(final int chessNum) {
         this.chessNum = chessNum;
     }
 

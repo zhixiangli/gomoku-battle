@@ -1,11 +1,7 @@
-/**
- * 
- */
 package com.zhixiangli.gomoku.alphabetasearch.common;
 
 /**
  * @author zhixiangli
- *
  */
 public class CacheConst {
 
@@ -13,4 +9,6 @@ public class CacheConst {
 
     public static final long MAXIMUM_SIZE = 10000000;
 
+    private CacheConst() {
+    }
 }

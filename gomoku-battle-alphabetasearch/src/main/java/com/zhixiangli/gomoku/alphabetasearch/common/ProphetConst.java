@@ -1,23 +1,20 @@
-/**
- * 
- */
 package com.zhixiangli.gomoku.alphabetasearch.common;
-
-import java.util.HashMap;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.zhixiangli.gomoku.core.analysis.PatternType;
 
+import java.util.HashMap;
+
 /**
  * @author zhixiangli
- *
  */
 public class ProphetConst {
 
     public static final ImmutableMap<PatternType, Double> EVALUATION = Maps
             .immutableEnumMap(new HashMap<PatternType, Double>() {
                 private static final long serialVersionUID = 1L;
+
                 {
                     put(PatternType.FIVE, 1e8);
 
@@ -40,4 +37,6 @@ public class ProphetConst {
                 }
             });
 
+    private ProphetConst() {
+    }
 }

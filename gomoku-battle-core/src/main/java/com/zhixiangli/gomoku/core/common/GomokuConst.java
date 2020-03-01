@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.zhixiangli.gomoku.core.common;
 
@@ -8,16 +8,15 @@ import java.util.Random;
 
 /**
  * constant.
- * 
+ *
  * @author lizhixiang
- * @date 2015年6月6日
  */
 public class GomokuConst {
 
     /**
      * four directions.
      */
-    public static final Point[] DIRECTIONS = { new Point(1, 0), new Point(0, 1), new Point(1, 1), new Point(-1, 1) };
+    public static final Point[] DIRECTIONS = {new Point(1, 0), new Point(0, 1), new Point(1, 1), new Point(-1, 1)};
 
     /**
      * continuous number to win the game.
@@ -31,4 +30,6 @@ public class GomokuConst {
 
     public static final Random RANDOM = new Random();
 
+    private GomokuConst() {
+    }
 }

@@ -1,28 +1,23 @@
-/**
- * 
- */
 package com.zhixiangli.gomoku.dashboard.javafx;
-
-import java.awt.Point;
-import java.io.IOException;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.console.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
-
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import org.apache.commons.lang3.StringUtils;
+
+import java.awt.Point;
+import java.io.IOException;
 
 /**
  * pane of each cell of chessboard.
- * 
+ *
  * @author lizhixiang
  */
 class DashboardCellPane extends Pane {
@@ -42,24 +37,23 @@ class DashboardCellPane extends Pane {
     /**
      * chess position
      */
-    private Point position;
+    private final Point position;
 
     /**
      * Gomoku Service.
      */
-    private ChessboardService chessboardService = ChessboardService.getInstance();
+    private final ChessboardService chessboardService = ChessboardService.getInstance();
 
-    public DashboardCellPane(Point position) throws IOException {
+    DashboardCellPane(final Point position) throws IOException {
         this.position = position;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/cell_pane.fxml"));
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/cell_pane.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
         fxmlLoader.load();
     }
 
     /**
-     * 
      * initialize.
      */
     @FXML
@@ -85,27 +79,26 @@ class DashboardCellPane extends Pane {
 
     }
 
-    private void updateCellPane(ChessType chessType, boolean isLatestPosition) {
+    private void updateCellPane(final ChessType chessType, final boolean isLatestPosition) {
         if (ChessType.EMPTY == chessType) {
             cellCircle.visibleProperty().set(false);
         } else {
             cellCircle.visibleProperty().set(true);
             if (isLatestPosition) {
-                cellCircle.setFill(ChessType.BLACK == chessType ? Color.BLACK : Color.CORNSILK);
+                cellCircle.setFill((ChessType.BLACK == chessType) ? Color.BLACK : Color.CORNSILK);
             } else {
-                cellCircle.setFill(ChessType.BLACK == chessType ? Color.DIMGRAY : Color.WHITE);
+                cellCircle.setFill((ChessType.BLACK == chessType) ? Color.DIMGRAY : Color.WHITE);
             }
         }
     }
 
     /**
-     * 
      * when this cell is clicked, this method will be called.
      */
     @FXML
     public void takeMove() {
-        ChessType chessType = chessboardService.getCurrentChessType();
-        Preconditions.checkState(chessType == ChessType.BLACK || chessType == ChessType.WHITE);
+        final ChessType chessType = chessboardService.getCurrentChessType();
+        Preconditions.checkState((chessType == ChessType.BLACK) || (chessType == ChessType.WHITE));
         if (chessType == ChessType.BLACK) {
             Preconditions.checkState(StringUtils.isBlank(PlayerProperties.playerBlackCommand));
         } else {

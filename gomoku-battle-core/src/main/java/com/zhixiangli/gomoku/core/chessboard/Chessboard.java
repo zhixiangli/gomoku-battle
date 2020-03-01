@@ -1,77 +1,67 @@
-/**
- * 
- */
 package com.zhixiangli.gomoku.core.chessboard;
+
+import com.google.common.base.Preconditions;
+import com.zhixiangli.gomoku.core.common.GomokuConst;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Point;
 import java.util.Arrays;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.base.Preconditions;
-import com.zhixiangli.gomoku.core.common.GomokuConst;
-
 /**
  * the data structure of chessboard.
- * 
- * @author lizhixiang
  *
+ * @author lizhixiang
  */
 public class Chessboard implements Cloneable {
 
     /**
      * chessboard.
      */
-    private ChessType[][] chessboard;
+    private final ChessType[][] chessboard;
 
     /**
      * init an empty chessboard.
      */
     public Chessboard() {
-        Preconditions.checkArgument(GomokuConst.CHESSBOARD_SIZE > 0);
-        this.chessboard = new ChessType[GomokuConst.CHESSBOARD_SIZE][GomokuConst.CHESSBOARD_SIZE];
-        this.clear();
+        chessboard = new ChessType[GomokuConst.CHESSBOARD_SIZE][GomokuConst.CHESSBOARD_SIZE];
+        clear();
     }
 
-    public Chessboard(String strs) {
+    public Chessboard(final String strs) {
         this();
-        String[] rows = StringUtils.split(strs);
+        final String[] rows = StringUtils.split(strs);
         Preconditions.checkArgument(ArrayUtils.getLength(rows) == GomokuConst.CHESSBOARD_SIZE);
         for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
             Preconditions.checkArgument(StringUtils.length(rows[i]) == GomokuConst.CHESSBOARD_SIZE);
             for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
-                ChessType chessType = ChessType.getChessType(rows[i].charAt(j));
+                final ChessType chessType = ChessType.getChessType(rows[i].charAt(j));
                 Preconditions.checkNotNull(chessType);
-                this.chessboard[i][j] = chessType;
+                chessboard[i][j] = chessType;
             }
         }
     }
 
     /**
-     * 
      * clear the chessboard.
      */
     public void clear() {
         for (int row = 0; row < GomokuConst.CHESSBOARD_SIZE; ++row) {
             for (int column = 0; column < GomokuConst.CHESSBOARD_SIZE; ++column) {
-                this.chessboard[row][column] = ChessType.EMPTY;
+                chessboard[row][column] = ChessType.EMPTY;
             }
         }
     }
 
     /**
-     * 
      * get chess type.
-     * 
-     * @param row
-     *            row index.
-     * @param column
-     *            column index.
+     *
+     * @param row    row index.
+     * @param column column index.
      * @return chess type.
      */
-    public ChessType getChess(int row, int column) {
-        return this.chessboard[row][column];
+    public ChessType getChess(final int row, final int column) {
+        return chessboard[row][column];
     }
 
     public ChessType getChess(Point p) {
@@ -88,7 +78,7 @@ public class Chessboard implements Cloneable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -101,7 +91,7 @@ public class Chessboard implements Cloneable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -124,7 +114,7 @@ public class Chessboard implements Cloneable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#clone()
      */
     @Override
@@ -143,7 +133,7 @@ public class Chessboard implements Cloneable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

@@ -1,11 +1,8 @@
-/**
- * 
- */
 package com.zhixiangli.gomoku.core.chessboard;
 
 /**
  * chessboard's state.
- * 
+ *
  * @author lizhixiang
  */
 public enum ChessState {
