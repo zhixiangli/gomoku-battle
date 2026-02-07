@@ -1,4 +1,0 @@
-2026-02-07 04:45:12,302 INFO [main] c.z.g.c.a.PatternRecognizer [PatternRecognizer.java:45] fill chess pattern type finish. cost: 11
-2026-02-07 04:45:14,252 INFO [main] c.z.g.a.AlphaBetaSearchAgent [AlphaBetaSearchAgent.java:52] alpha beta search cost: 1
-2026-02-07 04:45:45,827 INFO [main] c.z.g.c.a.PatternRecognizer [PatternRecognizer.java:45] fill chess pattern type finish. cost: 12
-2026-02-07 04:45:47,729 INFO [main] c.z.g.a.AlphaBetaSearchAgent [AlphaBetaSearchAgent.java:52] alpha beta search cost: 1
