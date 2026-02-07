@@ -7,7 +7,7 @@
 ![an example game between alpha-beta-search agents](https://github.com/zhixiangli/gomoku-battle/blob/master/example-game.gif)
 
 ## Dashboard
-![Dashboard UX](https://github.com/user-attachments/assets/4f0713fc-8eca-4a3d-a953-49c80b6f5787)
+![Dashboard UX](dashboard.png)
 
 ## Overview
 **Gomoku**, also called Gobang or Five in a Row, is an abstract strategy board game.

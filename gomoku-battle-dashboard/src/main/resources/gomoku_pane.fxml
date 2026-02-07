@@ -9,7 +9,7 @@
 
 <BorderPane minHeight="650.0" minWidth="850.0" prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <left>
-      <VBox styleClass="sidebar" prefWidth="180.0" spacing="8" alignment="TOP_CENTER">
+      <VBox styleClass="sidebar" prefWidth="240.0" spacing="8" alignment="TOP_CENTER">
          <padding>
             <Insets top="24" right="16" bottom="24" left="16" />
          </padding>
