@@ -77,6 +77,9 @@ public class AlphaBetaSearchAlgorithm {
             } else {
                 final ChessType nextChessType = GameReferee.nextChessType(currentChessType);
                 final Point[] candidateMoves = nextMoves(chessboard);
+                if (candidateMoves.length == 0) {
+                    result = AlphaBetaSearchProphet.evaluateChessboardValue(chessboard, rootChessType);
+                } else {
                 double newAlpha = alpha, newBeta = beta;
                 for (final Point nextPoint : candidateMoves) {
                     // set chessboard.
@@ -93,6 +96,7 @@ public class AlphaBetaSearchAlgorithm {
                     if (newBeta <= newAlpha) {
                         break;
                     }
+                }
                 }
             }
             return result * SearchConst.DECAY_FACTOR;
