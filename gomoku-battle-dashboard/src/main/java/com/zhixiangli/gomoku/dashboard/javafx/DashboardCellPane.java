@@ -1,6 +1,5 @@
 package com.zhixiangli.gomoku.dashboard.javafx;
 
-import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.console.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
@@ -98,11 +97,14 @@ class DashboardCellPane extends Pane {
     @FXML
     public void takeMove() {
         final ChessType chessType = chessboardService.getCurrentChessType();
-        Preconditions.checkState((chessType == ChessType.BLACK) || (chessType == ChessType.WHITE));
-        if (chessType == ChessType.BLACK) {
-            Preconditions.checkState(StringUtils.isBlank(PlayerProperties.playerBlackCommand));
-        } else {
-            Preconditions.checkState(StringUtils.isBlank(PlayerProperties.playerWhiteCommand));
+        if ((chessType != ChessType.BLACK) && (chessType != ChessType.WHITE)) {
+            return;
+        }
+        if (chessType == ChessType.BLACK && StringUtils.isNotBlank(PlayerProperties.playerBlackCommand)) {
+            return;
+        }
+        if (chessType == ChessType.WHITE && StringUtils.isNotBlank(PlayerProperties.playerWhiteCommand)) {
+            return;
         }
 
         chessboardService.takeMove(position);
