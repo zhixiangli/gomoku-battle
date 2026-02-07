@@ -2,6 +2,7 @@ package com.zhixiangli.gomoku.dashboard.javafx;
 
 import com.zhixiangli.gomoku.console.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
+import com.zhixiangli.gomoku.core.common.GomokuConst;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -9,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Point;
@@ -34,6 +36,18 @@ class DashboardCellPane extends Pane {
     private Circle cellCircle;
 
     /**
+     * horizontal grid line through cell center.
+     */
+    @FXML
+    private Line horizontalLine;
+
+    /**
+     * vertical grid line through cell center.
+     */
+    @FXML
+    private Line verticalLine;
+
+    /**
      * chess position
      */
     private final Point position;
@@ -57,6 +71,35 @@ class DashboardCellPane extends Pane {
      */
     @FXML
     public void initialize() {
+        // bind grid lines through cell center, clipped at board edges.
+        int row = position.x;
+        int col = position.y;
+        int maxIndex = GomokuConst.CHESSBOARD_SIZE - 1;
+
+        // horizontal line
+        if (col == 0) {
+            horizontalLine.startXProperty().bind(cellPane.widthProperty().divide(2));
+        }
+        horizontalLine.startYProperty().bind(cellPane.heightProperty().divide(2));
+        if (col == maxIndex) {
+            horizontalLine.endXProperty().bind(cellPane.widthProperty().divide(2));
+        } else {
+            horizontalLine.endXProperty().bind(cellPane.widthProperty());
+        }
+        horizontalLine.endYProperty().bind(cellPane.heightProperty().divide(2));
+
+        // vertical line
+        verticalLine.startXProperty().bind(cellPane.widthProperty().divide(2));
+        if (row == 0) {
+            verticalLine.startYProperty().bind(cellPane.heightProperty().divide(2));
+        }
+        verticalLine.endXProperty().bind(cellPane.widthProperty().divide(2));
+        if (row == maxIndex) {
+            verticalLine.endYProperty().bind(cellPane.heightProperty().divide(2));
+        } else {
+            verticalLine.endYProperty().bind(cellPane.heightProperty());
+        }
+
         // location of this chess piece.
         cellCircle.layoutXProperty().bind(cellPane.widthProperty().divide(2));
         cellCircle.layoutYProperty().bind(cellPane.heightProperty().divide(2));

@@ -89,7 +89,5 @@
 /* ── Cell Pane ─────────────────────────────────────────── */
 
 .chessboard-cell-pane {
-    -fx-border-color: #8b6914;
-    -fx-border-width: 0.5px;
     -fx-background-color: #d4a843;
 }
