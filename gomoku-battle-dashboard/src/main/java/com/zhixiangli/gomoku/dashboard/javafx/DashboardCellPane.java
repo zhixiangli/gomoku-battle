@@ -84,9 +84,11 @@ class DashboardCellPane extends Pane {
         } else {
             cellCircle.visibleProperty().set(true);
             if (isLatestPosition) {
-                cellCircle.setFill((ChessType.BLACK == chessType) ? Color.BLACK : Color.CORNSILK);
+                cellCircle.setFill((ChessType.BLACK == chessType) ? Color.rgb(20, 20, 20) : Color.rgb(240, 240, 235));
+                cellCircle.setStroke((ChessType.BLACK == chessType) ? Color.rgb(60, 60, 60) : Color.rgb(180, 180, 170));
             } else {
-                cellCircle.setFill((ChessType.BLACK == chessType) ? Color.DIMGRAY : Color.WHITE);
+                cellCircle.setFill((ChessType.BLACK == chessType) ? Color.rgb(50, 50, 50) : Color.rgb(225, 225, 220));
+                cellCircle.setStroke(Color.TRANSPARENT);
             }
         }
     }

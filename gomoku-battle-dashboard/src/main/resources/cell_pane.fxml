@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.shape.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root fx:id="cellPane" onMouseClicked="#takeMove" type="javafx.scene.layout.Pane" prefHeight="50.0" prefWidth="50.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="cellPane" onMouseClicked="#takeMove" type="javafx.scene.layout.Pane" prefHeight="40.0" prefWidth="40.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <styleClass>
       <String fx:value="chessboard-cell-pane" />
    </styleClass>
    <children>
-      <Circle fx:id="cellCircle" layoutX="20.0" layoutY="20.0" radius="20" stroke="BLACK" strokeType="INSIDE">
+      <Circle fx:id="cellCircle" layoutX="20.0" layoutY="20.0" radius="16" stroke="TRANSPARENT" strokeType="INSIDE" strokeWidth="0.8">
          <effect>
-            <Lighting>
-               <bumpInput>
-                  <Shadow />
-               </bumpInput>
-               <light>
-                  <Light.Distant />
-               </light>
-            </Lighting>
-         </effect></Circle>
+            <DropShadow radius="3" offsetX="1" offsetY="2" color="rgba(0,0,0,0.5)" />
+         </effect>
+      </Circle>
    </children>
 </fx:root>
