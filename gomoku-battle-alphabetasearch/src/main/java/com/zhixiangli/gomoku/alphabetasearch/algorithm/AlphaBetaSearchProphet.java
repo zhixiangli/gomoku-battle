@@ -81,12 +81,24 @@ public class AlphaBetaSearchProphet {
         if ((openThree > 0) && (halfOpenThree > 0)) {
             value += ProphetConst.EVALUATION.get(PatternType.HALF_OPEN_FOUR) * 3 * (openThree + halfOpenThree);
         }
+        // half open four + half open three
+        if ((halfOpenFour > 0) && (halfOpenThree > 0)) {
+            value += ProphetConst.EVALUATION.get(PatternType.HALF_OPEN_FOUR) * 3 * (halfOpenFour + halfOpenThree);
+        }
+        // half open three + half open three
+        if (halfOpenThree > 1) {
+            value += ProphetConst.EVALUATION.get(PatternType.HALF_OPEN_THREE) * 3 * halfOpenThree;
+        }
         final int openTwo = counter.getOrDefault(PatternType.OPEN_TWO, 0)
                 + counter.getOrDefault(PatternType.ONE_SPACED_OPEN_TWO, 0)
                 + counter.getOrDefault(PatternType.TWO_SPACED_OPEN_TWO, 0);
         // open two + open three
         if ((openTwo > 0) && (openThree > 0)) {
             value += ProphetConst.EVALUATION.get(PatternType.HALF_OPEN_FOUR);
+        }
+        // open two + half open three
+        if ((openTwo > 0) && (halfOpenThree > 0)) {
+            value += ProphetConst.EVALUATION.get(PatternType.HALF_OPEN_THREE) * (openTwo + halfOpenThree);
         }
         // open two + open two
         if (openTwo > 1) {
