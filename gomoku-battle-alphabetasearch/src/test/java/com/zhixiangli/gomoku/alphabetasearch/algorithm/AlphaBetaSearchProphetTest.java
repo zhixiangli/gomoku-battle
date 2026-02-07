@@ -52,6 +52,8 @@ public class AlphaBetaSearchProphetTest {
         types.add(Arrays.asList(SPACED_OPEN_THREE, SPACED_OPEN_THREE));
 
         // have a chance to win
+        types.add(Arrays.asList(HALF_OPEN_FOUR, HALF_OPEN_THREE));
+
         types.add(Arrays.asList(OPEN_THREE, HALF_OPEN_THREE));
         types.add(Arrays.asList(SPACED_OPEN_THREE, HALF_OPEN_THREE));
 
@@ -60,12 +62,18 @@ public class AlphaBetaSearchProphetTest {
         types.add(Collections.singletonList(OPEN_THREE));
         types.add(Collections.singletonList(SPACED_OPEN_THREE));
 
+        types.add(Arrays.asList(HALF_OPEN_THREE, HALF_OPEN_THREE));
+
         types.add(Arrays.asList(OPEN_TWO, OPEN_TWO));
         types.add(Arrays.asList(OPEN_TWO, ONE_SPACED_OPEN_TWO));
         types.add(Arrays.asList(OPEN_TWO, TWO_SPACED_OPEN_TWO));
         types.add(Arrays.asList(ONE_SPACED_OPEN_TWO, ONE_SPACED_OPEN_TWO));
         types.add(Arrays.asList(ONE_SPACED_OPEN_TWO, TWO_SPACED_OPEN_TWO));
         types.add(Arrays.asList(TWO_SPACED_OPEN_TWO, TWO_SPACED_OPEN_TWO));
+
+        types.add(Arrays.asList(OPEN_TWO, HALF_OPEN_THREE));
+        types.add(Arrays.asList(ONE_SPACED_OPEN_TWO, HALF_OPEN_THREE));
+        types.add(Arrays.asList(TWO_SPACED_OPEN_TWO, HALF_OPEN_THREE));
 
         types.add(Collections.singletonList(HALF_OPEN_THREE));
 
