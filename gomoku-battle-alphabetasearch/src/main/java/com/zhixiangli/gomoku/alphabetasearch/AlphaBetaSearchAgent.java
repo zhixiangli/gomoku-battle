@@ -10,7 +10,7 @@ import com.zhixiangli.gomoku.core.chessboard.Chessboard;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 import com.zhixiangli.gomoku.core.common.GomokuFormatter;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.RandomUtils;
+import java.util.concurrent.ThreadLocalRandom;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -77,7 +77,7 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
         final double bestValue = pairs.stream().map(Pair::getValue).max(Double::compare).get();
         final List<Pair<Point, Double>> resultPoints = pairs.stream()
                 .filter(pair -> Double.compare(bestValue, pair.getValue()) == 0).collect(Collectors.toList());
-        return resultPoints.get(RandomUtils.nextInt(0, resultPoints.size())).getKey();
+        return resultPoints.get(ThreadLocalRandom.current().nextInt(resultPoints.size())).getKey();
     }
 
     public static void main(final String[] args) {
