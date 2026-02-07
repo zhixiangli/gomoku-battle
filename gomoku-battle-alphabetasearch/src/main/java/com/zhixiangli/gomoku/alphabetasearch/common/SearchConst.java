@@ -16,10 +16,11 @@ public class SearchConst {
     public static final double DECAY_FACTOR = 0.999;
 
     /**
-     * The range (in number of cells) around existing stones to consider
-     * when generating candidate moves. Only empty positions within this
-     * distance from an already-placed stone are evaluated, which significantly
-     * reduces the search space on a large board.
+     * The Chebyshev distance (in cells) used to find candidate moves around
+     * existing stones. For each occupied cell at (row, col), a square region
+     * from (row - range, col - range) to (row + range, col + range) is scanned
+     * and any empty position within that region becomes a candidate move.
+     * This limits the search space to positions near existing stones.
      */
     public static final int AROUND_CANDIDATE_RANGE = 2;
 
@@ -28,7 +29,7 @@ public class SearchConst {
      * Candidates are ranked by a heuristic evaluation and only the top moves
      * are explored further, keeping the branching factor manageable.
      */
-    public static final int MAX_CANDIDATE_NUM = 15;
+    public static final int MAX_CANDIDATE_NUM = 10;
 
     /**
      * The maximum depth (in plies) that the alpha-beta search will explore.
