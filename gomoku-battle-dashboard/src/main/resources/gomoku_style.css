@@ -1,5 +1,95 @@
+/* ── Root & Sidebar ─────────────────────────────────────── */
+
+.root {
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-background-color: #2b2b2b;
+}
+
+.sidebar {
+    -fx-background-color: #1e1e1e;
+    -fx-padding: 20 15 20 15;
+    -fx-spacing: 12;
+}
+
+.sidebar-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e0c088;
+}
+
+.section-title {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8a8a8a;
+    -fx-padding: 8 0 2 0;
+}
+
+.announcement-label {
+    -fx-background-color: #333333;
+    -fx-text-fill: #f0d080;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10;
+    -fx-background-radius: 6;
+    -fx-alignment: center;
+    -fx-wrap-text: true;
+    -fx-min-height: 40;
+}
+
+.player-label {
+    -fx-background-color: #333333;
+    -fx-text-fill: #d0d0d0;
+    -fx-font-size: 13px;
+    -fx-padding: 6 10;
+    -fx-background-radius: 4;
+}
+
+.player-indicator-black {
+    -fx-fill: #1a1a1a;
+    -fx-stroke: #555555;
+    -fx-stroke-width: 1.5;
+}
+
+.player-indicator-white {
+    -fx-fill: #f0f0f0;
+    -fx-stroke: #555555;
+    -fx-stroke-width: 1.5;
+}
+
+/* ── New Game Button ───────────────────────────────────── */
+
+.new-game-button {
+    -fx-background-color: #4a8c5c;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 4, 0, 0, 2);
+}
+
+.new-game-button:hover {
+    -fx-background-color: #5aaa6e;
+}
+
+.new-game-button:pressed {
+    -fx-background-color: #3a7a4c;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 2, 0, 0, 1);
+}
+
+/* ── Chessboard Grid ───────────────────────────────────── */
+
+.chessboard-grid {
+    -fx-background-color: #c8a254;
+    -fx-padding: 4;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 4);
+}
+
+/* ── Cell Pane ─────────────────────────────────────────── */
+
 .chessboard-cell-pane {
-	-fx-border-color: black;
-	-fx-border-width: 1px;
-	-fx-background-color: pink;
+    -fx-border-color: #8b6914;
+    -fx-border-width: 0.5px;
+    -fx-background-color: #d4a843;
 }

@@ -31,7 +31,9 @@ public class DashboardApplication extends Application {
         final String title = String.format("ALPHA GOMOKU (©%d LI ZHIXIANG)", Calendar.getInstance().get(Calendar.YEAR));
         primaryStage.setTitle(title);
         primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(true);
+        primaryStage.setMinWidth(750);
+        primaryStage.setMinHeight(600);
         primaryStage.show();
     }
 

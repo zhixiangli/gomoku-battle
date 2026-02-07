@@ -1,32 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.text.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.shape.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.effect.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="650.0" minWidth="850.0" prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <left>
-      <Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="750" prefWidth="150.0">
+      <VBox styleClass="sidebar" prefWidth="180.0" spacing="8" alignment="TOP_CENTER">
+         <padding>
+            <Insets top="24" right="16" bottom="24" left="16" />
+         </padding>
          <children>
-            <Button layoutX="25.0" layoutY="550.0" mnemonicParsing="false" onMouseClicked="#newGame" prefHeight="30.0" prefWidth="100.0" text="NEW GAME" />
-            <TextArea fx:id="blackAliasArea" layoutX="25.0" layoutY="350.0" prefHeight="30.0" prefWidth="100.0" />
-            <TextArea fx:id="whiteAliasArea" layoutX="25.0" layoutY="470.0" prefHeight="30.0" prefWidth="100.0" />
-            <Circle layoutX="75.0" layoutY="320.0" radius="20.0" stroke="BLACK" strokeType="INSIDE" />
-            <Circle fill="WHITE" layoutX="75.0" layoutY="440.0" radius="20.0" stroke="BLACK" strokeType="INSIDE" />
-            <TextArea fx:id="announcementArea" layoutX="25.0" layoutY="50.0" prefHeight="200.0" prefWidth="100.0" />
+            <Label text="GOMOKU BATTLE" styleClass="sidebar-title" />
+
+            <Separator prefWidth="148.0">
+               <padding><Insets top="8" bottom="4" /></padding>
+            </Separator>
+
+            <Label text="STATUS" styleClass="section-title" />
+            <Label fx:id="announcementArea" styleClass="announcement-label" maxWidth="Infinity" alignment="CENTER" />
+
+            <Separator prefWidth="148.0">
+               <padding><Insets top="8" bottom="4" /></padding>
+            </Separator>
+
+            <Label text="BLACK" styleClass="section-title" />
+            <HBox spacing="8" alignment="CENTER_LEFT">
+               <children>
+                  <Circle radius="14.0" styleClass="player-indicator-black" />
+                  <Label fx:id="blackAliasArea" styleClass="player-label" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+               </children>
+            </HBox>
+
+            <Label text="WHITE" styleClass="section-title" />
+            <HBox spacing="8" alignment="CENTER_LEFT">
+               <children>
+                  <Circle radius="14.0" styleClass="player-indicator-white" />
+                  <Label fx:id="whiteAliasArea" styleClass="player-label" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+               </children>
+            </HBox>
+
+            <Region VBox.vgrow="ALWAYS" />
+
+            <Button mnemonicParsing="false" onMouseClicked="#newGame" text="NEW GAME" styleClass="new-game-button" maxWidth="Infinity" />
          </children>
-      </Pane>
+      </VBox>
    </left>
    <center>
-      <GridPane fx:id="chessboardGridPane" gridLinesVisible="true" BorderPane.alignment="CENTER">
+      <GridPane fx:id="chessboardGridPane" styleClass="chessboard-grid" gridLinesVisible="false" alignment="CENTER" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets />
+            <Insets top="12" right="12" bottom="12" left="12" />
          </BorderPane.margin>
       </GridPane>
    </center>
