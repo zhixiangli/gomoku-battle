@@ -20,10 +20,10 @@ public class AlphaBetaSearchProphet {
     private AlphaBetaSearchProphet() {
     }
 
-    public static int evaluateChessboardValue(final Chessboard chessboard, final ChessType selfChessType) {
+    public static double evaluateChessboardValue(final Chessboard chessboard, final ChessType selfChessType) {
         Preconditions.checkArgument(selfChessType != ChessType.EMPTY);
-        final int selfValue = evaluateChessboardValueByChessType(chessboard, selfChessType);
-        final int opponentValue = evaluateChessboardValueByChessType(chessboard, GameReferee.nextChessType(selfChessType));
+        final double selfValue = evaluateChessboardValueByChessType(chessboard, selfChessType);
+        final double opponentValue = evaluateChessboardValueByChessType(chessboard, GameReferee.nextChessType(selfChessType));
         if (selfValue > opponentValue) {
             return selfValue;
         } else {
@@ -31,8 +31,8 @@ public class AlphaBetaSearchProphet {
         }
     }
 
-    public static int evaluateChessboardValueByChessType(final Chessboard chessboard, final ChessType chessType) {
-        int value = 0;
+    public static double evaluateChessboardValueByChessType(final Chessboard chessboard, final ChessType chessType) {
+        double value = 0;
         for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
             for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
                 if (chessboard.getChess(i, j) == chessType) {
