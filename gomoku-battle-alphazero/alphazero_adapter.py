@@ -31,8 +31,9 @@ _ADAPTER_DIR = os.path.dirname(os.path.abspath(__file__))
 # Root of the alphazero-board-games submodule (sibling of this adapter dir).
 _SUBMODULE_DIR = os.path.join(os.path.dirname(_ADAPTER_DIR), "alphazero-board-games")
 
-# Log file lives next to this script; mode='w' clears previous logs each run.
-_LOG_FILE = os.path.join(_ADAPTER_DIR, "alphazero.log")
+# Log file lives in the gomoku-battle/log directory; mode='w' clears previous logs each run.
+_LOG_DIR = os.path.join(os.path.dirname(_ADAPTER_DIR), "log")
+_LOG_FILE = os.path.join(_LOG_DIR, "alphazero.log")
 
 
 def _pick_ai_action(mcts, board, player):
@@ -56,6 +57,7 @@ def _command_to_player(command: str) -> str:
 
 def main():
     # Log to a file (cleared each run) so stdout stays clean for JSON protocol.
+    os.makedirs(_LOG_DIR, exist_ok=True)
     handler = logging.FileHandler(_LOG_FILE, mode="w")
     handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
     logging.basicConfig(level=logging.INFO, handlers=[handler])
