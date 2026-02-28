@@ -25,6 +25,7 @@
 | **gomoku-battle-console** | The referee — manages agent subprocesses, sends/receives JSON commands |
 | **gomoku-battle-dashboard** | Real-time JavaFX dashboard to visualize the game as it unfolds |
 | **gomoku-battle-alphabetasearch** | 🏆 **A strong built-in AI agent** powered by alpha-beta pruning (see below) |
+| **gomoku-battle-alphazero** | AlphaZero adapter — integrates an MCTS + neural-network based agent via stdio |
 
 ---
 
@@ -99,12 +100,4 @@ Return the position to make a move.
 | AI | Description | Language | Command Processor |
 |----|-------------|----------|-------------------|
 | [alpha-beta-search](https://github.com/zhixiangli/gomoku-battle/tree/master/gomoku-battle-alphabetasearch) | 🏆 Alpha-Beta Search Agent — strong built-in AI | Java | [AlphaBetaSearchAgent.java](https://github.com/zhixiangli/gomoku-battle/blob/master/gomoku-battle-alphabetasearch/src/main/java/com/zhixiangli/gomoku/alphabetasearch/AlphaBetaSearchAgent.java) |
-
-## 📈 Evaluation
-Run a batch of games and collect statistics:
-```bash
-git clone https://github.com/zhixiangli/gomoku-battle.git
-cd gomoku-battle
-sh build.sh
-sh battle.sh -c battle.properties -d
-```
+| [alphazero](https://github.com/zhixiangli/gomoku-battle/tree/master/gomoku-battle-alphazero) | AlphaZero Agent adapter with configurable MCTS simulations | Python | [alphazero_adapter.py](https://github.com/zhixiangli/gomoku-battle/blob/master/gomoku-battle-alphazero/alphazero_adapter.py) |
