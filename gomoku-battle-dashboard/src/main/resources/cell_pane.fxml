@@ -17,5 +17,6 @@
             <DropShadow radius="3" offsetX="1" offsetY="2" color="rgba(0,0,0,0.5)" />
          </effect>
       </Circle>
+      <Circle fx:id="lastMoveMarker" layoutX="20.0" layoutY="20.0" radius="4.0" fill="#ff4d4d" stroke="#fff7e0" strokeType="INSIDE" strokeWidth="1.2" visible="false" mouseTransparent="true" />
    </children>
 </fx:root>
