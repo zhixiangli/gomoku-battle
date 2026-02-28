@@ -13,6 +13,7 @@ Response (stdout): {"rowIndex":7,"columnIndex":8}
 """
 
 import glob
+import argparse
 import json
 import logging
 import os
@@ -36,6 +37,18 @@ _LOG_DIR = os.path.join(os.path.dirname(_ADAPTER_DIR), "log")
 _LOG_FILE = os.path.join(_LOG_DIR, "alphazero.log")
 
 
+def _parse_args():
+    """Parse CLI arguments for adapter runtime settings."""
+    parser = argparse.ArgumentParser(description="Run AlphaZero gomoku adapter")
+    parser.add_argument(
+        "--simulation-num",
+        type=int,
+        default=5000,
+        help="Number of MCTS simulations per move (default: 5000)",
+    )
+    return parser.parse_args()
+
+
 def _pick_ai_action(mcts, board, player):
     """Pick the best action using MCTS (same logic as alphazero.stdio_play)."""
     actions, counts = mcts.simulate(board, player)
@@ -56,6 +69,8 @@ def _command_to_player(command: str) -> str:
 
 
 def main():
+    args = _parse_args()
+
     # Log to a file (cleared each run) so stdout stays clean for JSON protocol.
     os.makedirs(_LOG_DIR, exist_ok=True)
     handler = logging.FileHandler(_LOG_FILE, mode="w")
@@ -66,8 +81,11 @@ def main():
     logger.info("Initializing AlphaZero adapter...")
 
     config = GomokuConfig()
+    config.simulation_num = args.simulation_num
     game = GomokuGame(config)
     nnet = AlphaZeroNNet(game, config)
+
+    logger.info("MCTS simulation_num=%d", config.simulation_num)
 
     # Resolve checkpoint path relative to the submodule directory so it works
     # regardless of the process's current working directory.

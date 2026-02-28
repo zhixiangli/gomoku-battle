@@ -67,6 +67,8 @@ player.white.cmd=java -jar bin/gomoku-battle-alphabetasearch-0.0.1-SNAPSHOT-jar-
 player.white.alias=alpha-beta-search
 ```
 
+For the AlphaZero adapter, you can pass MCTS settings directly in `player.xxxxx.cmd`, for example: `--simulation-num=5000`.
+
 ## 🔌 AI Agent API
 The console creates a subprocess for each AI agent. Communication is via **stdin** (JSON request) and **stdout** (JSON response).
 
