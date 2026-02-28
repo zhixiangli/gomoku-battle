@@ -99,6 +99,9 @@ public class ChessboardService {
 
         // make move.
         chessboardProperty[point.x][point.y].set(currentChessType.get());
+        lastMovePoint.set(new Point(point));
+        history.add(Pair.of(currentChessType.get(), new Point(point)));
+
         final Chessboard chessboard = getChessboard();
         if (GameReferee.isWin(chessboard, point)) { // if win.
             final ChessState winner = (ChessType.BLACK == currentChessType.get()) ? ChessState.BLACK_WIN : ChessState.WHITE_WIN;
@@ -108,8 +111,6 @@ public class ChessboardService {
             chessStateProperty.set(ChessState.GAME_DRAW);
             LOGGER.info("game over, draw");
         } else {
-            lastMovePoint.set(new Point(point));
-            history.add(Pair.of(currentChessType.get(), new Point(point)));
             // finish this move, and change the current chess type and current
             // player.
             currentChessType.set(GameReferee.nextChessType(currentChessType.get()));
