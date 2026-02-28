@@ -1,0 +1,3 @@
+[submodule "alphazero-board-games"]
+	path = alphazero-board-games
+	url = https://github.com/zhixiangli/alphazero-board-games.git
