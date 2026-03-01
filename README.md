@@ -4,9 +4,9 @@
 
 ## 🎬 Example Match Animation
 
-Black uses **alpha-beta-search** and white uses **AlphaZero**. The animation below is generated from a real battle log and ends with `WHITE_WIN`.
+Black uses **Alpha-Beta Search** and white uses **AlphaZero**. The animation below is generated from a real battle log and ends with `WHITE_WIN`.
 
-![Black (alpha-beta-search) vs White (AlphaZero) animation](assets/black-alphabetasearch-vs-white-alphazero.svg)
+![Black (Alpha-Beta Search) vs White (AlphaZero) animation](assets/black-alphabetasearch-vs-white-alphazero.svg)
 
 ## 🎯 Overview
 
@@ -19,7 +19,7 @@ Black uses **alpha-beta-search** and white uses **AlphaZero**. The animation bel
 | **gomoku-battle-core** | Board model, rule checks, and pattern utilities |
 | **gomoku-battle-console** | Match referee that runs agents as subprocesses and exchanges JSON commands |
 | **gomoku-battle-dashboard** | JavaFX UI for real-time game visualization |
-| **gomoku-battle-alphabetasearch** | Built-in alpha-beta pruning baseline agent |
+| **gomoku-battle-alphabetasearch** | Built-in Alpha-Beta Search baseline agent |
 | **gomoku-battle-alphazero** | AlphaZero algorithm implementation (MCTS + neural network) that is stronger than the alpha-beta pruning baseline |
 
 ---
@@ -41,9 +41,9 @@ Configure agents in **battle.properties**:
 ### Configuration Example
 ```properties
 player.black.cmd=java -jar bin/gomoku-battle-alphabetasearch-0.0.1-SNAPSHOT-jar-with-dependencies.jar
-player.black.alias=alpha-beta-search
+player.black.alias=Alpha-Beta Search
 player.white.cmd=java -jar bin/gomoku-battle-alphabetasearch-0.0.1-SNAPSHOT-jar-with-dependencies.jar
-player.white.alias=alpha-beta-search
+player.white.alias=Alpha-Beta Search
 ```
 
 For AlphaZero, pass MCTS options in `player.xxxxx.cmd`, e.g. `--simulation-num=5000`.
@@ -77,5 +77,5 @@ Return the move position.
 
 | AI | Description | Language | Command Processor |
 |----|-------------|----------|-------------------|
-| [alpha-beta-search](https://github.com/zhixiangli/gomoku-battle/tree/master/gomoku-battle-alphabetasearch) | Alpha-beta pruning baseline agent | Java | [AlphaBetaSearchAgent.java](https://github.com/zhixiangli/gomoku-battle/blob/master/gomoku-battle-alphabetasearch/src/main/java/com/zhixiangli/gomoku/alphabetasearch/AlphaBetaSearchAgent.java) |
+| [Alpha-Beta Search](https://github.com/zhixiangli/gomoku-battle/tree/master/gomoku-battle-alphabetasearch) | Alpha-Beta Search baseline agent | Java | [AlphaBetaSearchAgent.java](https://github.com/zhixiangli/gomoku-battle/blob/master/gomoku-battle-alphabetasearch/src/main/java/com/zhixiangli/gomoku/alphabetasearch/AlphaBetaSearchAgent.java) |
 | [alphazero](https://github.com/zhixiangli/gomoku-battle/tree/master/gomoku-battle-alphazero) | AlphaZero algorithm implementation that is stronger than the alpha-beta pruning baseline, with configurable MCTS simulations | Python | [alphazero_adapter.py](https://github.com/zhixiangli/gomoku-battle/blob/master/gomoku-battle-alphazero/alphazero_adapter.py) |
