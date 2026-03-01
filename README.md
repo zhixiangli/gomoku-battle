@@ -2,6 +2,12 @@
 
 > A lightweight Gomoku AI arena for running and comparing agents.
 
+## 🎬 Example Match Animation
+
+Black uses **alpha-beta-search** and white uses **AlphaZero**. The animation below is generated from a real battle log and ends with `WHITE_WIN`.
+
+![Black (alpha-beta-search) vs White (AlphaZero) animation](assets/black-alphabetasearch-vs-white-alphazero.svg)
+
 ## 🎯 Overview
 
 **Gomoku Battle** is a pluggable platform for running Gomoku AI matches across languages. Implement an agent, connect it through stdio, and battle it against others.
@@ -25,12 +31,6 @@ cd gomoku-battle
 sh build.sh
 sh battle.sh -c battle.properties
 ```
-
-## 🎬 Example Match Animation
-
-Black uses **alpha-beta-search** and white uses **AlphaZero**. The animation below is generated from a real battle log and ends with `WHITE_WIN`.
-
-![Black (alpha-beta-search) vs White (AlphaZero) animation](assets/black-alphabetasearch-vs-white-alphazero.svg)
 
 ## ⚙️ Configuration
 Configure agents in **battle.properties**:
