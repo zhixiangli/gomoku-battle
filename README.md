@@ -42,8 +42,8 @@ Configure agents in **battle.properties**:
 ```properties
 player.black.cmd=java -jar bin/gomoku-battle-alphabetasearch-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 player.black.alias=Alpha-Beta Search
-player.white.cmd=java -jar bin/gomoku-battle-alphabetasearch-0.0.1-SNAPSHOT-jar-with-dependencies.jar
-player.white.alias=Alpha-Beta Search
+player.white.cmd=uv run --project alphazero-board-games python gomoku-battle-alphazero/alphazero_adapter.py --simulation-num=5000
+player.white.alias=AlphaZero
 ```
 
 For AlphaZero, pass MCTS options in `player.xxxxx.cmd`, e.g. `--simulation-num=5000`.
