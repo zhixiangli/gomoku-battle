@@ -26,6 +26,12 @@ sh build.sh
 sh battle.sh -c battle.properties
 ```
 
+## 🎬 Example Match Animation
+
+Black uses **alpha-beta-search** and white uses **AlphaZero**. The animation below is generated from a real battle log and ends with `WHITE_WIN`.
+
+![Black (alpha-beta-search) vs White (AlphaZero) animation](assets/black-alphabetasearch-vs-white-alphazero.svg)
+
 ## ⚙️ Configuration
 Configure agents in **battle.properties**:
 

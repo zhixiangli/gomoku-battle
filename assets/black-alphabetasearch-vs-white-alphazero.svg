@@ -1,0 +1,187 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1000" viewBox="0 0 900 1000">
+<rect width="100%" height="100%" fill="#f3d7a4"/>
+<text x="450" y="32" text-anchor="middle" font-size="24" fill="#2b1d0e" font-family="Arial, sans-serif">Black (alpha-beta-search) vs White (AlphaZero)</text>
+<line x1="60.00" y1="60.00" x2="60.00" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="60.00" x2="840.00" y2="60.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="115.71" y1="60.00" x2="115.71" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="115.71" x2="840.00" y2="115.71" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="171.43" y1="60.00" x2="171.43" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="171.43" x2="840.00" y2="171.43" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="227.14" y1="60.00" x2="227.14" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="227.14" x2="840.00" y2="227.14" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="282.86" y1="60.00" x2="282.86" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="282.86" x2="840.00" y2="282.86" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="338.57" y1="60.00" x2="338.57" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="338.57" x2="840.00" y2="338.57" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="394.29" y1="60.00" x2="394.29" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="394.29" x2="840.00" y2="394.29" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="450.00" y1="60.00" x2="450.00" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="450.00" x2="840.00" y2="450.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="505.71" y1="60.00" x2="505.71" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="505.71" x2="840.00" y2="505.71" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="561.43" y1="60.00" x2="561.43" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="561.43" x2="840.00" y2="561.43" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="617.14" y1="60.00" x2="617.14" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="617.14" x2="840.00" y2="617.14" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="672.86" y1="60.00" x2="672.86" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="672.86" x2="840.00" y2="672.86" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="728.57" y1="60.00" x2="728.57" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="728.57" x2="840.00" y2="728.57" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="784.29" y1="60.00" x2="784.29" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="784.29" x2="840.00" y2="784.29" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="840.00" y1="60.00" x2="840.00" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<line x1="60.00" y1="840.00" x2="840.00" y2="840.00" stroke="#6b4f2a" stroke-width="1.4"/>
+<text x="60.00" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">A</text>
+<text x="115.71" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">B</text>
+<text x="171.43" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">C</text>
+<text x="227.14" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">D</text>
+<text x="282.86" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">E</text>
+<text x="338.57" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">F</text>
+<text x="394.29" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">G</text>
+<text x="450.00" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">H</text>
+<text x="505.71" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">I</text>
+<text x="561.43" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">J</text>
+<text x="617.14" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">K</text>
+<text x="672.86" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">L</text>
+<text x="728.57" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">M</text>
+<text x="784.29" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">N</text>
+<text x="840.00" y="52" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">O</text>
+<text x="35" y="65.00" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">1</text>
+<text x="35" y="120.71" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">2</text>
+<text x="35" y="176.43" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">3</text>
+<text x="35" y="232.14" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">4</text>
+<text x="35" y="287.86" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">5</text>
+<text x="35" y="343.57" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">6</text>
+<text x="35" y="399.29" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">7</text>
+<text x="35" y="455.00" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">8</text>
+<text x="35" y="510.71" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">9</text>
+<text x="35" y="566.43" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">10</text>
+<text x="35" y="622.14" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">11</text>
+<text x="35" y="677.86" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">12</text>
+<text x="35" y="733.57" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">13</text>
+<text x="35" y="789.29" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">14</text>
+<text x="35" y="845.00" text-anchor="middle" font-size="15" fill="#3a2a16" font-family="Arial, sans-serif">15</text>
+<circle cx="505.71" cy="450.00" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="0.00s" fill="freeze"/></circle>
+<text x="505.71" y="454.00" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">1<set attributeName="visibility" to="visible" begin="0.00s" fill="freeze"/></text>
+<circle cx="450.00" cy="505.71" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="0.70s" fill="freeze"/></circle>
+<text x="450.00" y="509.71" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">2<set attributeName="visibility" to="visible" begin="0.70s" fill="freeze"/></text>
+<circle cx="394.29" cy="450.00" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="1.40s" fill="freeze"/></circle>
+<text x="394.29" y="454.00" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">3<set attributeName="visibility" to="visible" begin="1.40s" fill="freeze"/></text>
+<circle cx="450.00" cy="394.29" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="2.10s" fill="freeze"/></circle>
+<text x="450.00" y="398.29" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">4<set attributeName="visibility" to="visible" begin="2.10s" fill="freeze"/></text>
+<circle cx="450.00" cy="450.00" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="2.80s" fill="freeze"/></circle>
+<text x="450.00" y="454.00" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">5<set attributeName="visibility" to="visible" begin="2.80s" fill="freeze"/></text>
+<circle cx="561.43" cy="450.00" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="3.50s" fill="freeze"/></circle>
+<text x="561.43" y="454.00" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">6<set attributeName="visibility" to="visible" begin="3.50s" fill="freeze"/></text>
+<circle cx="338.57" cy="450.00" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="4.20s" fill="freeze"/></circle>
+<text x="338.57" y="454.00" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">7<set attributeName="visibility" to="visible" begin="4.20s" fill="freeze"/></text>
+<circle cx="282.86" cy="450.00" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="4.90s" fill="freeze"/></circle>
+<text x="282.86" y="454.00" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">8<set attributeName="visibility" to="visible" begin="4.90s" fill="freeze"/></text>
+<circle cx="505.71" cy="505.71" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="5.60s" fill="freeze"/></circle>
+<text x="505.71" y="509.71" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">9<set attributeName="visibility" to="visible" begin="5.60s" fill="freeze"/></text>
+<circle cx="394.29" cy="394.29" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="6.30s" fill="freeze"/></circle>
+<text x="394.29" y="398.29" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">10<set attributeName="visibility" to="visible" begin="6.30s" fill="freeze"/></text>
+<circle cx="505.71" cy="394.29" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="7.00s" fill="freeze"/></circle>
+<text x="505.71" y="398.29" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">11<set attributeName="visibility" to="visible" begin="7.00s" fill="freeze"/></text>
+<circle cx="505.71" cy="561.43" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="7.70s" fill="freeze"/></circle>
+<text x="505.71" y="565.43" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">12<set attributeName="visibility" to="visible" begin="7.70s" fill="freeze"/></text>
+<circle cx="394.29" cy="505.71" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="8.40s" fill="freeze"/></circle>
+<text x="394.29" y="509.71" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">13<set attributeName="visibility" to="visible" begin="8.40s" fill="freeze"/></text>
+<circle cx="338.57" cy="561.43" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="9.10s" fill="freeze"/></circle>
+<text x="338.57" y="565.43" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">14<set attributeName="visibility" to="visible" begin="9.10s" fill="freeze"/></text>
+<circle cx="561.43" cy="338.57" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="9.80s" fill="freeze"/></circle>
+<text x="561.43" y="342.57" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">15<set attributeName="visibility" to="visible" begin="9.80s" fill="freeze"/></text>
+<circle cx="617.14" cy="282.86" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="10.50s" fill="freeze"/></circle>
+<text x="617.14" y="286.86" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">16<set attributeName="visibility" to="visible" begin="10.50s" fill="freeze"/></text>
+<circle cx="505.71" cy="282.86" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="11.20s" fill="freeze"/></circle>
+<text x="505.71" y="286.86" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">17<set attributeName="visibility" to="visible" begin="11.20s" fill="freeze"/></text>
+<circle cx="505.71" cy="338.57" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="11.90s" fill="freeze"/></circle>
+<text x="505.71" y="342.57" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">18<set attributeName="visibility" to="visible" begin="11.90s" fill="freeze"/></text>
+<circle cx="617.14" cy="394.29" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="12.60s" fill="freeze"/></circle>
+<text x="617.14" y="398.29" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">19<set attributeName="visibility" to="visible" begin="12.60s" fill="freeze"/></text>
+<circle cx="672.86" cy="450.00" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="13.30s" fill="freeze"/></circle>
+<text x="672.86" y="454.00" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">20<set attributeName="visibility" to="visible" begin="13.30s" fill="freeze"/></text>
+<circle cx="450.00" cy="227.14" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="14.00s" fill="freeze"/></circle>
+<text x="450.00" y="231.14" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">21<set attributeName="visibility" to="visible" begin="14.00s" fill="freeze"/></text>
+<circle cx="394.29" cy="171.43" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="14.70s" fill="freeze"/></circle>
+<text x="394.29" y="175.43" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">22<set attributeName="visibility" to="visible" begin="14.70s" fill="freeze"/></text>
+<circle cx="394.29" cy="561.43" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="15.40s" fill="freeze"/></circle>
+<text x="394.29" y="565.43" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">23<set attributeName="visibility" to="visible" begin="15.40s" fill="freeze"/></text>
+<circle cx="282.86" cy="394.29" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="16.10s" fill="freeze"/></circle>
+<text x="282.86" y="398.29" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">24<set attributeName="visibility" to="visible" begin="16.10s" fill="freeze"/></text>
+<circle cx="338.57" cy="394.29" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="16.80s" fill="freeze"/></circle>
+<text x="338.57" y="398.29" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">25<set attributeName="visibility" to="visible" begin="16.80s" fill="freeze"/></text>
+<circle cx="282.86" cy="338.57" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="17.50s" fill="freeze"/></circle>
+<text x="282.86" y="342.57" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">26<set attributeName="visibility" to="visible" begin="17.50s" fill="freeze"/></text>
+<circle cx="282.86" cy="282.86" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="18.20s" fill="freeze"/></circle>
+<text x="282.86" y="286.86" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">27<set attributeName="visibility" to="visible" begin="18.20s" fill="freeze"/></text>
+<circle cx="282.86" cy="505.71" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="18.90s" fill="freeze"/></circle>
+<text x="282.86" y="509.71" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">28<set attributeName="visibility" to="visible" begin="18.90s" fill="freeze"/></text>
+<circle cx="282.86" cy="561.43" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="19.60s" fill="freeze"/></circle>
+<text x="282.86" y="565.43" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">29<set attributeName="visibility" to="visible" begin="19.60s" fill="freeze"/></text>
+<circle cx="394.29" cy="227.14" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="20.30s" fill="freeze"/></circle>
+<text x="394.29" y="231.14" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">30<set attributeName="visibility" to="visible" begin="20.30s" fill="freeze"/></text>
+<circle cx="338.57" cy="282.86" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="21.00s" fill="freeze"/></circle>
+<text x="338.57" y="286.86" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">31<set attributeName="visibility" to="visible" begin="21.00s" fill="freeze"/></text>
+<circle cx="338.57" cy="338.57" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="21.70s" fill="freeze"/></circle>
+<text x="338.57" y="342.57" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">32<set attributeName="visibility" to="visible" begin="21.70s" fill="freeze"/></text>
+<circle cx="394.29" cy="282.86" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="22.40s" fill="freeze"/></circle>
+<text x="394.29" y="286.86" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">33<set attributeName="visibility" to="visible" begin="22.40s" fill="freeze"/></text>
+<circle cx="450.00" cy="282.86" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="23.10s" fill="freeze"/></circle>
+<text x="450.00" y="286.86" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">34<set attributeName="visibility" to="visible" begin="23.10s" fill="freeze"/></text>
+<circle cx="394.29" cy="617.14" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="23.80s" fill="freeze"/></circle>
+<text x="394.29" y="621.14" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">35<set attributeName="visibility" to="visible" begin="23.80s" fill="freeze"/></text>
+<circle cx="394.29" cy="672.86" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="24.50s" fill="freeze"/></circle>
+<text x="394.29" y="676.86" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">36<set attributeName="visibility" to="visible" begin="24.50s" fill="freeze"/></text>
+<circle cx="561.43" cy="394.29" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="25.20s" fill="freeze"/></circle>
+<text x="561.43" y="398.29" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">37<set attributeName="visibility" to="visible" begin="25.20s" fill="freeze"/></text>
+<circle cx="338.57" cy="171.43" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="25.90s" fill="freeze"/></circle>
+<text x="338.57" y="175.43" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">38<set attributeName="visibility" to="visible" begin="25.90s" fill="freeze"/></text>
+<circle cx="282.86" cy="115.71" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="26.60s" fill="freeze"/></circle>
+<text x="282.86" y="119.71" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">39<set attributeName="visibility" to="visible" begin="26.60s" fill="freeze"/></text>
+<circle cx="171.43" cy="338.57" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="27.30s" fill="freeze"/></circle>
+<text x="171.43" y="342.57" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">40<set attributeName="visibility" to="visible" begin="27.30s" fill="freeze"/></text>
+<circle cx="728.57" cy="394.29" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="28.00s" fill="freeze"/></circle>
+<text x="728.57" y="398.29" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">41<set attributeName="visibility" to="visible" begin="28.00s" fill="freeze"/></text>
+<circle cx="672.86" cy="394.29" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="28.70s" fill="freeze"/></circle>
+<text x="672.86" y="398.29" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">42<set attributeName="visibility" to="visible" begin="28.70s" fill="freeze"/></text>
+<circle cx="227.14" cy="338.57" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="29.40s" fill="freeze"/></circle>
+<text x="227.14" y="342.57" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">43<set attributeName="visibility" to="visible" begin="29.40s" fill="freeze"/></text>
+<circle cx="672.86" cy="505.71" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="30.10s" fill="freeze"/></circle>
+<text x="672.86" y="509.71" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">44<set attributeName="visibility" to="visible" begin="30.10s" fill="freeze"/></text>
+<circle cx="672.86" cy="338.57" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="30.80s" fill="freeze"/></circle>
+<text x="672.86" y="342.57" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">45<set attributeName="visibility" to="visible" begin="30.80s" fill="freeze"/></text>
+<circle cx="672.86" cy="561.43" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="31.50s" fill="freeze"/></circle>
+<text x="672.86" y="565.43" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">46<set attributeName="visibility" to="visible" begin="31.50s" fill="freeze"/></text>
+<circle cx="672.86" cy="617.14" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="32.20s" fill="freeze"/></circle>
+<text x="672.86" y="621.14" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">47<set attributeName="visibility" to="visible" begin="32.20s" fill="freeze"/></text>
+<circle cx="617.14" cy="561.43" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="32.90s" fill="freeze"/></circle>
+<text x="617.14" y="565.43" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">48<set attributeName="visibility" to="visible" begin="32.90s" fill="freeze"/></text>
+<circle cx="561.43" cy="561.43" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="33.60s" fill="freeze"/></circle>
+<text x="561.43" y="565.43" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">49<set attributeName="visibility" to="visible" begin="33.60s" fill="freeze"/></text>
+<circle cx="728.57" cy="450.00" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="34.30s" fill="freeze"/></circle>
+<text x="728.57" y="454.00" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">50<set attributeName="visibility" to="visible" begin="34.30s" fill="freeze"/></text>
+<circle cx="617.14" cy="617.14" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="35.00s" fill="freeze"/></circle>
+<text x="617.14" y="621.14" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">51<set attributeName="visibility" to="visible" begin="35.00s" fill="freeze"/></text>
+<circle cx="672.86" cy="672.86" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="35.70s" fill="freeze"/></circle>
+<text x="672.86" y="676.86" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">52<set attributeName="visibility" to="visible" begin="35.70s" fill="freeze"/></text>
+<circle cx="227.14" cy="282.86" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="36.40s" fill="freeze"/></circle>
+<text x="227.14" y="286.86" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">53<set attributeName="visibility" to="visible" begin="36.40s" fill="freeze"/></text>
+<circle cx="171.43" cy="282.86" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="37.10s" fill="freeze"/></circle>
+<text x="171.43" y="286.86" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">54<set attributeName="visibility" to="visible" begin="37.10s" fill="freeze"/></text>
+<circle cx="784.29" cy="394.29" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="37.80s" fill="freeze"/></circle>
+<text x="784.29" y="398.29" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">55<set attributeName="visibility" to="visible" begin="37.80s" fill="freeze"/></text>
+<circle cx="617.14" cy="450.00" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="38.50s" fill="freeze"/></circle>
+<text x="617.14" y="454.00" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">56<set attributeName="visibility" to="visible" begin="38.50s" fill="freeze"/></text>
+<circle cx="784.29" cy="450.00" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="39.20s" fill="freeze"/></circle>
+<text x="784.29" y="454.00" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">57<set attributeName="visibility" to="visible" begin="39.20s" fill="freeze"/></text>
+<circle cx="561.43" cy="505.71" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="39.90s" fill="freeze"/></circle>
+<text x="561.43" y="509.71" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">58<set attributeName="visibility" to="visible" begin="39.90s" fill="freeze"/></text>
+<circle cx="784.29" cy="338.57" r="21.17" fill="#111" stroke="#000" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="40.60s" fill="freeze"/></circle>
+<text x="784.29" y="342.57" text-anchor="middle" font-size="11" fill="#fff" visibility="hidden" font-family="Arial, sans-serif">59<set attributeName="visibility" to="visible" begin="40.60s" fill="freeze"/></text>
+<circle cx="450.00" cy="617.14" r="21.17" fill="#f3f3f3" stroke="#666" stroke-width="1.2" visibility="hidden"><set attributeName="visibility" to="visible" begin="41.30s" fill="freeze"/></circle>
+<text x="450.00" y="621.14" text-anchor="middle" font-size="11" fill="#222" visibility="hidden" font-family="Arial, sans-serif">60<set attributeName="visibility" to="visible" begin="41.30s" fill="freeze"/></text>
+<text x="450" y="940" text-anchor="middle" font-size="22" fill="#2b1d0e" font-family="Arial, sans-serif">Moves: 60 | Winner: White (AlphaZero)</text>
+<text x="450" y="968" text-anchor="middle" font-size="14" fill="#2b1d0e" font-family="Arial, sans-serif">Source: provided battle log ending with WHITE_WIN</text>
+<animate attributeName="opacity" values="1;1" dur="43.30s" repeatCount="indefinite"/>
+</svg>
