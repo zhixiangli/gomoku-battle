@@ -20,7 +20,7 @@ Black uses **Alpha-Beta Search** and white uses **AlphaZero**. The animation bel
 | **gomoku-battle-console** | Match referee that runs agents as subprocesses and exchanges JSON commands |
 | **gomoku-battle-dashboard** | JavaFX UI for real-time game visualization |
 | **gomoku-battle-alphabetasearch** | Built-in Alpha-Beta Search baseline agent |
-| **gomoku-battle-alphazero** | AlphaZero algorithm implementation (MCTS + neural network) that is stronger than the alpha-beta pruning baseline |
+| **gomoku-battle-alphazero** | AlphaZero algorithm implementation (MCTS + neural network) that is stronger than the Alpha-Beta Search baseline |
 
 ---
 
@@ -78,4 +78,4 @@ Return the move position.
 | AI | Description | Language | Command Processor |
 |----|-------------|----------|-------------------|
 | [Alpha-Beta Search](https://github.com/zhixiangli/gomoku-battle/tree/master/gomoku-battle-alphabetasearch) | Alpha-Beta Search baseline agent | Java | [AlphaBetaSearchAgent.java](https://github.com/zhixiangli/gomoku-battle/blob/master/gomoku-battle-alphabetasearch/src/main/java/com/zhixiangli/gomoku/alphabetasearch/AlphaBetaSearchAgent.java) |
-| [alphazero](https://github.com/zhixiangli/gomoku-battle/tree/master/gomoku-battle-alphazero) | AlphaZero algorithm implementation that is stronger than the alpha-beta pruning baseline, with configurable MCTS simulations | Python | [alphazero_adapter.py](https://github.com/zhixiangli/gomoku-battle/blob/master/gomoku-battle-alphazero/alphazero_adapter.py) |
+| [AlphaZero](https://github.com/zhixiangli/gomoku-battle/tree/master/gomoku-battle-alphazero) | AlphaZero algorithm implementation that is stronger than the Alpha-Beta Search baseline, with configurable MCTS simulations | Python | [alphazero_adapter.py](https://github.com/zhixiangli/gomoku-battle/blob/master/gomoku-battle-alphazero/alphazero_adapter.py) |
