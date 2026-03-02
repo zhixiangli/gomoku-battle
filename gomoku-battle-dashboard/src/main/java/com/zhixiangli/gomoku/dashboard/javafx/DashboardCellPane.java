@@ -1,6 +1,7 @@
 package com.zhixiangli.gomoku.dashboard.javafx;
 
 import com.zhixiangli.gomoku.console.common.PlayerProperties;
+import com.zhixiangli.gomoku.core.chessboard.ChessState;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
@@ -163,6 +164,10 @@ class DashboardCellPane extends Pane {
      */
     @FXML
     public void takeMove() {
+        if (chessboardService.getChessState() == ChessState.GAME_READY) {
+            chessboardService.restart();
+        }
+
         final ChessType chessType = chessboardService.getCurrentChessType();
         if ((chessType != ChessType.BLACK) && (chessType != ChessType.WHITE)) {
             return;

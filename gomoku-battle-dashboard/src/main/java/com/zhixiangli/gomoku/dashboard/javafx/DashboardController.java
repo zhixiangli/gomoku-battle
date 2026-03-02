@@ -67,12 +67,19 @@ public class DashboardController {
         chessboardService.addChessStateChangeListener(
                 (observable, oldValue, newValue) -> {
                     if (Platform.isFxApplicationThread()) {
-                        announcementArea.setText(newValue.name());
+                        announcementArea.setText(getAnnouncementText(newValue));
                     } else {
-                        Platform.runLater(() -> announcementArea.setText(newValue.name()));
+                        Platform.runLater(() -> announcementArea.setText(getAnnouncementText(newValue)));
                     }
                 });
-        announcementArea.setText(ChessState.GAME_READY.name());
+        announcementArea.setText(getAnnouncementText(ChessState.GAME_READY));
+    }
+
+    private String getAnnouncementText(final ChessState chessState) {
+        if (ChessState.GAME_READY == chessState) {
+            return "Click board or NEW GAME to start";
+        }
+        return chessState.name();
     }
 
     private void initializeGridPane() throws IOException {
