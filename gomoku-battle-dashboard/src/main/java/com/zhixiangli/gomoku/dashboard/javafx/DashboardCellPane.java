@@ -4,6 +4,7 @@ import com.zhixiangli.gomoku.console.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -121,12 +122,12 @@ class DashboardCellPane extends Pane {
         // the chess type of this cell, and add listener when the chess type
         // is changed.
         chessboardService.addChessboardChangeListener(position,
-                (observable, oldValue, newValue) -> updateCellPane(newValue));
+                (observable, oldValue, newValue) -> Platform.runLater(() -> updateCellPane(newValue)));
         updateCellPane(chessboardService.getChessboard(position));
 
         chessboardService.addLastMovePointChangeListener((observable, oldValue, newValue) -> {
             if (position.equals(oldValue) || position.equals(newValue)) {
-                updateCellPane(chessboardService.getChessboard(position));
+                Platform.runLater(() -> updateCellPane(chessboardService.getChessboard(position)));
             }
         });
 

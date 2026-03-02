@@ -4,6 +4,7 @@ import com.zhixiangli.gomoku.console.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.chessboard.ChessState;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -64,7 +65,7 @@ public class DashboardController {
 
     private void initailizeAnnouncement() {
         chessboardService.addChessStateChangeListener(
-                (observable, oldValue, newValue) -> announcementArea.setText(newValue.name()));
+                (observable, oldValue, newValue) -> Platform.runLater(() -> announcementArea.setText(newValue.name())));
         announcementArea.setText(ChessState.GAME_READY.name());
     }
 
