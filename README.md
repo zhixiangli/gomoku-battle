@@ -35,6 +35,8 @@ sh battle.sh -c battle.properties
 ## ⚙️ Configuration
 Configure agents in **battle.properties**:
 
+> Recommended quick-start setup: play as **White (Human)** against **Black (AlphaZero)** to experience a strong AI opening first.
+
 + **player.xxxxx.alias**: display name for the agent.
 + **player.xxxxx.cmd**: shell command to start the agent process. Leave blank (or omit) for human play — the player alias defaults to `Human`.
 
@@ -49,11 +51,11 @@ player.white.alias=AlphaZero
 #### Human vs AI
 Leave `player.xxxxx.cmd` blank to play as a human. The alias defaults to `Human` when no command is set.
 ```properties
-player.black.cmd=
-player.black.alias=
+player.black.cmd=uv run --project alphazero-board-games python gomoku-battle-alphazero/alphazero_adapter.py --simulation-num=5000
+player.black.alias=AlphaZero
 
-player.white.cmd=java -jar bin/gomoku-battle-alphabetasearch-0.0.1-SNAPSHOT-jar-with-dependencies.jar
-player.white.alias=Alpha-Beta Search
+player.white.cmd=
+player.white.alias=
 ```
 
 For AlphaZero, pass MCTS options in `player.xxxxx.cmd`, e.g. `--simulation-num=5000`.
