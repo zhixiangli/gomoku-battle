@@ -4,6 +4,8 @@ import com.zhixiangli.gomoku.console.common.PlayerProperties;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
+import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -12,6 +14,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Point;
@@ -23,6 +26,8 @@ import java.io.IOException;
  * @author lizhixiang
  */
 class DashboardCellPane extends Pane {
+
+    private static final double PULSE_ANIMATION_DURATION_MS = 600;
 
     /**
      * pane of this cell.
@@ -58,6 +63,11 @@ class DashboardCellPane extends Pane {
      * chess position
      */
     private final Point position;
+
+    /**
+     * pulsing animation for the last move marker.
+     */
+    private FadeTransition pulseAnimation;
 
     /**
      * Gomoku Service.
@@ -117,7 +127,14 @@ class DashboardCellPane extends Pane {
         // location and size for latest move marker.
         lastMoveMarker.layoutXProperty().bind(cellPane.widthProperty().divide(2));
         lastMoveMarker.layoutYProperty().bind(cellPane.heightProperty().divide(2));
-        lastMoveMarker.radiusProperty().bind(Bindings.min(cellPane.widthProperty(), cellPane.heightProperty()).divide(8));
+        lastMoveMarker.radiusProperty().bind(Bindings.min(cellPane.widthProperty(), cellPane.heightProperty()).divide(4));
+
+        // pulsing animation to draw attention to the last move.
+        pulseAnimation = new FadeTransition(Duration.millis(PULSE_ANIMATION_DURATION_MS), lastMoveMarker);
+        pulseAnimation.setFromValue(1.0);
+        pulseAnimation.setToValue(0.3);
+        pulseAnimation.setCycleCount(Animation.INDEFINITE);
+        pulseAnimation.setAutoReverse(true);
 
         // the chess type of this cell, and add listener when the chess type
         // is changed.
@@ -137,24 +154,22 @@ class DashboardCellPane extends Pane {
         if (ChessType.EMPTY == chessType) {
             cellCircle.visibleProperty().set(false);
             lastMoveMarker.visibleProperty().set(false);
+            pulseAnimation.stop();
             return;
         }
 
         cellCircle.visibleProperty().set(true);
-        boolean isLatestPosition = position.equals(chessboardService.getLastMovePoint());
+        cellCircle.setFill((ChessType.BLACK == chessType) ? Color.rgb(30, 30, 30) : Color.rgb(235, 235, 230));
+        cellCircle.setStroke((ChessType.BLACK == chessType) ? Color.rgb(35, 35, 35) : Color.rgb(180, 180, 170));
+        cellCircle.setStrokeWidth(0.8);
 
+        boolean isLatestPosition = position.equals(chessboardService.getLastMovePoint());
         if (isLatestPosition) {
-            cellCircle.setFill((ChessType.BLACK == chessType) ? Color.rgb(20, 20, 20) : Color.rgb(245, 245, 240));
-            cellCircle.setStroke((ChessType.BLACK == chessType) ? Color.rgb(235, 205, 120) : Color.rgb(95, 75, 25));
-            cellCircle.setStrokeWidth(2.0);
-            lastMoveMarker.setFill((ChessType.BLACK == chessType) ? Color.rgb(245, 245, 240) : Color.rgb(35, 35, 35));
-            lastMoveMarker.setStroke((ChessType.BLACK == chessType) ? Color.rgb(35, 35, 35) : Color.rgb(255, 255, 255));
             lastMoveMarker.visibleProperty().set(true);
+            pulseAnimation.play();
         } else {
-            cellCircle.setFill((ChessType.BLACK == chessType) ? Color.rgb(50, 50, 50) : Color.rgb(225, 225, 220));
-            cellCircle.setStroke((ChessType.BLACK == chessType) ? Color.rgb(35, 35, 35) : Color.rgb(180, 180, 170));
-            cellCircle.setStrokeWidth(0.8);
             lastMoveMarker.visibleProperty().set(false);
+            pulseAnimation.stop();
         }
     }
 
