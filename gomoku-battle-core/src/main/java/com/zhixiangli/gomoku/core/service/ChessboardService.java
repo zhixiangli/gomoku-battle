@@ -106,8 +106,10 @@ public class ChessboardService {
         if (GameReferee.isWin(chessboard, point)) { // if win.
             final ChessState winner = (ChessType.BLACK == currentChessType.get()) ? ChessState.BLACK_WIN : ChessState.WHITE_WIN;
             LOGGER.info("game over, winner: {}", winner);
+            currentChessType.set(ChessType.EMPTY);
             chessStateProperty.set(winner);
         } else if (GameReferee.isDraw(chessboard, point)) { // if draw.
+            currentChessType.set(ChessType.EMPTY);
             chessStateProperty.set(ChessState.GAME_DRAW);
             LOGGER.info("game over, draw");
         } else {
@@ -154,6 +156,10 @@ public class ChessboardService {
 
     public ChessType getCurrentChessType() {
         return currentChessType.get();
+    }
+
+    public ChessState getChessState() {
+        return chessStateProperty.get();
     }
 
     /**

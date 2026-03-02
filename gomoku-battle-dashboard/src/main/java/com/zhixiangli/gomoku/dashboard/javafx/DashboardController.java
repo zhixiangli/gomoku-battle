@@ -65,7 +65,13 @@ public class DashboardController {
 
     private void initailizeAnnouncement() {
         chessboardService.addChessStateChangeListener(
-                (observable, oldValue, newValue) -> Platform.runLater(() -> announcementArea.setText(newValue.name())));
+                (observable, oldValue, newValue) -> {
+                    if (Platform.isFxApplicationThread()) {
+                        announcementArea.setText(newValue.name());
+                    } else {
+                        Platform.runLater(() -> announcementArea.setText(newValue.name()));
+                    }
+                });
         announcementArea.setText(ChessState.GAME_READY.name());
     }
 
