@@ -48,7 +48,7 @@ public class DashboardController {
         initializePlayerAlias();
 
         // add listener to update announcement when chessboard state is changed.
-        initailizeAnnouncement();
+        initializeAnnouncement();
 
         // add each cell pane to grid pane.
         initializeGridPane();
@@ -63,7 +63,7 @@ public class DashboardController {
         whiteAliasArea.setText(PlayerProperties.playerWhiteAlias);
     }
 
-    private void initailizeAnnouncement() {
+    private void initializeAnnouncement() {
         chessboardService.addChessStateChangeListener(
                 (observable, oldValue, newValue) -> {
                     if (Platform.isFxApplicationThread()) {
