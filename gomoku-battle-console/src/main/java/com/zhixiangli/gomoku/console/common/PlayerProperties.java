@@ -3,6 +3,7 @@ package com.zhixiangli.gomoku.console.common;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,8 @@ public class PlayerProperties {
 
     public static String playerWhiteAlias;
 
+    private static final String HUMAN_ALIAS = "Human";
+
     private PlayerProperties() {
     }
 
@@ -35,6 +38,12 @@ public class PlayerProperties {
             playerBlackAlias = playerConfig.getString("player.black.alias");
             playerWhiteCommand = playerConfig.getString("player.white.cmd");
             playerWhiteAlias = playerConfig.getString("player.white.alias");
+            if (StringUtils.isBlank(playerBlackCommand) && StringUtils.isBlank(playerBlackAlias)) {
+                playerBlackAlias = HUMAN_ALIAS;
+            }
+            if (StringUtils.isBlank(playerWhiteCommand) && StringUtils.isBlank(playerWhiteAlias)) {
+                playerWhiteAlias = HUMAN_ALIAS;
+            }
         } catch (final ConfigurationException e) {
             LOGGER.error("load player config error", e);
         }

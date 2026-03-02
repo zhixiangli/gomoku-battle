@@ -36,7 +36,7 @@ sh battle.sh -c battle.properties
 Configure agents in **battle.properties**:
 
 + **player.xxxxx.alias**: display name for the agent.
-+ **player.xxxxx.cmd**: shell command to start the agent process.
++ **player.xxxxx.cmd**: shell command to start the agent process. Leave blank (or omit) for human play — the player alias defaults to `Human`.
 
 ### Configuration Example
 ```properties
@@ -44,6 +44,16 @@ player.black.cmd=java -jar bin/gomoku-battle-alphabetasearch-0.0.1-SNAPSHOT-jar-
 player.black.alias=Alpha-Beta Search
 player.white.cmd=uv run --project alphazero-board-games python gomoku-battle-alphazero/alphazero_adapter.py --simulation-num=5000
 player.white.alias=AlphaZero
+```
+
+#### Human vs AI
+Leave `player.xxxxx.cmd` blank to play as a human. The alias defaults to `Human` when no command is set.
+```properties
+player.black.cmd=
+player.black.alias=
+
+player.white.cmd=java -jar bin/gomoku-battle-alphabetasearch-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+player.white.alias=Alpha-Beta Search
 ```
 
 For AlphaZero, pass MCTS options in `player.xxxxx.cmd`, e.g. `--simulation-num=5000`.
