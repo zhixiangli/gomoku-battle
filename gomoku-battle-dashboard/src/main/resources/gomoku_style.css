@@ -56,6 +56,20 @@
     -fx-stroke-width: 1.5;
 }
 
+.player-choice-box {
+    -fx-background-color: #333333;
+    -fx-mark-color: #d0d0d0;
+}
+
+.player-choice-box .label {
+    -fx-text-fill: #d0d0d0;
+    -fx-font-size: 12px;
+}
+
+.player-choice-box .context-menu {
+    -fx-background-color: #2f2f2f;
+}
+
 /* ── New Game Button ───────────────────────────────────── */
 
 .new-game-button {

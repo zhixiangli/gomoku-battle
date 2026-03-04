@@ -33,32 +33,23 @@ sh battle.sh -c battle.properties
 ```
 
 ## ⚙️ Configuration
-Configure agents in **battle.properties**:
+Configure agent commands in **battle.properties**. Player side (Black/White) is now selected in the dashboard UI with a dropdown: **Human**, **Alpha-Beta Search**, or **AlphaZero**.
 
-> Recommended quick-start setup: play as **White (Human)** against **Black (AlphaZero)** to experience a strong AI opening first.
-
-+ **player.xxxxx.alias**: display name for the agent.
-+ **player.xxxxx.cmd**: shell command to start the agent process. Leave blank (or omit) for human play — the player alias defaults to `Human`.
++ **agent.alphabeta.cmd**: shell command to start the Alpha-Beta Search agent.
++ **agent.alphazero.cmd**: shell command to start the AlphaZero agent.
 
 ### Configuration Example
 ```properties
-player.black.cmd=java -jar bin/gomoku-battle-alphabetasearch-0.0.1-SNAPSHOT-jar-with-dependencies.jar
-player.black.alias=Alpha-Beta Search
-player.white.cmd=uv run --project alphazero-board-games python gomoku-battle-alphazero/alphazero_adapter.py --simulation-num=5000
-player.white.alias=AlphaZero
+agent.alphabeta.cmd=java -jar bin/gomoku-battle-alphabetasearch-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+agent.alphazero.cmd=uv run --project alphazero-board-games python gomoku-battle-alphazero/alphazero_adapter.py --simulation-num=5000
 ```
 
-#### Human vs AI
-Leave `player.xxxxx.cmd` blank to play as a human. The alias defaults to `Human` when no command is set.
-```properties
-player.black.cmd=uv run --project alphazero-board-games python gomoku-battle-alphazero/alphazero_adapter.py --simulation-num=5000
-player.black.alias=AlphaZero
+In the dashboard, you can choose each side independently (Black and White):
+- Human
+- Alpha-Beta Search
+- AlphaZero
 
-player.white.cmd=
-player.white.alias=
-```
-
-For AlphaZero, pass MCTS options in `player.xxxxx.cmd`, e.g. `--simulation-num=5000`.
+For AlphaZero, pass MCTS options in `agent.alphazero.cmd`, e.g. `--simulation-num=5000`.
 
 ## 🔌 AI Agent API
 The console spawns each agent as a subprocess and communicates over JSON (`stdin` / `stdout`).

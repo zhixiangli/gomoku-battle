@@ -172,10 +172,7 @@ class DashboardCellPane extends Pane {
         if ((chessType != ChessType.BLACK) && (chessType != ChessType.WHITE)) {
             return;
         }
-        if (chessType == ChessType.BLACK && StringUtils.isNotBlank(PlayerProperties.playerBlackCommand)) {
-            return;
-        }
-        if (chessType == ChessType.WHITE && StringUtils.isNotBlank(PlayerProperties.playerWhiteCommand)) {
+        if (StringUtils.isNotBlank(PlayerProperties.getPlayerCommand(chessType))) {
             return;
         }
 

@@ -1,11 +1,15 @@
 package com.zhixiangli.gomoku.dashboard.javafx;
 
 import com.zhixiangli.gomoku.console.common.PlayerProperties;
+import com.zhixiangli.gomoku.console.common.PlayerProperties.PlayerType;
 import com.zhixiangli.gomoku.core.chessboard.ChessState;
+import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
@@ -25,6 +29,12 @@ public class DashboardController {
     @FXML
     private Label whiteAliasArea;
 
+    @FXML
+    private ChoiceBox<PlayerType> blackPlayerChoice;
+
+    @FXML
+    private ChoiceBox<PlayerType> whitePlayerChoice;
+
     /**
      * announcement label.
      */
@@ -39,12 +49,14 @@ public class DashboardController {
 
     private final ChessboardService chessboardService = ChessboardService.getInstance();
 
+    private boolean initializingPlayerChoice;
+
     /**
      * initialize.
      */
     @FXML
     public void initialize() throws IOException {
-        // initialize choice box.
+        initializePlayerSelector();
         initializePlayerAlias();
 
         // add listener to update announcement when chessboard state is changed.
@@ -58,9 +70,36 @@ public class DashboardController {
         chessboardService.restart();
     }
 
+    @FXML
+    public void updateBlackPlayer() {
+        PlayerProperties.setPlayerType(ChessType.BLACK, blackPlayerChoice.getValue());
+        blackAliasArea.setText(PlayerProperties.getPlayerAlias(ChessType.BLACK));
+        if (!initializingPlayerChoice) {
+            chessboardService.restart();
+        }
+    }
+
+    @FXML
+    public void updateWhitePlayer() {
+        PlayerProperties.setPlayerType(ChessType.WHITE, whitePlayerChoice.getValue());
+        whiteAliasArea.setText(PlayerProperties.getPlayerAlias(ChessType.WHITE));
+        if (!initializingPlayerChoice) {
+            chessboardService.restart();
+        }
+    }
+
+    private void initializePlayerSelector() {
+        initializingPlayerChoice = true;
+        blackPlayerChoice.setItems(FXCollections.observableArrayList(PlayerType.values()));
+        whitePlayerChoice.setItems(FXCollections.observableArrayList(PlayerType.values()));
+        blackPlayerChoice.setValue(PlayerProperties.getPlayerType(ChessType.BLACK));
+        whitePlayerChoice.setValue(PlayerProperties.getPlayerType(ChessType.WHITE));
+        initializingPlayerChoice = false;
+    }
+
     private void initializePlayerAlias() {
-        blackAliasArea.setText(PlayerProperties.playerBlackAlias);
-        whiteAliasArea.setText(PlayerProperties.playerWhiteAlias);
+        blackAliasArea.setText(PlayerProperties.getPlayerAlias(ChessType.BLACK));
+        whiteAliasArea.setText(PlayerProperties.getPlayerAlias(ChessType.WHITE));
     }
 
     private void initializeAnnouncement() {

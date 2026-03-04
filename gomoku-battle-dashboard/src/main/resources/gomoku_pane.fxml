@@ -34,6 +34,7 @@
                   <Label fx:id="blackAliasArea" styleClass="player-label" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
                </children>
             </HBox>
+            <ChoiceBox fx:id="blackPlayerChoice" styleClass="player-choice-box" maxWidth="Infinity" onAction="#updateBlackPlayer" />
 
             <Label text="WHITE" styleClass="section-title" />
             <HBox spacing="8" alignment="CENTER_LEFT">
@@ -42,6 +43,7 @@
                   <Label fx:id="whiteAliasArea" styleClass="player-label" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
                </children>
             </HBox>
+            <ChoiceBox fx:id="whitePlayerChoice" styleClass="player-choice-box" maxWidth="Infinity" onAction="#updateWhitePlayer" />
 
             <Region VBox.vgrow="ALWAYS" />
 
