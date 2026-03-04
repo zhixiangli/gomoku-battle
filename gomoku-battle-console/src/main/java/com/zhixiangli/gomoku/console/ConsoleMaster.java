@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.Point;
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author zhixiangli
@@ -26,20 +28,10 @@ public class ConsoleMaster {
 
     private final ChessboardService chessboardService = ChessboardService.getInstance();
 
-    private ConsoleProcess blackPlayerProcess;
-
-    private ConsoleProcess whitePlayerProcess;
+    private final Map<String, ConsoleProcess> commandProcessMap = new ConcurrentHashMap<>();
 
     public ConsoleMaster(final String playProperties) throws IOException {
         PlayerProperties.parse(playProperties);
-        if (StringUtils.isNotBlank(PlayerProperties.playerBlackCommand)) {
-            LOGGER.info("fork black player process: {}", PlayerProperties.playerBlackCommand);
-            blackPlayerProcess = new ConsoleProcess(PlayerProperties.playerBlackCommand);
-        }
-        if (StringUtils.isNotBlank(PlayerProperties.playerWhiteCommand)) {
-            LOGGER.info("fork white player process: {}", PlayerProperties.playerWhiteCommand);
-            whitePlayerProcess = new ConsoleProcess(PlayerProperties.playerWhiteCommand);
-        }
         // when chess type changed, notify the process to make a next move.
         chessboardService.addCurrentChessTypeChangeListener(
                 (observable, oldValue, newValue) -> new Thread(() -> callForAction(newValue)).start());
@@ -49,16 +41,38 @@ public class ConsoleMaster {
         try {
             switch (chessType) {
                 case BLACK:
-                    sendActionCommand(blackPlayerProcess, ConsoleCommand.NEXT_BLACK);
+                    sendActionCommand(getProcess(chessType), ConsoleCommand.NEXT_BLACK);
                     break;
                 case WHITE:
-                    sendActionCommand(whitePlayerProcess, ConsoleCommand.NEXT_WHITE);
+                    sendActionCommand(getProcess(chessType), ConsoleCommand.NEXT_WHITE);
                     break;
                 case EMPTY:
                 default:
             }
         } catch (final IOException e) {
             LOGGER.error("call for action error.", e);
+        }
+    }
+
+    private ConsoleProcess getProcess(final ChessType chessType) throws IOException {
+        final String command = PlayerProperties.getPlayerCommand(chessType);
+        if (StringUtils.isBlank(command)) {
+            return null;
+        }
+        try {
+            return commandProcessMap.computeIfAbsent(command, key -> {
+                try {
+                    LOGGER.info("fork player process: {}", key);
+                    return new ConsoleProcess(key);
+                } catch (final IOException e) {
+                    throw new IllegalStateException("fork player process error", e);
+                }
+            });
+        } catch (final IllegalStateException e) {
+            if (e.getCause() instanceof IOException) {
+                throw (IOException) e.getCause();
+            }
+            throw e;
         }
     }
 
