@@ -18,20 +18,22 @@ public class ProphetConst {
                 {
                     put(PatternType.FIVE, 1e8);
 
-                    put(PatternType.OPEN_FOUR, 1e5);
+                    // Winning threat hierarchy (OPEN_FOUR >> HALF_OPEN_FOUR >> OPEN_THREE ...)
+                    // is tuned so that search strongly prefers immediate forcing moves.
+                    put(PatternType.OPEN_FOUR, 1e6);
 
-                    put(PatternType.HALF_OPEN_FOUR, 1e4);
+                    put(PatternType.HALF_OPEN_FOUR, 8e4);
 
-                    put(PatternType.OPEN_THREE, 3e3);
-                    put(PatternType.SPACED_OPEN_THREE, 1e3);
+                    put(PatternType.OPEN_THREE, 1e4);
+                    put(PatternType.SPACED_OPEN_THREE, 6e3);
 
-                    put(PatternType.HALF_OPEN_THREE, 1e2);
+                    put(PatternType.HALF_OPEN_THREE, 8e2);
 
-                    put(PatternType.OPEN_TWO, 5e1);
-                    put(PatternType.ONE_SPACED_OPEN_TWO, 3e1);
-                    put(PatternType.TWO_SPACED_OPEN_TWO, 1e1);
+                    put(PatternType.OPEN_TWO, 2e2);
+                    put(PatternType.ONE_SPACED_OPEN_TWO, 1.2e2);
+                    put(PatternType.TWO_SPACED_OPEN_TWO, 5e1);
 
-                    put(PatternType.HALF_OPEN_TWO, 1e0);
+                    put(PatternType.HALF_OPEN_TWO, 1e1);
 
                     put(PatternType.OTHERS, 0.0);
                 }
