@@ -23,15 +23,15 @@ public class ProphetConst {
                     put(PatternType.HALF_OPEN_FOUR, 1e4);
 
                     put(PatternType.OPEN_THREE, 3e3);
-                    put(PatternType.SPACED_OPEN_THREE, 1e3);
+                    put(PatternType.SPACED_OPEN_THREE, 2e3);
 
-                    put(PatternType.HALF_OPEN_THREE, 1e2);
+                    put(PatternType.HALF_OPEN_THREE, 5e2);
 
-                    put(PatternType.OPEN_TWO, 5e1);
-                    put(PatternType.ONE_SPACED_OPEN_TWO, 3e1);
-                    put(PatternType.TWO_SPACED_OPEN_TWO, 1e1);
+                    put(PatternType.OPEN_TWO, 1e2);
+                    put(PatternType.ONE_SPACED_OPEN_TWO, 5e1);
+                    put(PatternType.TWO_SPACED_OPEN_TWO, 2e1);
 
-                    put(PatternType.HALF_OPEN_TWO, 1e0);
+                    put(PatternType.HALF_OPEN_TWO, 3e0);
 
                     put(PatternType.OTHERS, 0.0);
                 }
