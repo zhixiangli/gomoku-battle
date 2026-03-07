@@ -54,10 +54,10 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
     }
 
     /**
-     * Use iterative deepening: search from depth 1 up to MAX_DEPTH.
+     * Use iterative deepening with aspiration windows: search from depth 1 up to MAX_DEPTH.
      * Each iteration reorders root candidates by scores from the previous iteration,
-     * and the transposition table carries forward entries for better move ordering
-     * at deeper levels.
+     * and uses aspiration windows to narrow the search space for dramatic pruning.
+     * The transposition table carries forward entries for better move ordering.
      */
     private Point searchBestPoint(final Point[] initialCandidates, final Chessboard chessboard,
                                   final ChessType chessType) {
@@ -65,6 +65,7 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
 
         Point[] candidates = initialCandidates;
         List<Pair<Point, Double>> pairs = null;
+        final double ASPIRATION_DELTA = 200.0;
 
         for (int depth = 1; depth <= SearchConst.MAX_DEPTH; depth++) {
             // Reorder candidates based on previous iteration's scores (best first)
@@ -73,13 +74,29 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
                 candidates = pairs.stream().map(Pair::getKey).toArray(Point[]::new);
             }
 
+            final List<Pair<Point, Double>> prevPairs = pairs;
             pairs = new ArrayList<>();
-            for (final Point point : candidates) {
+            for (int i = 0; i < candidates.length; i++) {
+                final Point point = candidates[i];
                 chessboard.setChess(point, chessType);
                 double value = -Double.MAX_VALUE;
                 try {
-                    value = alphaBetaAlgorithm.search(depth, -Double.MAX_VALUE, Double.MAX_VALUE,
-                            chessboard, point, chessType, chessType, StringUtils.EMPTY);
+                    // Use aspiration window from previous iteration's score
+                    if (prevPairs != null && depth > 2) {
+                        final double prevScore = prevPairs.get(i).getValue();
+                        double windowAlpha = prevScore - ASPIRATION_DELTA;
+                        double windowBeta = prevScore + ASPIRATION_DELTA;
+                        value = alphaBetaAlgorithm.search(depth, windowAlpha, windowBeta,
+                                chessboard, point, chessType, chessType, StringUtils.EMPTY);
+                        // If result is outside aspiration window, re-search with full window
+                        if (value <= windowAlpha || value >= windowBeta) {
+                            value = alphaBetaAlgorithm.search(depth, -Double.MAX_VALUE, Double.MAX_VALUE,
+                                    chessboard, point, chessType, chessType, StringUtils.EMPTY);
+                        }
+                    } else {
+                        value = alphaBetaAlgorithm.search(depth, -Double.MAX_VALUE, Double.MAX_VALUE,
+                                chessboard, point, chessType, chessType, StringUtils.EMPTY);
+                    }
                 } catch (final Exception e) {
                     LOGGER.error("alpha beta search error", e);
                 }

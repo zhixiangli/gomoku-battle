@@ -15,8 +15,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * Alpha-beta search with Zobrist-hashed transposition table, iterative-deepening
@@ -123,11 +121,19 @@ public class AlphaBetaSearchAlgorithm {
                     if (probeResult.flag == TranspositionTable.EXACT) {
                         return probeResult.value;
                     }
-                    if (probeResult.flag == TranspositionTable.LOWER_BOUND && probeResult.value >= beta) {
-                        return probeResult.value;
+                    if (probeResult.flag == TranspositionTable.LOWER_BOUND) {
+                        if (probeResult.value >= beta) {
+                            return probeResult.value;
+                        }
+                        // Narrow the window using the lower bound
+                        alpha = Math.max(alpha, probeResult.value);
                     }
-                    if (probeResult.flag == TranspositionTable.UPPER_BOUND && probeResult.value <= alpha) {
-                        return probeResult.value;
+                    if (probeResult.flag == TranspositionTable.UPPER_BOUND) {
+                        if (probeResult.value <= alpha) {
+                            return probeResult.value;
+                        }
+                        // Narrow the window using the upper bound
+                        beta = Math.min(beta, probeResult.value);
                     }
                 }
                 // Always use TT best move for ordering, regardless of stored depth
@@ -172,7 +178,8 @@ public class AlphaBetaSearchAlgorithm {
         }
 
         // Generate full candidate list (expensive but needed)
-        final Point[] candidateMoves = nextMoves(chessboard);
+        final int candidateLimit = Math.min(SearchConst.MAX_CANDIDATE_NUM, Math.max(5, 3 + depth));
+        final Point[] candidateMoves = nextMoves(chessboard, candidateLimit);
         if (candidateMoves.length == 0 && bestMove == null) {
             return AlphaBetaSearchProphet.evaluateChessboardValue(chessboard, rootChessType)
                     * SearchConst.DECAY_FACTOR;
@@ -351,49 +358,70 @@ public class AlphaBetaSearchAlgorithm {
     }
 
     /**
+     * Generate and score candidate moves with default limit.
+     */
+    public Point[] nextMoves(final Chessboard chessboard) {
+        return nextMoves(chessboard, SearchConst.MAX_CANDIDATE_NUM);
+    }
+
+    /**
      * Generate and score candidate moves, returning the top candidates sorted by heuristic value.
      * Also detects forced moves: if a winning move or must-block move exists,
      * returns only that single move to avoid wasting search time.
+     * Optimized to avoid Stream API overhead.
+     *
+     * @param maxCandidates maximum number of candidates to return
      */
-    public Point[] nextMoves(final Chessboard chessboard) {
+    Point[] nextMoves(final Chessboard chessboard, final int maxCandidates) {
         final Point[] candidates = GlobalAnalyser.getEmptyPointsAround(chessboard, SearchConst.AROUND_CANDIDATE_RANGE);
         if (candidates.length == 0) {
             return candidates;
         }
 
-        // Score all candidates
-        final Pair<Point, Double>[] scored = new Pair[candidates.length];
+        // Score all candidates using arrays to minimize allocation
+        final double[] scores = new double[candidates.length];
         double maxScore = -Double.MAX_VALUE;
-        int maxIndex = 0;
         for (int i = 0; i < candidates.length; i++) {
-            final double value = AlphaBetaSearchProphet.evaluatePointValue(chessboard, candidates[i]);
-            scored[i] = ImmutablePair.of(candidates[i], value);
-            if (value > maxScore) {
-                maxScore = value;
-                maxIndex = i;
+            scores[i] = AlphaBetaSearchProphet.evaluatePointValue(chessboard, candidates[i]);
+            if (scores[i] > maxScore) {
+                maxScore = scores[i];
             }
         }
 
         // If the best move is a strong threat (near OPEN_FOUR level), limit candidates
         if (maxScore >= THREAT_THRESHOLD) {
-            // Only search the top 1-3 forcing moves
-            final List<Point> forcing = new ArrayList<>();
-            for (final Pair<Point, Double> s : scored) {
-                if (s.getValue() >= THREAT_THRESHOLD) {
-                    forcing.add(s.getKey());
+            int forcingCount = 0;
+            for (int i = 0; i < candidates.length; i++) {
+                if (scores[i] >= THREAT_THRESHOLD) {
+                    forcingCount++;
                 }
             }
-            if (!forcing.isEmpty() && forcing.size() <= 3) {
-                return forcing.toArray(new Point[0]);
+            if (forcingCount > 0 && forcingCount <= 3) {
+                final Point[] forcing = new Point[forcingCount];
+                int idx = 0;
+                for (int i = 0; i < candidates.length; i++) {
+                    if (scores[i] >= THREAT_THRESHOLD) {
+                        forcing[idx++] = candidates[i];
+                    }
+                }
+                return forcing;
             }
         }
 
-        // Sort by score descending and take top candidates
-        final Stream<Point> candidatesStream = Stream.of(scored)
-                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
-                .limit(SearchConst.MAX_CANDIDATE_NUM)
-                .map(Pair::getKey);
-        return candidatesStream.toArray(Point[]::new);
+        // Partial sort: find top candidates by score
+        final int limit = Math.min(maxCandidates, candidates.length);
+        // Simple selection: use indices array sorted by score
+        final Integer[] indices = new Integer[candidates.length];
+        for (int i = 0; i < indices.length; i++) {
+            indices[i] = i;
+        }
+        java.util.Arrays.sort(indices, (a, b) -> Double.compare(scores[b], scores[a]));
+
+        final Point[] result = new Point[limit];
+        for (int i = 0; i < limit; i++) {
+            result[i] = candidates[indices[i]];
+        }
+        return result;
     }
 
     public void clearCache() {
