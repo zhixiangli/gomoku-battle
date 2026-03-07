@@ -80,12 +80,14 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
                 .filter(pair -> Double.compare(bestValue, pair.getValue()) == 0).collect(Collectors.toList());
 
         // Break ties using static evaluation of move importance
-        final double bestPointValue = resultPoints.stream()
-                .mapToDouble(pair -> AlphaBetaSearchProphet.evaluatePointValue(chessboard, pair.getKey()))
-                .max().getAsDouble();
-        final List<Pair<Point, Double>> bestMoves = resultPoints.stream()
-                .filter(pair -> Double.compare(bestPointValue,
-                        AlphaBetaSearchProphet.evaluatePointValue(chessboard, pair.getKey())) == 0)
+        final List<Pair<Point, Double>> evaluatedPoints = resultPoints.stream()
+                .map(pair -> ImmutablePair.of(pair.getKey(),
+                        AlphaBetaSearchProphet.evaluatePointValue(chessboard, pair.getKey())))
+                .collect(Collectors.toList());
+        final double bestPointValue = evaluatedPoints.stream()
+                .mapToDouble(Pair::getValue).max().getAsDouble();
+        final List<Pair<Point, Double>> bestMoves = evaluatedPoints.stream()
+                .filter(pair -> Double.compare(bestPointValue, pair.getValue()) == 0)
                 .collect(Collectors.toList());
         return bestMoves.get(ThreadLocalRandom.current().nextInt(bestMoves.size())).getKey();
     }
