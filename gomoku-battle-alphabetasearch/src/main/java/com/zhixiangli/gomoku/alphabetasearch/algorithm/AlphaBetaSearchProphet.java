@@ -2,6 +2,7 @@ package com.zhixiangli.gomoku.alphabetasearch.algorithm;
 
 import com.google.common.base.Preconditions;
 import com.zhixiangli.gomoku.alphabetasearch.common.ProphetConst;
+import com.zhixiangli.gomoku.alphabetasearch.common.SearchConst;
 import com.zhixiangli.gomoku.core.analysis.GameReferee;
 import com.zhixiangli.gomoku.core.analysis.GlobalAnalyser;
 import com.zhixiangli.gomoku.core.analysis.PatternType;
@@ -24,7 +25,7 @@ public class AlphaBetaSearchProphet {
         Preconditions.checkArgument(selfChessType != ChessType.EMPTY);
         final double selfValue = evaluateChessboardValueByChessType(chessboard, selfChessType);
         final double opponentValue = evaluateChessboardValueByChessType(chessboard, GameReferee.nextChessType(selfChessType));
-        return selfValue - opponentValue;
+        return selfValue - SearchConst.DEFENSIVE_WEIGHT * opponentValue;
     }
 
     public static double evaluateChessboardValueByChessType(final Chessboard chessboard, final ChessType chessType) {

@@ -8,6 +8,16 @@ package com.zhixiangli.gomoku.alphabetasearch.common;
 public class SearchConst {
 
     /**
+     * Weight applied to opponent threats in the evaluation function.
+     * A value greater than 1.0 makes the AI more defensive by valuing
+     * opponent threats slightly more than its own opportunities.
+     * This helps the AI prioritize blocking opponent threats,
+     * which is critical in Gomoku where a single missed block can
+     * lead to an immediate loss.
+     */
+    public static final double DEFENSIVE_WEIGHT = 1.15;
+
+    /**
      * Decay factor applied to the evaluation score at each depth level.
      * A value slightly less than 1.0 encourages the algorithm to prefer
      * shorter winning paths and longer losing paths, making the AI
