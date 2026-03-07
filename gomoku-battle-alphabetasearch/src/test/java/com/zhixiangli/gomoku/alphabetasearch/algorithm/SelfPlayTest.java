@@ -112,7 +112,7 @@ public class SelfPlayTest {
         board.setChess(5, 6, ChessType.BLACK);
 
         Point bestMove = findBestMove(algorithm, board, ChessType.BLACK);
-        System.out.println("Best blocking move: " + bestMove);
+        LOGGER.info("Best blocking move: {}", bestMove);
         // Must block at (7,11) to prevent WHITE from completing FIVE
         Assert.assertTrue("AI should block at (7,11) but chose " + bestMove,
                 bestMove.x == 7 && bestMove.y == 11);
