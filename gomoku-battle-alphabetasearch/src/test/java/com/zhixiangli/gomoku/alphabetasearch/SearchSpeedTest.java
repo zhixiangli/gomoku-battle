@@ -13,7 +13,7 @@ import java.awt.Point;
  *   - Test position "B[25];W[36];B[34];W[45];B[43]": ~6500ms
  *
  * Optimized timing (sequential, depth 7, iterative deepening + TT + LMR):
- *   - Same position: ~60-100ms (&gt;65x faster)
+ *   - Same position: ~60-100ms (>65x faster)
  */
 public class SearchSpeedTest {
 

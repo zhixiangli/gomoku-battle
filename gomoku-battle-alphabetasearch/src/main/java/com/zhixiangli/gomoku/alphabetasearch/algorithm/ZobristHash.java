@@ -18,7 +18,7 @@ public final class ZobristHash {
             new long[GomokuConst.CHESSBOARD_SIZE][GomokuConst.CHESSBOARD_SIZE][2];
 
     static {
-        final Random rng = new Random(0x5A0B51517L);
+        final Random rng = new Random(0x5A0B5151L);
         for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; i++) {
             for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; j++) {
                 TABLE[i][j][0] = rng.nextLong();

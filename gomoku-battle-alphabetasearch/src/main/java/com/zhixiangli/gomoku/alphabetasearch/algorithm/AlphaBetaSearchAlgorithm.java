@@ -78,7 +78,6 @@ public class AlphaBetaSearchAlgorithm {
      * @param point            the point has been put.
      * @param currentChessType the chess type has been put.
      * @return the evaluation value from rootChessType's perspective.
-     * @throws Exception if search encounters an error.
      */
     public final double search(
             final int depth, final double alpha, final double beta, final Chessboard chessboard, final Point point,
@@ -347,8 +346,10 @@ public class AlphaBetaSearchAlgorithm {
         if (depth >= killerMoves.length) {
             return;
         }
-        if (killerMoves[depth][0] == null || killerMoves[depth][0].x != move.x || killerMoves[depth][0].y != move.y) {
-            killerMoves[depth][1] = killerMoves[depth][0];
+        final Point existing = killerMoves[depth][0];
+        final boolean isNewMove = (existing == null) || (existing.x != move.x) || (existing.y != move.y);
+        if (isNewMove) {
+            killerMoves[depth][1] = existing;
             killerMoves[depth][0] = move;
         }
     }

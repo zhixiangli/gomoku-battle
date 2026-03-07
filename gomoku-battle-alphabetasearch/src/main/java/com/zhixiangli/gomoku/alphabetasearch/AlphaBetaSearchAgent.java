@@ -71,7 +71,10 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
             // Reorder candidates based on previous iteration's scores (best first)
             if (pairs != null) {
                 pairs.sort((a, b) -> Double.compare(b.getValue(), a.getValue()));
-                candidates = pairs.stream().map(Pair::getKey).toArray(Point[]::new);
+                candidates = new Point[pairs.size()];
+                for (int i = 0; i < pairs.size(); i++) {
+                    candidates[i] = pairs.get(i).getKey();
+                }
             }
 
             final List<Pair<Point, Double>> prevPairs = pairs;
