@@ -3,6 +3,7 @@ package com.zhixiangli.gomoku.alphabetasearch;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.zhixiangli.gomoku.alphabetasearch.algorithm.AlphaBetaSearchAlgorithm;
+import com.zhixiangli.gomoku.alphabetasearch.algorithm.AlphaBetaSearchProphet;
 import com.zhixiangli.gomoku.alphabetasearch.common.SearchConst;
 import com.zhixiangli.gomoku.console.ConsoleAgent;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
@@ -77,7 +78,18 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
         final double bestValue = pairs.stream().map(Pair::getValue).max(Double::compare).get();
         final List<Pair<Point, Double>> resultPoints = pairs.stream()
                 .filter(pair -> Double.compare(bestValue, pair.getValue()) == 0).collect(Collectors.toList());
-        return resultPoints.get(ThreadLocalRandom.current().nextInt(resultPoints.size())).getKey();
+
+        // Break ties using static evaluation of move importance
+        final List<Pair<Point, Double>> evaluatedPoints = resultPoints.stream()
+                .map(pair -> ImmutablePair.of(pair.getKey(),
+                        AlphaBetaSearchProphet.evaluatePointValue(chessboard, pair.getKey())))
+                .collect(Collectors.toList());
+        final double bestPointValue = evaluatedPoints.stream()
+                .mapToDouble(Pair::getValue).max().getAsDouble();
+        final List<Pair<Point, Double>> bestMoves = evaluatedPoints.stream()
+                .filter(pair -> Double.compare(bestPointValue, pair.getValue()) == 0)
+                .collect(Collectors.toList());
+        return bestMoves.get(ThreadLocalRandom.current().nextInt(bestMoves.size())).getKey();
     }
 
     public static void main(final String[] args) {
