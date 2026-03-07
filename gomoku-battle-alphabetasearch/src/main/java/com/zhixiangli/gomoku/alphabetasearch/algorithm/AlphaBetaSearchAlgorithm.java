@@ -1,9 +1,6 @@
 package com.zhixiangli.gomoku.alphabetasearch.algorithm;
 
 import com.google.common.base.Preconditions;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.zhixiangli.gomoku.alphabetasearch.common.CacheConst;
 import com.zhixiangli.gomoku.alphabetasearch.common.ProphetConst;
 import com.zhixiangli.gomoku.alphabetasearch.common.SearchConst;
 import com.zhixiangli.gomoku.core.analysis.GameReferee;
@@ -12,24 +9,49 @@ import com.zhixiangli.gomoku.core.analysis.PatternType;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.chessboard.Chessboard;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
-import com.zhixiangli.gomoku.core.common.GomokuFormatter;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.awt.Point;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
+ * Alpha-beta search with Zobrist-hashed transposition table, iterative-deepening
+ * move ordering, killer move heuristic, history heuristic, late move reduction,
+ * and lazy move generation to minimize expensive candidate evaluation.
+ *
  * @author zhixiangli
  */
 public class AlphaBetaSearchAlgorithm {
 
-    private final Cache<String, Double> seachCache;
+    private static final int TT_SIZE_POWER = 21; // 2^21 ≈ 2M entries
+
+    /** Depth reduction for late moves. */
+    private static final int LMR_REDUCTION = 2;
+
+    /** Minimum depth to apply late move reduction. */
+    private static final int LMR_MIN_DEPTH = 3;
+
+    /** Moves searched before applying LMR (first N moves get full depth). */
+    private static final int LMR_FULL_DEPTH_MOVES = 3;
+
+    /** Threshold for considering a move as a strong threat (OPEN_FOUR level). */
+    private static final double THREAT_THRESHOLD = ProphetConst.EVALUATION.get(PatternType.OPEN_FOUR) * 0.5;
+
+    private final TranspositionTable tt;
 
     private final boolean isEnableCache;
+
+    /** Killer moves: two slots per depth level. */
+    private final Point[][] killerMoves;
+
+    /** History heuristic table: indexed by [row * BOARD_SIZE + col]. */
+    private final int[] historyTable;
+
+    private final TranspositionTable.ProbeResult probeResult = new TranspositionTable.ProbeResult();
 
     public AlphaBetaSearchAlgorithm() {
         this(true);
@@ -37,8 +59,9 @@ public class AlphaBetaSearchAlgorithm {
 
     public AlphaBetaSearchAlgorithm(final boolean isEnableCache) {
         this.isEnableCache = isEnableCache;
-        seachCache = CacheBuilder.newBuilder().maximumSize(CacheConst.MAXIMUM_SIZE)
-                .expireAfterAccess(CacheConst.DURATION_IN_MINUTE, TimeUnit.MINUTES).build();
+        this.tt = new TranspositionTable(TT_SIZE_POWER);
+        this.killerMoves = new Point[SearchConst.MAX_DEPTH + 2][2];
+        this.historyTable = new int[GomokuConst.CHESSBOARD_SIZE * GomokuConst.CHESSBOARD_SIZE];
     }
 
     double clearCacheAndSearch(
@@ -56,8 +79,8 @@ public class AlphaBetaSearchAlgorithm {
      * @param chessboard       the current chessboard.
      * @param point            the point has been put.
      * @param currentChessType the chess type has been put.
-     * @return
-     * @throws Exception
+     * @return the evaluation value from rootChessType's perspective.
+     * @throws Exception if search encounters an error.
      */
     public final double search(
             final int depth, final double alpha, final double beta, final Chessboard chessboard, final Point point,
@@ -66,61 +89,319 @@ public class AlphaBetaSearchAlgorithm {
         Preconditions.checkArgument(chessboard.getChess(point) != ChessType.EMPTY);
         Preconditions.checkArgument(currentChessType != ChessType.EMPTY);
 
-        final String currentPath = path + GomokuFormatter.encodePoint(point);
-        final Callable<Double> callable = () -> {
-            double result = 0;
-            if (GameReferee.isWin(chessboard, point)) {
-                final double maxValue = ProphetConst.EVALUATION.get(PatternType.FIVE);
-                result = (rootChessType == currentChessType) ? maxValue : -maxValue;
-            } else if (depth <= 0) {
-                result = AlphaBetaSearchProphet.evaluateChessboardValue(chessboard, rootChessType);
-            } else {
-                final ChessType nextChessType = GameReferee.nextChessType(currentChessType);
-                final Point[] candidateMoves = nextMoves(chessboard);
-                if (candidateMoves.length == 0) {
-                    result = AlphaBetaSearchProphet.evaluateChessboardValue(chessboard, rootChessType);
-                } else {
-                double newAlpha = alpha, newBeta = beta;
-                for (final Point nextPoint : candidateMoves) {
-                    // set chessboard.
-                    chessboard.setChess(nextPoint, nextChessType);
-                    final double searchValue = search(depth - 1, newAlpha, newBeta, chessboard, nextPoint, nextChessType,
-                            rootChessType, currentPath);
-                    // unset chessboard.
-                    chessboard.setChess(nextPoint, ChessType.EMPTY);
-                    if (rootChessType == currentChessType) {
-                        result = newBeta = Math.min(newBeta, searchValue);
-                    } else {
-                        result = newAlpha = Math.max(newAlpha, searchValue);
+        final long hash = ZobristHash.computeHash(chessboard);
+        return searchInternal(depth, alpha, beta, chessboard, point, currentChessType, rootChessType, hash);
+    }
+
+    /**
+     * Internal search using Zobrist hash for transposition table lookups.
+     * Includes: TT probe/store, lazy move generation, move ordering,
+     * killer moves, history heuristic, and late move reduction (LMR).
+     */
+    final double searchInternal(
+            final int depth, double alpha, double beta, final Chessboard chessboard, final Point point,
+            final ChessType currentChessType, final ChessType rootChessType, final long hash) {
+
+        // Terminal: win check
+        if (GameReferee.isWin(chessboard, point)) {
+            final double maxValue = ProphetConst.EVALUATION.get(PatternType.FIVE);
+            final double result = (rootChessType == currentChessType) ? maxValue : -maxValue;
+            return result * SearchConst.DECAY_FACTOR;
+        }
+
+        // Leaf node
+        if (depth <= 0) {
+            return AlphaBetaSearchProphet.evaluateChessboardValue(chessboard, rootChessType)
+                    * SearchConst.DECAY_FACTOR;
+        }
+
+        // --- Transposition table probe ---
+        Point ttBestMove = null;
+        if (isEnableCache) {
+            if (tt.probe(hash, probeResult)) {
+                if (probeResult.depth >= depth) {
+                    if (probeResult.flag == TranspositionTable.EXACT) {
+                        return probeResult.value;
                     }
-                    if (newBeta <= newAlpha) {
-                        break;
+                    if (probeResult.flag == TranspositionTable.LOWER_BOUND && probeResult.value >= beta) {
+                        return probeResult.value;
+                    }
+                    if (probeResult.flag == TranspositionTable.UPPER_BOUND && probeResult.value <= alpha) {
+                        return probeResult.value;
                     }
                 }
+                // Always use TT best move for ordering, regardless of stored depth
+                if (probeResult.bestMoveRow >= 0) {
+                    ttBestMove = new Point(probeResult.bestMoveRow, probeResult.bestMoveCol);
                 }
             }
-            return result * SearchConst.DECAY_FACTOR;
-        };
+        }
+
+        final ChessType nextChessType = GameReferee.nextChessType(currentChessType);
+        final boolean isMinNode = (rootChessType == currentChessType);
+        final double origAlpha = alpha;
+        final double origBeta = beta;
+        double result = isMinNode ? Double.MAX_VALUE : -Double.MAX_VALUE;
+        Point bestMove = null;
+        int moveIndex = 0;
+
+        // --- Lazy move generation: try TT best move first to avoid expensive nextMoves ---
+        if (isEnableCache && ttBestMove != null && chessboard.getChess(ttBestMove) == ChessType.EMPTY) {
+            chessboard.setChess(ttBestMove, nextChessType);
+            final long newHash = hash ^ ZobristHash.pieceHash(ttBestMove.x, ttBestMove.y, nextChessType);
+            final double searchValue = searchInternal(depth - 1, alpha, beta, chessboard,
+                    ttBestMove, nextChessType, rootChessType, newHash);
+            chessboard.setChess(ttBestMove, ChessType.EMPTY);
+
+            bestMove = ttBestMove;
+            if (isMinNode) {
+                result = searchValue;
+                beta = Math.min(beta, searchValue);
+            } else {
+                result = searchValue;
+                alpha = Math.max(alpha, searchValue);
+            }
+            moveIndex = 1;
+
+            if (beta <= alpha) {
+                recordKillerMove(ttBestMove, depth);
+                updateHistory(ttBestMove, depth);
+                return storeTTAndReturn(hash, depth, result * SearchConst.DECAY_FACTOR,
+                        origAlpha, origBeta, bestMove);
+            }
+        }
+
+        // Generate full candidate list (expensive but needed)
+        final Point[] candidateMoves = nextMoves(chessboard);
+        if (candidateMoves.length == 0 && bestMove == null) {
+            return AlphaBetaSearchProphet.evaluateChessboardValue(chessboard, rootChessType)
+                    * SearchConst.DECAY_FACTOR;
+        }
+
+        // Reorder and filter (skip TT best move as already searched)
+        final Point[] orderedMoves = orderMoves(candidateMoves, ttBestMove, depth);
+
+        // Search remaining candidates
+        for (final Point nextPoint : orderedMoves) {
+            // Skip TT best move (already searched above)
+            if (ttBestMove != null && nextPoint.x == ttBestMove.x && nextPoint.y == ttBestMove.y) {
+                continue;
+            }
+
+            chessboard.setChess(nextPoint, nextChessType);
+            final long newHash = hash ^ ZobristHash.pieceHash(nextPoint.x, nextPoint.y, nextChessType);
+
+            double searchValue;
+
+            // Late move reduction: search later moves at reduced depth first
+            if (isEnableCache && moveIndex >= LMR_FULL_DEPTH_MOVES && depth >= LMR_MIN_DEPTH
+                    && !isSpecialMove(nextPoint, ttBestMove, depth)) {
+                final int reducedDepth = Math.max(0, depth - 1 - LMR_REDUCTION);
+                searchValue = searchInternal(reducedDepth, alpha, beta, chessboard,
+                        nextPoint, nextChessType, rootChessType, newHash);
+                // Re-search at full depth if it looks promising
+                final boolean promising = isMinNode ? (searchValue < beta) : (searchValue > alpha);
+                if (promising) {
+                    searchValue = searchInternal(depth - 1, alpha, beta, chessboard,
+                            nextPoint, nextChessType, rootChessType, newHash);
+                }
+            } else {
+                searchValue = searchInternal(depth - 1, alpha, beta, chessboard,
+                        nextPoint, nextChessType, rootChessType, newHash);
+            }
+
+            chessboard.setChess(nextPoint, ChessType.EMPTY);
+
+            if (isMinNode) {
+                if (searchValue < result) {
+                    result = searchValue;
+                    bestMove = nextPoint;
+                }
+                beta = Math.min(beta, searchValue);
+            } else {
+                if (searchValue > result) {
+                    result = searchValue;
+                    bestMove = nextPoint;
+                }
+                alpha = Math.max(alpha, searchValue);
+            }
+
+            if (beta <= alpha) {
+                recordKillerMove(nextPoint, depth);
+                updateHistory(nextPoint, depth);
+                break;
+            }
+            moveIndex++;
+        }
+
+        if (bestMove == null && candidateMoves.length > 0) {
+            bestMove = candidateMoves[0];
+        }
+
+        return storeTTAndReturn(hash, depth, result * SearchConst.DECAY_FACTOR,
+                origAlpha, origBeta, bestMove);
+    }
+
+    /**
+     * Store result in TT and return the decayed value.
+     */
+    private double storeTTAndReturn(final long hash, final int depth, final double decayedResult,
+                                    final double origAlpha, final double origBeta, final Point bestMove) {
         if (isEnableCache) {
-            return seachCache.get(currentPath, callable);
-        } else {
-            return callable.call();
+            final int flag;
+            if (decayedResult <= origAlpha) {
+                flag = TranspositionTable.UPPER_BOUND;
+            } else if (decayedResult >= origBeta) {
+                flag = TranspositionTable.LOWER_BOUND;
+            } else {
+                flag = TranspositionTable.EXACT;
+            }
+            tt.store(hash, depth, decayedResult, flag, bestMove);
+        }
+        return decayedResult;
+    }
+
+    /**
+     * Check if a move is "special" (TT best move or killer move) and should not be reduced.
+     */
+    private boolean isSpecialMove(final Point move, final Point ttBestMove, final int depth) {
+        if (ttBestMove != null && move.x == ttBestMove.x && move.y == ttBestMove.y) {
+            return true;
+        }
+        if (depth < killerMoves.length) {
+            for (final Point killer : killerMoves[depth]) {
+                if (killer != null && move.x == killer.x && move.y == killer.y) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Reorder candidate moves for better alpha-beta pruning.
+     * Priority: TT best move > killer moves > history-sorted moves.
+     */
+    private Point[] orderMoves(final Point[] candidates, final Point ttBestMove, final int depth) {
+        if (!isEnableCache) {
+            return candidates;
+        }
+        final List<Point> ordered = new ArrayList<>(candidates.length);
+
+        // 1. TT best move first (if in candidates)
+        if (ttBestMove != null) {
+            for (final Point p : candidates) {
+                if (p.x == ttBestMove.x && p.y == ttBestMove.y) {
+                    ordered.add(p);
+                    break;
+                }
+            }
+        }
+
+        // 2. Killer moves
+        if (depth < killerMoves.length) {
+            for (final Point killer : killerMoves[depth]) {
+                if (killer != null && (ttBestMove == null || killer.x != ttBestMove.x || killer.y != ttBestMove.y)) {
+                    for (final Point p : candidates) {
+                        if (p.x == killer.x && p.y == killer.y && !containsPoint(ordered, p)) {
+                            ordered.add(p);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. Remaining moves sorted by history heuristic score
+        final List<Pair<Point, Integer>> remaining = new ArrayList<>();
+        for (final Point p : candidates) {
+            if (!containsPoint(ordered, p)) {
+                remaining.add(ImmutablePair.of(p, historyTable[p.x * GomokuConst.CHESSBOARD_SIZE + p.y]));
+            }
+        }
+        remaining.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
+        for (final Pair<Point, Integer> pair : remaining) {
+            ordered.add(pair.getKey());
+        }
+
+        return ordered.toArray(new Point[0]);
+    }
+
+    private static boolean containsPoint(final List<Point> list, final Point p) {
+        for (final Point q : list) {
+            if (q.x == p.x && q.y == p.y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void recordKillerMove(final Point move, final int depth) {
+        if (depth >= killerMoves.length) {
+            return;
+        }
+        if (killerMoves[depth][0] == null || killerMoves[depth][0].x != move.x || killerMoves[depth][0].y != move.y) {
+            killerMoves[depth][1] = killerMoves[depth][0];
+            killerMoves[depth][0] = move;
         }
     }
 
+    private void updateHistory(final Point move, final int depth) {
+        historyTable[move.x * GomokuConst.CHESSBOARD_SIZE + move.y] += depth * depth;
+    }
+
+    /**
+     * Generate and score candidate moves, returning the top candidates sorted by heuristic value.
+     * Also detects forced moves: if a winning move or must-block move exists,
+     * returns only that single move to avoid wasting search time.
+     */
     public Point[] nextMoves(final Chessboard chessboard) {
         final Point[] candidates = GlobalAnalyser.getEmptyPointsAround(chessboard, SearchConst.AROUND_CANDIDATE_RANGE);
-        ArrayUtils.shuffle(candidates, GomokuConst.RANDOM);
-        final Stream<Point> candidatesStream = Stream.of(candidates)
-                .map(point -> ImmutablePair.of(point, AlphaBetaSearchProphet.evaluatePointValue(chessboard, point)))
-                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue())).limit(SearchConst.MAX_CANDIDATE_NUM)
+        if (candidates.length == 0) {
+            return candidates;
+        }
+
+        // Score all candidates
+        final Pair<Point, Double>[] scored = new Pair[candidates.length];
+        double maxScore = -Double.MAX_VALUE;
+        int maxIndex = 0;
+        for (int i = 0; i < candidates.length; i++) {
+            final double value = AlphaBetaSearchProphet.evaluatePointValue(chessboard, candidates[i]);
+            scored[i] = ImmutablePair.of(candidates[i], value);
+            if (value > maxScore) {
+                maxScore = value;
+                maxIndex = i;
+            }
+        }
+
+        // If the best move is a strong threat (near OPEN_FOUR level), limit candidates
+        if (maxScore >= THREAT_THRESHOLD) {
+            // Only search the top 1-3 forcing moves
+            final List<Point> forcing = new ArrayList<>();
+            for (final Pair<Point, Double> s : scored) {
+                if (s.getValue() >= THREAT_THRESHOLD) {
+                    forcing.add(s.getKey());
+                }
+            }
+            if (!forcing.isEmpty() && forcing.size() <= 3) {
+                return forcing.toArray(new Point[0]);
+            }
+        }
+
+        // Sort by score descending and take top candidates
+        final Stream<Point> candidatesStream = Stream.of(scored)
+                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
+                .limit(SearchConst.MAX_CANDIDATE_NUM)
                 .map(Pair::getKey);
         return candidatesStream.toArray(Point[]::new);
     }
 
     public void clearCache() {
-        seachCache.invalidateAll();
-        Preconditions.checkState(seachCache.size() == 0);
+        tt.clear();
+        for (int i = 0; i < killerMoves.length; i++) {
+            killerMoves[i][0] = null;
+            killerMoves[i][1] = null;
+        }
+        java.util.Arrays.fill(historyTable, 0);
     }
-
 }

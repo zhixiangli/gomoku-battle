@@ -1,6 +1,5 @@
 package com.zhixiangli.gomoku.alphabetasearch;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.zhixiangli.gomoku.alphabetasearch.algorithm.AlphaBetaSearchAlgorithm;
 import com.zhixiangli.gomoku.alphabetasearch.common.SearchConst;
@@ -10,7 +9,6 @@ import com.zhixiangli.gomoku.core.chessboard.Chessboard;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 import com.zhixiangli.gomoku.core.common.GomokuFormatter;
 import org.apache.commons.lang3.ArrayUtils;
-import java.util.concurrent.ThreadLocalRandom;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,10 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author zhixiangli
@@ -55,28 +53,48 @@ public class AlphaBetaSearchAgent extends ConsoleAgent {
 
     }
 
-    private Point searchBestPoint(final Point[] candidates, final Chessboard chessboard, final ChessType chessType) {
+    /**
+     * Use iterative deepening: search from depth 1 up to MAX_DEPTH.
+     * Each iteration reorders root candidates by scores from the previous iteration,
+     * and the transposition table carries forward entries for better move ordering
+     * at deeper levels.
+     */
+    private Point searchBestPoint(final Point[] initialCandidates, final Chessboard chessboard,
+                                  final ChessType chessType) {
         alphaBetaAlgorithm.clearCache();
-        final List<Pair<Point, Double>> pairs = Stream.of(candidates).parallel().map(point -> {
-            final Chessboard newChessboard = chessboard.clone();
-            // set chessboard.
-            newChessboard.setChess(point, chessType);
-            double value = -Double.MAX_VALUE;
-            try {
-                value = alphaBetaAlgorithm.search(SearchConst.MAX_DEPTH, -Double.MAX_VALUE, Double.MAX_VALUE, newChessboard, point,
-                        chessType, chessType, StringUtils.EMPTY);
-            } catch (Exception e) {
-                LOGGER.error("alpha beta search error", e);
+
+        Point[] candidates = initialCandidates;
+        List<Pair<Point, Double>> pairs = null;
+
+        for (int depth = 1; depth <= SearchConst.MAX_DEPTH; depth++) {
+            // Reorder candidates based on previous iteration's scores (best first)
+            if (pairs != null) {
+                pairs.sort((a, b) -> Double.compare(b.getValue(), a.getValue()));
+                candidates = pairs.stream().map(Pair::getKey).toArray(Point[]::new);
             }
-            // unset chessboard.
-            newChessboard.setChess(point, ChessType.EMPTY);
-            Preconditions.checkState(newChessboard.equals(chessboard));
-            return ImmutablePair.of(point, value);
-        }).collect(Collectors.toList());
+
+            pairs = new ArrayList<>();
+            for (final Point point : candidates) {
+                chessboard.setChess(point, chessType);
+                double value = -Double.MAX_VALUE;
+                try {
+                    value = alphaBetaAlgorithm.search(depth, -Double.MAX_VALUE, Double.MAX_VALUE,
+                            chessboard, point, chessType, chessType, StringUtils.EMPTY);
+                } catch (final Exception e) {
+                    LOGGER.error("alpha beta search error", e);
+                }
+                chessboard.setChess(point, ChessType.EMPTY);
+                pairs.add(ImmutablePair.of(point, value));
+            }
+        }
 
         final double bestValue = pairs.stream().map(Pair::getValue).max(Double::compare).get();
-        final List<Pair<Point, Double>> resultPoints = pairs.stream()
-                .filter(pair -> Double.compare(bestValue, pair.getValue()) == 0).collect(Collectors.toList());
+        final List<Pair<Point, Double>> resultPoints = new ArrayList<>();
+        for (final Pair<Point, Double> pair : pairs) {
+            if (Double.compare(bestValue, pair.getValue()) == 0) {
+                resultPoints.add(pair);
+            }
+        }
         return resultPoints.get(ThreadLocalRandom.current().nextInt(resultPoints.size())).getKey();
     }
 
