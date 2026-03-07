@@ -24,11 +24,7 @@ public class AlphaBetaSearchProphet {
         Preconditions.checkArgument(selfChessType != ChessType.EMPTY);
         final double selfValue = evaluateChessboardValueByChessType(chessboard, selfChessType);
         final double opponentValue = evaluateChessboardValueByChessType(chessboard, GameReferee.nextChessType(selfChessType));
-        if (selfValue > opponentValue) {
-            return selfValue;
-        } else {
-            return -opponentValue;
-        }
+        return selfValue - opponentValue;
     }
 
     public static double evaluateChessboardValueByChessType(final Chessboard chessboard, final ChessType chessType) {
