@@ -32,6 +32,15 @@ sh build.sh
 sh battle.sh -c battle.properties
 ```
 
+## ✅ Run Tests
+The project is a Maven multi-module build. Unit tests live in each module's `src/test/java` directory and are executed by the Maven Surefire plugin during `test`.
+
+```bash
+mvn test
+```
+
+GitHub Actions CI runs the same command on every pull request and on pushes to `main` / `master`.
+
 ## ⚙️ Configuration
 Configure agent commands in **battle.properties**. Player side (Black/White) is now selected in the dashboard UI with a dropdown: **Human**, **Alpha-Beta Search**, or **AlphaZero**.
 
