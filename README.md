@@ -32,6 +32,10 @@ sh build.sh
 sh battle.sh -c battle.properties
 ```
 
+### Prerequisites
+- Java **25**
+- Maven **3.9+**
+
 ## ✅ Run Tests
 The project is a Maven multi-module build. Unit tests live in each module's `src/test/java` directory and are executed by the Maven Surefire plugin during `test`.
 
