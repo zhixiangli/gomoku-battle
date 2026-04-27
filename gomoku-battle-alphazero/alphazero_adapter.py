@@ -12,19 +12,16 @@ Request  (stdin):  {"command":"NEXT_WHITE","rows":15,"columns":15,"chessboard":"
 Response (stdout): {"rowIndex":7,"columnIndex":8}
 """
 
-import glob
 import argparse
+import glob
+import importlib
 import json
 import logging
 import os
+import random
 import sys
-
-import numpy
-
-from alphazero.mcts import MCTS
-from alphazero.nnet import AlphaZeroNNet
-from gomoku_15_15.config import GomokuConfig
-from gomoku_15_15.game import GomokuGame
+from dataclasses import dataclass
+from typing import Any, Optional
 
 # Directory containing this adapter script.
 _ADAPTER_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -37,7 +34,21 @@ _LOG_DIR = os.path.join(os.path.dirname(_ADAPTER_DIR), "log")
 _LOG_FILE = os.path.join(_LOG_DIR, "alphazero.log")
 
 
-def _parse_args():
+@dataclass
+class AdapterRuntime:
+    """Initialized objects needed to handle requests."""
+
+    mcts: Any
+    columns: int
+
+
+def _ensure_submodule_on_syspath():
+    """Ensure alphazero-board-games is importable when running from repo root."""
+    if _SUBMODULE_DIR not in sys.path:
+        sys.path.insert(0, _SUBMODULE_DIR)
+
+
+def _parse_args(argv: Optional[list[str]] = None):
     """Parse CLI arguments for adapter runtime settings."""
     parser = argparse.ArgumentParser(description="Run AlphaZero gomoku adapter")
     parser.add_argument(
@@ -46,7 +57,7 @@ def _parse_args():
         default=5000,
         help="Number of MCTS simulations per move (default: 5000)",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def _pick_ai_action(mcts, board, player):
@@ -54,36 +65,35 @@ def _pick_ai_action(mcts, board, player):
     actions, counts = mcts.simulate(board, player)
     if len(actions) == 0:
         return None
-    best = numpy.max(counts)
-    best_actions = actions[counts == best]
-    return int(numpy.random.choice(best_actions))
+
+    actions_list = list(actions)
+    counts_list = list(counts)
+    best_count = max(counts_list)
+    best_actions = [action for action, count in zip(actions_list, counts_list) if count == best_count]
+    return int(random.choice(best_actions))
 
 
 def _command_to_player(command: str) -> str:
     """Map ConsoleCommand to AlphaZero player string."""
     if command == "NEXT_BLACK":
         return "B"
-    elif command == "NEXT_WHITE":
+    if command == "NEXT_WHITE":
         return "W"
     raise ValueError(f"Unknown command: {command}")
 
 
-def main():
-    args = _parse_args()
+def _build_runtime(simulation_num: int, logger: logging.Logger) -> AdapterRuntime:
+    """Initialize AlphaZero game objects and verify checkpoints are present."""
+    _ensure_submodule_on_syspath()
+    mcts_module = importlib.import_module("alphazero.mcts")
+    nnet_module = importlib.import_module("alphazero.nnet")
+    config_module = importlib.import_module("gomoku_15_15.config")
+    game_module = importlib.import_module("gomoku_15_15.game")
 
-    # Log to a file (cleared each run) so stdout stays clean for JSON protocol.
-    os.makedirs(_LOG_DIR, exist_ok=True)
-    handler = logging.FileHandler(_LOG_FILE, mode="w")
-    handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
-    logging.basicConfig(level=logging.INFO, handlers=[handler])
-    logger = logging.getLogger(__name__)
-
-    logger.info("Initializing AlphaZero adapter...")
-
-    config = GomokuConfig()
-    config.simulation_num = args.simulation_num
-    game = GomokuGame(config)
-    nnet = AlphaZeroNNet(game, config)
+    config = config_module.GomokuConfig()
+    config.simulation_num = simulation_num
+    game = game_module.GomokuGame(config)
+    nnet = nnet_module.AlphaZeroNNet(game, config)
 
     logger.info("MCTS simulation_num=%d", config.simulation_num)
 
@@ -96,44 +106,78 @@ def main():
     if not checkpoint_files:
         raise RuntimeError(
             f"No checkpoint files found matching '{checkpoint_path}*.pt'. "
-            f"Cannot run AlphaZero without a trained model."
+            "Cannot run AlphaZero without a trained model."
         )
 
     nnet.load_checkpoint(checkpoint_path)
-    mcts = MCTS(nnet, game, config)
+    mcts = mcts_module.MCTS(nnet, game, config)
 
-    logger.info("AlphaZero adapter ready, waiting for commands.")
+    return AdapterRuntime(mcts=mcts, columns=config.columns)
 
-    for line in sys.stdin:
-        line = line.strip()
-        if not line:
-            continue
 
-        try:
-            request = json.loads(line)
-        except json.JSONDecodeError:
-            logger.error("Failed to parse JSON: %s", line)
-            continue
+def _process_request(runtime: AdapterRuntime, request: dict[str, Any]) -> Optional[dict[str, int]]:
+    """Process one JSON request and return a response JSON object or None."""
+    command = request.get("command", "")
+    sgf_board = request.get("chessboard", "")
+    player = _command_to_player(command)
+    action = _pick_ai_action(runtime.mcts, sgf_board, player)
 
-        command = request.get("command", "")
-        sgf_board = request.get("chessboard", "")
+    if action is None:
+        return None
 
-        logger.info("Received command=%s, board=%s", command, sgf_board)
+    row, col = divmod(action, runtime.columns)
+    return {"rowIndex": row, "columnIndex": col}
 
-        player = _command_to_player(command)
-        action = _pick_ai_action(mcts, sgf_board, player)
 
-        if action is None:
-            logger.warning("No legal moves available.")
-            continue
+def main(argv: Optional[list[str]] = None, stdin=None, stdout=None):
+    args = _parse_args(argv)
+    stdin = stdin or sys.stdin
+    stdout = stdout or sys.stdout
 
-        row, col = divmod(action, config.columns)
-        response = {"rowIndex": row, "columnIndex": col}
+    # Log to a file (cleared each run) so stdout stays clean for JSON protocol.
+    os.makedirs(_LOG_DIR, exist_ok=True)
+    logger = logging.getLogger(__name__)
+    logger.handlers = []
+    logger.setLevel(logging.INFO)
+    handler = logging.FileHandler(_LOG_FILE, mode="w")
+    handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
+    logger.addHandler(handler)
+    logger.propagate = False
 
-        logger.info("Responding: %s (action=%d)", response, action)
+    try:
+        logger.info("Initializing AlphaZero adapter...")
+        runtime = _build_runtime(args.simulation_num, logger)
+        logger.info("AlphaZero adapter ready, waiting for commands.")
 
-        sys.stdout.write(json.dumps(response) + "\n")
-        sys.stdout.flush()
+        for line in stdin:
+            line = line.strip()
+            if not line:
+                continue
+
+            try:
+                request = json.loads(line)
+            except json.JSONDecodeError:
+                logger.error("Failed to parse JSON: %s", line)
+                continue
+
+            logger.info("Received command=%s, board=%s", request.get("command", ""), request.get("chessboard", ""))
+
+            try:
+                response = _process_request(runtime, request)
+            except ValueError as exc:
+                logger.error("Invalid request: %s", exc)
+                continue
+
+            if response is None:
+                logger.warning("No legal moves available.")
+                continue
+
+            logger.info("Responding: %s", response)
+            stdout.write(json.dumps(response) + "\n")
+            stdout.flush()
+    finally:
+        handler.close()
+        logger.handlers = []
 
 
 if __name__ == "__main__":
