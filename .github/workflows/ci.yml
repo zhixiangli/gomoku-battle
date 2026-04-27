@@ -33,18 +33,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e ./alphazero-board-games
+          pip install pytest
 
       - name: Run Maven tests
         run: mvn --batch-mode test
 
       - name: Run Python tests
-        run: |
-          mapfile -t test_dirs < <(find . -type d -name tests -not -path './.git/*' -not -path './alphazero-board-games/*' | sort)
-          if [ ${#test_dirs[@]} -eq 0 ]; then
-            echo "No Python test directories found."
-            exit 0
-          fi
-          for test_dir in "${test_dirs[@]}"; do
-            echo "Running Python tests in ${test_dir}"
-            python -m unittest discover -s "${test_dir}" -p "test_*.py"
-          done
+        run: python -m pytest --ignore=alphazero-board-games
