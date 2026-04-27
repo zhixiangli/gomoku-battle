@@ -5,11 +5,13 @@ from pathlib import Path
 
 
 _ADAPTER_PATH = Path(__file__).resolve().parents[1] / "alphazero_adapter.py"
-_SPEC = importlib.util.spec_from_file_location("alphazero_adapter_real", _ADAPTER_PATH)
+_SPEC = importlib.util.spec_from_file_location("alphazero_adapter_module", _ADAPTER_PATH)
 alphazero_adapter = importlib.util.module_from_spec(_SPEC)
 assert _SPEC.loader is not None
 _SPEC.loader.exec_module(alphazero_adapter)
-class AdapterRealIntegrationTests(unittest.TestCase):
+
+
+class AdapterIntegrationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         alphazero_adapter._ensure_submodule_on_syspath()
