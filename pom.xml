@@ -53,6 +53,12 @@
 			<artifactId>commons-configuration2</artifactId>
 			<version>2.15.0</version>
 		</dependency>
+		<!-- Required by commons-configuration2 at runtime. -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.21.0</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
 		<dependency>
 			<groupId>commons-beanutils</groupId>
