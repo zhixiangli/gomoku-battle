@@ -19,6 +19,7 @@ import json
 import logging
 import os
 import random
+import re
 import sys
 from dataclasses import dataclass
 from typing import Any, Optional
@@ -32,6 +33,9 @@ _SUBMODULE_DIR = os.path.join(os.path.dirname(_ADAPTER_DIR), "alphazero-board-ga
 # Log file lives in the gomoku-battle/log directory; mode='w' clears previous logs each run.
 _LOG_DIR = os.path.join(os.path.dirname(_ADAPTER_DIR), "log")
 _LOG_FILE = os.path.join(_LOG_DIR, "alphazero.log")
+
+_BOARD_SIZE = 15
+_MOVE_PATTERN = re.compile(r"^([BW])\[([0-9a-e])([0-9a-e])\]$")
 
 
 @dataclass
@@ -82,6 +86,45 @@ def _command_to_player(command: str) -> str:
     raise ValueError(f"Unknown command: {command}")
 
 
+def _validate_sgf(sgf_board: str) -> None:
+    """Validate the fixed-size, alternating-move SGF history used by the protocol."""
+    if not isinstance(sgf_board, str):
+        raise ValueError("chessboard must be a string")
+    if not sgf_board:
+        return
+
+    expected_player = "B"
+    occupied = set()
+    for move in sgf_board.split(";"):
+        match = _MOVE_PATTERN.fullmatch(move)
+        if match is None:
+            raise ValueError(f"Invalid SGF move: {move}")
+        player, row_hex, column_hex = match.groups()
+        if player != expected_player:
+            raise ValueError(f"Invalid SGF move order: {move}")
+        row, column = int(row_hex, 16), int(column_hex, 16)
+        if row >= _BOARD_SIZE or column >= _BOARD_SIZE:
+            raise ValueError(f"SGF coordinate is out of range: {move}")
+        if (row, column) in occupied:
+            raise ValueError(f"Duplicate SGF move: {move}")
+        occupied.add((row, column))
+        expected_player = "W" if player == "B" else "B"
+
+
+def _validate_request(request: Any) -> dict[str, Any]:
+    """Validate one Java console protocol request before invoking the MCTS engine."""
+    if not isinstance(request, dict):
+        raise ValueError("Request must be a JSON object")
+
+    command = request.get("command")
+    _command_to_player(command)
+    if request.get("rows") != _BOARD_SIZE or request.get("columns") != _BOARD_SIZE:
+        raise ValueError(f"Only {_BOARD_SIZE}x{_BOARD_SIZE} boards are supported")
+
+    _validate_sgf(request.get("chessboard"))
+    return request
+
+
 def _build_runtime(simulation_num: int, logger: logging.Logger) -> AdapterRuntime:
     """Initialize AlphaZero game objects and verify checkpoints are present."""
     _ensure_submodule_on_syspath()
@@ -117,6 +160,7 @@ def _build_runtime(simulation_num: int, logger: logging.Logger) -> AdapterRuntim
 
 def _process_request(runtime: AdapterRuntime, request: dict[str, Any]) -> Optional[dict[str, int]]:
     """Process one JSON request and return a response JSON object or None."""
+    _validate_request(request)
     command = request.get("command", "")
     sgf_board = request.get("chessboard", "")
     player = _command_to_player(command)
@@ -163,7 +207,7 @@ def main(argv: Optional[list[str]] = None, stdin=None, stdout=None):
             logger.info("Received command=%s, board=%s", request.get("command", ""), request.get("chessboard", ""))
 
             try:
-                response = _process_request(runtime, request)
+                response = _process_request(runtime, _validate_request(request))
             except ValueError as exc:
                 logger.error("Invalid request: %s", exc)
                 continue

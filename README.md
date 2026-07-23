@@ -72,8 +72,8 @@ The console spawns each agent as a subprocess and communicates over JSON (`stdin
 | Field | Description |
 |-------|-------------|
 | command | `NEXT_BLACK` or `NEXT_WHITE` |
-| rows | board row count |
-| columns | board column count |
+| rows | board row count; must be `15` |
+| columns | board column count; must be `15` |
 | chessboard | SGF |
 
 ### Sample Request

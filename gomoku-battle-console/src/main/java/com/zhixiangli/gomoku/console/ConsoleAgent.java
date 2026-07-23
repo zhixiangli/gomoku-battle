@@ -1,7 +1,7 @@
 package com.zhixiangli.gomoku.console;
 
-import com.google.gson.Gson;
 import com.zhixiangli.gomoku.console.common.ConsoleCommand;
+import com.zhixiangli.gomoku.console.common.ConsoleProtocol;
 import com.zhixiangli.gomoku.console.common.ConsoleRequest;
 import com.zhixiangli.gomoku.console.common.ConsoleResponse;
 import com.zhixiangli.gomoku.core.chessboard.ChessType;
@@ -26,7 +26,13 @@ public abstract class ConsoleAgent {
                 final String command = StringUtils.strip(reader.nextLine());
                 LOGGER.info("received command {}", command);
 
-                final ConsoleRequest req = new Gson().fromJson(command, ConsoleRequest.class);
+                final ConsoleRequest req;
+                try {
+                    req = ConsoleProtocol.parseRequest(command);
+                } catch (final IllegalArgumentException e) {
+                    LOGGER.warn("ignoring invalid command", e);
+                    continue;
+                }
                 Point p = null;
                 if (ConsoleCommand.NEXT_BLACK.getText().equals(req.getCommand().getText())) {
                     p = next(req.getChessboard(), ChessType.BLACK);
@@ -35,7 +41,7 @@ public abstract class ConsoleAgent {
                 }
                 if (null != p) {
                     final ConsoleResponse resp = new ConsoleResponse(p.x, p.y);
-                    System.out.println(new Gson().toJson(resp));
+                    System.out.println(new com.google.gson.Gson().toJson(resp));
                 }
             }
         }

@@ -20,6 +20,7 @@ class AdapterIntegrationTests(unittest.TestCase):
         cls.runtime = alphazero_adapter._build_runtime(simulation_num=32, logger=logger)
 
     def _assert_response_in_expected(self, request, expected_positions):
+        request = {"rows": 15, "columns": 15, **request}
         response = alphazero_adapter._process_request(self.runtime, request)
         self.assertIsNotNone(response)
         actual = (response["rowIndex"], response["columnIndex"])
@@ -133,6 +134,20 @@ class AdapterIntegrationTests(unittest.TestCase):
                     request=pattern["request"],
                     expected_positions=pattern["expected_positions"],
                 )
+
+
+class AdapterProtocolTests(unittest.TestCase):
+    def test_request_requires_object_known_command_and_fixed_dimensions(self):
+        for request in [
+            [],
+            {"command": "NEXT_GREEN", "rows": 15, "columns": 15, "chessboard": ""},
+            {"command": "NEXT_BLACK", "rows": 14, "columns": 15, "chessboard": ""},
+            {"command": "NEXT_BLACK", "rows": 15, "columns": 15, "chessboard": "B[7f]"},
+        ]:
+            with self.subTest(request=request):
+                with self.assertRaises(ValueError):
+                    alphazero_adapter._validate_request(request)
+
 
 
 if __name__ == "__main__":

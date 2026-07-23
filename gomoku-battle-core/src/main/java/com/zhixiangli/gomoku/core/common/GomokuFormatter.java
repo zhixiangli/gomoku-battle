@@ -30,7 +30,7 @@ public class GomokuFormatter {
     }
 
     public static int decodeAxis(final char hex) {
-        return Integer.parseInt(String.valueOf(hex), 16);
+        return decodeCoordinate(hex);
     }
 
     public static String toSGF(final List<Pair<ChessType, Point>> history) {
@@ -40,14 +40,41 @@ public class GomokuFormatter {
     }
 
     public static Chessboard toChessboard(final String sgf) {
-        final String[] pieces = StringUtils.split(sgf, ';');
         final Chessboard board = new Chessboard();
+        if (sgf == null) {
+            throw new IllegalArgumentException("SGF cannot be null");
+        }
+        if (sgf.isEmpty()) {
+            return board;
+        }
+
+        final String[] pieces = sgf.split(";", -1);
+        ChessType expectedChessType = ChessType.BLACK;
         for (final String piece : pieces) {
-            final int row = GomokuFormatter.decodeAxis(piece.charAt(2));
-            final int column = GomokuFormatter.decodeAxis(piece.charAt(3));
-            board.setChess(row, column, ChessType.getChessType(piece.charAt(0)));
+            if ((piece.length() != 5) || (piece.charAt(1) != '[') || (piece.charAt(4) != ']')) {
+                throw new IllegalArgumentException("Invalid SGF move: " + piece);
+            }
+            final ChessType chessType = ChessType.getChessType(piece.charAt(0));
+            if ((chessType == null) || (chessType == ChessType.EMPTY) || (chessType != expectedChessType)) {
+                throw new IllegalArgumentException("Invalid SGF move order: " + piece);
+            }
+            final int row = decodeCoordinate(piece.charAt(2));
+            final int column = decodeCoordinate(piece.charAt(3));
+            if (board.getChess(row, column) != ChessType.EMPTY) {
+                throw new IllegalArgumentException("Duplicate SGF move: " + piece);
+            }
+            board.setChess(row, column, chessType);
+            expectedChessType = (chessType == ChessType.BLACK) ? ChessType.WHITE : ChessType.BLACK;
         }
         return board;
+    }
+
+    private static int decodeCoordinate(final char coordinate) {
+        final int value = Character.digit(coordinate, 16);
+        if ((value < 0) || (value >= GomokuConst.CHESSBOARD_SIZE)) {
+            throw new IllegalArgumentException("SGF coordinate is out of range: " + coordinate);
+        }
+        return value;
     }
 
 }
