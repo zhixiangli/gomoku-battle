@@ -40,5 +40,12 @@ jobs:
       - name: Run Maven tests
         run: mvn --batch-mode test
 
+      - name: Smoke test launch scripts
+        run: |
+          test "$(git ls-files -s build.sh | cut -c 1-6)" = "100755"
+          test "$(git ls-files -s battle.sh | cut -c 1-6)" = "100755"
+          bash -n build.sh battle.sh
+          ./battle.sh -h
+
       - name: Run Python tests
         run: python -m pytest --ignore=alphazero-board-games

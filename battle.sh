@@ -14,7 +14,6 @@ Usage: $(basename "$0") [OPTION]...
   -d          run without UI
   -h          display help
 EOM
-    exit 2
 }
 
 function main {
@@ -29,11 +28,12 @@ function main {
                 ;;
             h|*)
                 usage
-                ;;
+                return 0
         esac
     done
     if [ -z "$player_config" ]; then
         usage
+        return 2
     fi
 
     mkdir -p ${LOG_DIR}

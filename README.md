@@ -28,8 +28,8 @@ Black uses **Alpha-Beta Search** and white uses **AlphaZero**. The animation bel
 ```bash
 git clone https://github.com/zhixiangli/gomoku-battle.git
 cd gomoku-battle
-sh build.sh
-sh battle.sh -c battle.properties
+./build.sh
+./battle.sh -c battle.properties
 ```
 
 ### Prerequisites
