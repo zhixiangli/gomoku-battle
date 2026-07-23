@@ -42,10 +42,18 @@ public class ConsoleBootstrap extends ConsoleMaster implements Runnable {
         startDaemon().join();
     }
 
-    public static void main(final String[] args) throws ParseException, IOException, InterruptedException {
+    public static Options createOptions() {
         final Options options = new Options();
-        options.addOption(PlayerProperties.PLAYER_CONF, true, "player properties path");
-        final CommandLine cmd = new DefaultParser().parse(options, args);
+        options.addOption(org.apache.commons.cli.Option.builder(PlayerProperties.PLAYER_CONF)
+                .hasArg()
+                .required()
+                .desc("player properties path")
+                .build());
+        return options;
+    }
+
+    public static void main(final String[] args) throws ParseException, IOException, InterruptedException {
+        final CommandLine cmd = new DefaultParser().parse(createOptions(), args);
         new ConsoleBootstrap(cmd.getOptionValue(PlayerProperties.PLAYER_CONF)).startLoop();
     }
 

@@ -23,8 +23,7 @@ public class PlayerProperties {
     private static final String ALPHAZERO_ALIAS = "AlphaZero";
     private static final String ALPHABETA_ALIAS = "Alpha-Beta Search";
 
-    private static String alphazeroCommand;
-    private static String alphabetaCommand;
+    private static PlayerConfiguration configuration;
 
     private static PlayerType blackPlayerType = PlayerType.ALPHABETA;
     private static PlayerType whitePlayerType = PlayerType.ALPHAZERO;
@@ -33,15 +32,31 @@ public class PlayerProperties {
     }
 
     public static synchronized void parse(final String configPath) {
-        blackPlayerType = PlayerType.ALPHABETA;
-        whitePlayerType = PlayerType.ALPHAZERO;
-        try {
-            final PropertiesConfiguration playerConfig = new Configurations().properties(new File(configPath));
-            alphazeroCommand = playerConfig.getString("agent.alphazero.cmd");
-            alphabetaCommand = playerConfig.getString("agent.alphabeta.cmd");
-        } catch (final ConfigurationException e) {
-            LOGGER.error("load player config error", e);
+        if (StringUtils.isBlank(configPath)) {
+            throw new IllegalArgumentException("Player configuration path is required");
         }
+        final File configFile = new File(configPath);
+        if (!configFile.isFile()) {
+            throw new IllegalArgumentException("Player configuration file does not exist: " + configPath);
+        }
+        try {
+            final PropertiesConfiguration playerConfig = new Configurations().properties(configFile);
+            final String alphaZeroCommand = requiredCommand(playerConfig, "agent.alphazero.cmd");
+            final String alphaBetaCommand = requiredCommand(playerConfig, "agent.alphabeta.cmd");
+            configuration = new PlayerConfiguration(alphaZeroCommand, alphaBetaCommand);
+            blackPlayerType = PlayerType.ALPHABETA;
+            whitePlayerType = PlayerType.ALPHAZERO;
+        } catch (final ConfigurationException e) {
+            throw new IllegalArgumentException("Unable to load player configuration: " + configPath, e);
+        }
+    }
+
+    private static String requiredCommand(final PropertiesConfiguration playerConfig, final String propertyName) {
+        final String command = StringUtils.trimToNull(playerConfig.getString(propertyName));
+        if (command == null) {
+            throw new IllegalArgumentException("Missing required property: " + propertyName);
+        }
+        return command;
     }
 
     public static synchronized void setPlayerType(final ChessType chessType, final PlayerType playerType) {
@@ -68,7 +83,13 @@ public class PlayerProperties {
     }
 
     public static synchronized String getPlayerCommand(final ChessType chessType) {
-        return getPlayerType(chessType).getCommand(alphazeroCommand, alphabetaCommand);
+        if (configuration == null) {
+            throw new IllegalStateException("Player configuration has not been loaded");
+        }
+        return getPlayerType(chessType).getCommand(configuration.alphaZeroCommand(), configuration.alphaBetaCommand());
+    }
+
+    private record PlayerConfiguration(String alphaZeroCommand, String alphaBetaCommand) {
     }
 
     public enum PlayerType {
