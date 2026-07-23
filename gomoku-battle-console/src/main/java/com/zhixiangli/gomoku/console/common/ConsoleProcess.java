@@ -100,6 +100,10 @@ public class ConsoleProcess implements AutoCloseable {
         }
     }
 
+    public boolean isAlive() {
+        return process.isAlive();
+    }
+
     @Override
     public synchronized void close() {
         closeQuietly(writer);

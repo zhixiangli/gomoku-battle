@@ -132,6 +132,10 @@ public class ChessboardService {
         currentChessType.addListener(listener);
     }
 
+    public void removeCurrentChessTypeChangeListener(final ChangeListener<ChessType> listener) {
+        currentChessType.removeListener(listener);
+    }
+
     public void addLastMovePointChangeListener(final ChangeListener<Point> listener) {
         lastMovePoint.addListener(listener);
     }

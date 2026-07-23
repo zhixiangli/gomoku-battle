@@ -20,8 +20,10 @@ public class DashboardBootstrap {
 
     public static void main(final String[] args) throws ParseException, IOException {
         final CommandLine cmd = new DefaultParser().parse(ConsoleBootstrap.createOptions(), args);
-        new ConsoleBootstrap(cmd.getOptionValue(PlayerProperties.PLAYER_CONF)).startDaemon();
-        Application.launch(DashboardApplication.class, args);
+        try (ConsoleBootstrap consoleBootstrap = new ConsoleBootstrap(cmd.getOptionValue(PlayerProperties.PLAYER_CONF))) {
+            consoleBootstrap.startDaemon();
+            Application.launch(DashboardApplication.class, args);
+        }
     }
 
 }
