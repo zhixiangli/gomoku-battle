@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,22 +42,30 @@ public class GomokuFormatter {
 
     public static Chessboard toChessboard(final String sgf) {
         final Chessboard board = new Chessboard();
+        for (final Pair<ChessType, Point> move : toHistory(sgf)) {
+            board.setChess(move.getRight(), move.getLeft());
+        }
+        return board;
+    }
+
+    public static List<Pair<ChessType, Point>> toHistory(final String sgf) {
         if (sgf == null) {
             throw new IllegalArgumentException("SGF cannot be null");
         }
         if (sgf.isEmpty()) {
-            return board;
+            return List.of();
         }
 
+        final Chessboard board = new Chessboard();
+        final List<Pair<ChessType, Point>> history = new ArrayList<>();
         final String[] pieces = sgf.split(";", -1);
-        ChessType expectedChessType = ChessType.BLACK;
         for (final String piece : pieces) {
             if ((piece.length() != 5) || (piece.charAt(1) != '[') || (piece.charAt(4) != ']')) {
                 throw new IllegalArgumentException("Invalid SGF move: " + piece);
             }
             final ChessType chessType = ChessType.getChessType(piece.charAt(0));
-            if ((chessType == null) || (chessType == ChessType.EMPTY) || (chessType != expectedChessType)) {
-                throw new IllegalArgumentException("Invalid SGF move order: " + piece);
+            if ((chessType == null) || (chessType == ChessType.EMPTY)) {
+                throw new IllegalArgumentException("Invalid SGF move: " + piece);
             }
             final int row = decodeCoordinate(piece.charAt(2));
             final int column = decodeCoordinate(piece.charAt(3));
@@ -64,9 +73,9 @@ public class GomokuFormatter {
                 throw new IllegalArgumentException("Duplicate SGF move: " + piece);
             }
             board.setChess(row, column, chessType);
-            expectedChessType = (chessType == ChessType.BLACK) ? ChessType.WHITE : ChessType.BLACK;
+            history.add(Pair.of(chessType, new Point(row, column)));
         }
-        return board;
+        return List.copyOf(history);
     }
 
     private static int decodeCoordinate(final char coordinate) {

@@ -21,6 +21,7 @@ public class ConsoleProtocolTest {
         assertInvalidRequest("{\"command\":\"NEXT_GREEN\",\"rows\":15,\"columns\":15,\"chessboard\":\"\"}");
         assertInvalidRequest("{\"command\":\"NEXT_BLACK\",\"rows\":14,\"columns\":15,\"chessboard\":\"\"}");
         assertInvalidRequest("{\"command\":\"NEXT_BLACK\",\"rows\":15,\"columns\":15,\"chessboard\":\"B[7f]\"}");
+        assertInvalidRequest("{\"command\":\"NEXT_BLACK\",\"rows\":15,\"columns\":15,\"chessboard\":\"B[77];B[78]\"}");
         assertInvalidRequest("[]");
     }
 

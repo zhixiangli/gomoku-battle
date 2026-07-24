@@ -20,8 +20,15 @@ public class GomokuFormatterTest {
     public void malformedSgfIsRejected() {
         assertInvalid("B[77");
         assertInvalid("B[7f]");
-        assertInvalid("B[77];B[78]");
         assertInvalid("B[77];W[77]");
+    }
+
+    @Test
+    public void arbitraryBoardPositionsDoNotRequireMoveOrder() {
+        final Chessboard chessboard = GomokuFormatter.toChessboard("W[77];W[78]");
+
+        assertEquals(ChessType.WHITE, chessboard.getChess(7, 7));
+        assertEquals(ChessType.WHITE, chessboard.getChess(7, 8));
     }
 
     private void assertInvalid(final String sgf) {

@@ -4,8 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.zhixiangli.gomoku.core.chessboard.ChessType;
 import com.zhixiangli.gomoku.core.common.GomokuConst;
 import com.zhixiangli.gomoku.core.common.GomokuFormatter;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.awt.Point;
+import java.util.List;
 
 public final class ConsoleProtocol {
 
@@ -27,7 +32,7 @@ public final class ConsoleProtocol {
         if (request.getChessboard() == null) {
             throw new IllegalArgumentException("Request chessboard is required");
         }
-        GomokuFormatter.toChessboard(request.getChessboard());
+        validateMoveOrder(GomokuFormatter.toHistory(request.getChessboard()));
         return request;
     }
 
@@ -69,6 +74,16 @@ public final class ConsoleProtocol {
             return coordinate;
         } catch (final NumberFormatException | ArithmeticException e) {
             throw new IllegalArgumentException("Agent response " + name + " must be an integer", e);
+        }
+    }
+
+    private static void validateMoveOrder(final List<Pair<ChessType, Point>> history) {
+        ChessType expectedChessType = ChessType.BLACK;
+        for (final Pair<ChessType, Point> move : history) {
+            if (move.getLeft() != expectedChessType) {
+                throw new IllegalArgumentException("Invalid SGF move order at " + move.getRight());
+            }
+            expectedChessType = (expectedChessType == ChessType.BLACK) ? ChessType.WHITE : ChessType.BLACK;
         }
     }
 
