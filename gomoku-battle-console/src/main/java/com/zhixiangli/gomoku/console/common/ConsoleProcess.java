@@ -16,9 +16,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Line-oriented stdio connection to one external agent process.
@@ -43,6 +45,8 @@ public class ConsoleProcess implements AutoCloseable {
 
     private final Duration responseTimeout;
 
+    private final AtomicBoolean closed = new AtomicBoolean();
+
     public ConsoleProcess(final String command) throws IOException {
         this(List.of("sh", "-c", "exec " + requireCommand(command)), DEFAULT_RESPONSE_TIMEOUT);
     }
@@ -64,19 +68,28 @@ public class ConsoleProcess implements AutoCloseable {
         stderrDrainer.start();
     }
 
-    public synchronized void send(final String message) throws IOException {
-        if (!process.isAlive()) {
-            throw exitedProcessException();
+    public void send(final String message) throws IOException {
+        synchronized (writer) {
+            ensureOpen();
+            if (!process.isAlive()) {
+                throw exitedProcessException();
+            }
+            LOGGER.info("send message start: {}", message);
+            writer.write(message);
+            writer.flush();
+            LOGGER.info("sent message finish: {}", message);
         }
-        LOGGER.info("send message start: {}", message);
-        writer.write(message);
-        writer.flush();
-        LOGGER.info("sent message finish: {}", message);
     }
 
-    public synchronized String receive() throws IOException {
+    public String receive() throws IOException {
+        ensureOpen();
         LOGGER.info("receive message start");
-        final Future<String> lineFuture = stdoutReader.submit(reader::readLine);
+        final Future<String> lineFuture;
+        try {
+            lineFuture = stdoutReader.submit(reader::readLine);
+        } catch (final RejectedExecutionException e) {
+            throw new IOException("Agent connection is closed", e);
+        }
         try {
             final String line = lineFuture.get(responseTimeout.toMillis(), TimeUnit.MILLISECONDS);
             if (line == null) {
@@ -89,7 +102,9 @@ public class ConsoleProcess implements AutoCloseable {
             close();
             throw new IOException("Agent did not respond within " + responseTimeout, e);
         } catch (final InterruptedException e) {
+            lineFuture.cancel(true);
             Thread.currentThread().interrupt();
+            close();
             throw new IOException("Interrupted while waiting for agent response", e);
         } catch (final ExecutionException e) {
             final Throwable cause = e.getCause();
@@ -101,23 +116,27 @@ public class ConsoleProcess implements AutoCloseable {
     }
 
     public boolean isAlive() {
-        return process.isAlive();
+        return !closed.get() && process.isAlive();
     }
 
     @Override
-    public synchronized void close() {
-        closeQuietly(writer);
+    public void close() {
+        if (!closed.compareAndSet(false, true)) {
+            return;
+        }
         if (process.isAlive()) {
             process.destroy();
             try {
                 if (!process.waitFor(CLOSE_TIMEOUT.toMillis(), TimeUnit.MILLISECONDS)) {
                     process.destroyForcibly();
+                    process.waitFor(CLOSE_TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
                 }
             } catch (final InterruptedException e) {
                 Thread.currentThread().interrupt();
                 process.destroyForcibly();
             }
         }
+        closeQuietly(writer);
         closeQuietly(reader);
         stdoutReader.shutdownNow();
     }
@@ -138,6 +157,12 @@ public class ConsoleProcess implements AutoCloseable {
     private IOException exitedProcessException() {
         final String exitStatus = process.isAlive() ? "unknown" : String.valueOf(process.exitValue());
         return new IOException("Agent exited without a response (exit status " + exitStatus + ")");
+    }
+
+    private void ensureOpen() throws IOException {
+        if (closed.get()) {
+            throw new IOException("Agent connection is closed");
+        }
     }
 
     private static String requireCommand(final String command) {

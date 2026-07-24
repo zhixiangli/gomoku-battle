@@ -20,6 +20,11 @@ public enum ChessState {
     GAME_DRAW,
 
     /**
+     * An external player failed to provide a valid move.
+     */
+    AGENT_FAILURE,
+
+    /**
      * white player win.
      */
     WHITE_WIN,

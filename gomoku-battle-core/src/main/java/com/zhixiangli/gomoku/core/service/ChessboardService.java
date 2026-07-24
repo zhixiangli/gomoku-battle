@@ -48,6 +48,8 @@ public class ChessboardService {
 
     private final List<Pair<ChessType, Point>> history;
 
+    private long gameId;
+
     /**
      * chessboard state property, game on, draw, black win, white win.
      */
@@ -67,35 +69,72 @@ public class ChessboardService {
         history = new ArrayList<>();
     }
 
-    public void restart() {
+    public synchronized void restart() {
         LOGGER.info("start a new game.");
+        gameId++;
         for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
             for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
                 chessboardProperty[i][j].set(ChessType.EMPTY);
             }
         }
+        history.clear();
+        lastMovePoint.set(null);
         chessStateProperty.set(ChessState.GAME_ON);
         // change current chess type to fire action.
         currentChessType.set(ChessType.EMPTY);
         currentChessType.set(ChessType.BLACK);
-        lastMovePoint.set(null);
-        history.clear();
     }
 
     /**
      *
      * make a move.
      *
-     * @param row
-     *            row index.
-     * @param column
-     *            column index.
+     * @param point position to occupy.
      */
-    public void takeMove(final Point point) {
+    public synchronized void takeMove(final Point point) {
         LOGGER.info("start moving: {} {}", point, currentChessType);
         Preconditions.checkArgument(GameReferee.isInChessboard(point), "the position is out of range.");
         Preconditions.checkArgument(chessStateProperty.get() == ChessState.GAME_ON, "the chess game isn't on.");
         Preconditions.checkArgument(getChessboard(point) == ChessType.EMPTY, "the position is not empty.");
+
+        takeMoveInternal(point);
+    }
+
+    /**
+     * Applies an agent move only when it belongs to the active game and player.
+     *
+     * @return true when the move was applied; false when it was stale or invalid.
+     */
+    public synchronized boolean takeMoveIfCurrent(final long expectedGameId, final ChessType expectedChessType,
+                                                  final Point point) {
+        if ((gameId != expectedGameId) || (currentChessType.get() != expectedChessType)
+                || (chessStateProperty.get() != ChessState.GAME_ON) || !GameReferee.isInChessboard(point)
+                || (getChessboard(point) != ChessType.EMPTY)) {
+            return false;
+        }
+
+        takeMoveInternal(point);
+        return true;
+    }
+
+    /**
+     * Marks a game as failed only when the reported failure belongs to its active generation.
+     */
+    public synchronized boolean failGameIfCurrent(final long expectedGameId, final ChessType expectedChessType) {
+        if ((gameId != expectedGameId) || (currentChessType.get() != expectedChessType)
+                || (chessStateProperty.get() != ChessState.GAME_ON)) {
+            return false;
+        }
+        currentChessType.set(ChessType.EMPTY);
+        chessStateProperty.set(ChessState.AGENT_FAILURE);
+        return true;
+    }
+
+    public synchronized GameSnapshot snapshot() {
+        return new GameSnapshot(gameId, currentChessType.get(), chessStateProperty.get(), history);
+    }
+
+    private void takeMoveInternal(final Point point) {
 
         // make move.
         chessboardProperty[point.x][point.y].set(currentChessType.get());
@@ -124,6 +163,10 @@ public class ChessboardService {
         chessStateProperty.addListener(listener);
     }
 
+    public void removeChessStateChangeListener(final ChangeListener<ChessState> listener) {
+        chessStateProperty.removeListener(listener);
+    }
+
     public void addChessboardChangeListener(final Point point, final ChangeListener<ChessType> listener) {
         chessboardProperty[point.x][point.y].addListener(listener);
     }
@@ -140,11 +183,11 @@ public class ChessboardService {
         lastMovePoint.addListener(listener);
     }
 
-    public ChessType getChessboard(final Point point) {
+    public synchronized ChessType getChessboard(final Point point) {
         return chessboardProperty[point.x][point.y].get();
     }
 
-    public Chessboard getChessboard() {
+    public synchronized Chessboard getChessboard() {
         final Chessboard chessboard = new Chessboard();
         for (int i = 0; i < GomokuConst.CHESSBOARD_SIZE; ++i) {
             for (int j = 0; j < GomokuConst.CHESSBOARD_SIZE; ++j) {
@@ -154,23 +197,38 @@ public class ChessboardService {
         return chessboard;
     }
 
-    public Point getLastMovePoint() {
-        return lastMovePoint.get();
+    public synchronized Point getLastMovePoint() {
+        final Point point = lastMovePoint.get();
+        return point == null ? null : new Point(point);
     }
 
-    public ChessType getCurrentChessType() {
+    public synchronized ChessType getCurrentChessType() {
         return currentChessType.get();
     }
 
-    public ChessState getChessState() {
+    public synchronized ChessState getChessState() {
         return chessStateProperty.get();
     }
 
     /**
      * @return the history
      */
-    public List<Pair<ChessType, Point>> getHistory() {
-        return history;
+    public synchronized List<Pair<ChessType, Point>> getHistory() {
+        return copyHistory(history);
+    }
+
+    private static List<Pair<ChessType, Point>> copyHistory(final List<Pair<ChessType, Point>> source) {
+        return List.copyOf(source.stream()
+                .map(move -> Pair.of(move.getLeft(), new Point(move.getRight())))
+                .toList());
+    }
+
+    public record GameSnapshot(long gameId, ChessType currentChessType, ChessState chessState,
+                               List<Pair<ChessType, Point>> history) {
+
+        public GameSnapshot {
+            history = copyHistory(history);
+        }
     }
 
 }

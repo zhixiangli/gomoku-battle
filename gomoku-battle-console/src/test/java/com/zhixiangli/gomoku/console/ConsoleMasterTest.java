@@ -1,6 +1,7 @@
 package com.zhixiangli.gomoku.console;
 
 import com.zhixiangli.gomoku.console.common.ConsoleProcess;
+import com.zhixiangli.gomoku.core.chessboard.ChessState;
 import com.zhixiangli.gomoku.core.service.ChessboardService;
 import org.junit.Test;
 
@@ -46,6 +47,26 @@ public class ConsoleMasterTest {
             assertEquals(1, processCount.get());
         } finally {
             master.close();
+        }
+    }
+
+    @Test
+    public void invalidAgentResponseFailsTheCurrentGame() throws Exception {
+        final ChessboardService chessboardService = ChessboardService.getInstance();
+        final String configPath = getClass().getClassLoader().getResource("ai_player.properties").getPath();
+
+        try (ConsoleMaster master = new ConsoleMaster(configPath, chessboardService, command ->
+                new ConsoleProcess(List.of("sh", "-c",
+                        "read request; echo '{\"rowIndex\":15,\"columnIndex\":0}'"), Duration.ofSeconds(1)))) {
+            chessboardService.restart();
+
+            final long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
+            while ((chessboardService.getChessState() != ChessState.AGENT_FAILURE)
+                    && (System.nanoTime() < deadline)) {
+                Thread.sleep(10);
+            }
+
+            assertEquals(ChessState.AGENT_FAILURE, chessboardService.getChessState());
         }
     }
 

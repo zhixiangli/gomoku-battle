@@ -10,6 +10,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertFalse;
+
 /**
  * Tests for ChessboardService state transitions.
  */
@@ -104,5 +106,32 @@ public class ChessboardServiceTest {
         service.restart();
         Assert.assertEquals(ChessState.GAME_ON, service.getChessState());
         Assert.assertEquals(ChessType.BLACK, service.getCurrentChessType());
+    }
+
+    @Test
+    public void staleAgentMoveIsRejectedAfterRestart() {
+        final long previousGameId = service.snapshot().gameId();
+
+        service.restart();
+
+        assertFalse(service.takeMoveIfCurrent(previousGameId, ChessType.BLACK, new Point(0, 0)));
+        Assert.assertTrue(service.getHistory().isEmpty());
+        Assert.assertEquals(ChessType.BLACK, service.getCurrentChessType());
+    }
+
+    @Test
+    public void historyIsAnImmutableDeepCopy() {
+        service.takeMove(new Point(0, 0));
+
+        final List<org.apache.commons.lang3.tuple.Pair<ChessType, Point>> history = service.getHistory();
+        try {
+            history.add(org.apache.commons.lang3.tuple.Pair.of(ChessType.WHITE, new Point(1, 1)));
+            Assert.fail("Expected history to be immutable");
+        } catch (final UnsupportedOperationException expected) {
+            // expected
+        }
+        history.get(0).getRight().setLocation(5, 5);
+
+        Assert.assertEquals(new Point(0, 0), service.getHistory().get(0).getRight());
     }
 }
