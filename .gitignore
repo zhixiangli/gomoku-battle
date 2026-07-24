@@ -22,3 +22,7 @@ out/
 
 # Log files
 **/log/
+
+# Python
+__pycache__/
+*.py[cod]

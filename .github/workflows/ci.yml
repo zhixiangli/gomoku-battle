@@ -46,6 +46,7 @@ jobs:
           test "$(git ls-files -s battle.sh | cut -c 1-6)" = "100755"
           bash -n build.sh battle.sh
           ./battle.sh -h
+          if ./battle.sh -c target/missing-player.properties; then exit 1; fi
 
       - name: Run Python tests
         run: python -m pytest --ignore=alphazero-board-games

@@ -61,6 +61,11 @@ def _parse_args(argv: Optional[list[str]] = None):
         default=5000,
         help="Number of MCTS simulations per move (default: 5000)",
     )
+    parser.add_argument(
+        "--preflight",
+        action="store_true",
+        help="Validate the submodule and trained-model checkpoint, then exit",
+    )
     return parser.parse_args(argv)
 
 
@@ -125,6 +130,31 @@ def _validate_request(request: Any) -> dict[str, Any]:
     return request
 
 
+def _find_checkpoint_path(config: Any) -> str:
+    """Resolve and validate the checkpoint prefix configured by AlphaZero."""
+    checkpoint_path = os.path.join(_SUBMODULE_DIR, config.save_checkpoint_path)
+    if not glob.glob(checkpoint_path + "*.pt"):
+        raise RuntimeError(
+            f"No checkpoint files found matching '{checkpoint_path}*.pt'. "
+            "Cannot run AlphaZero without a trained model."
+        )
+    return checkpoint_path
+
+
+def _preflight() -> str:
+    """Validate the local AlphaZero source checkout and model files."""
+    config_module_path = os.path.join(_SUBMODULE_DIR, "gomoku_15_15", "config.py")
+    if not os.path.isfile(config_module_path):
+        raise RuntimeError(
+            "alphazero-board-games is not initialized; run "
+            "'git submodule update --init --recursive'"
+        )
+
+    _ensure_submodule_on_syspath()
+    config_module = importlib.import_module("gomoku_15_15.config")
+    return _find_checkpoint_path(config_module.GomokuConfig())
+
+
 def _build_runtime(simulation_num: int, logger: logging.Logger) -> AdapterRuntime:
     """Initialize AlphaZero game objects and verify checkpoints are present."""
     _ensure_submodule_on_syspath()
@@ -142,15 +172,8 @@ def _build_runtime(simulation_num: int, logger: logging.Logger) -> AdapterRuntim
 
     # Resolve checkpoint path relative to the submodule directory so it works
     # regardless of the process's current working directory.
-    checkpoint_path = os.path.join(_SUBMODULE_DIR, config.save_checkpoint_path)
+    checkpoint_path = _find_checkpoint_path(config)
     logger.info("Resolved checkpoint path: %s", checkpoint_path)
-
-    checkpoint_files = glob.glob(checkpoint_path + "*.pt")
-    if not checkpoint_files:
-        raise RuntimeError(
-            f"No checkpoint files found matching '{checkpoint_path}*.pt'. "
-            "Cannot run AlphaZero without a trained model."
-        )
 
     nnet.load_checkpoint(checkpoint_path)
     mcts = mcts_module.MCTS(nnet, game, config)
@@ -177,6 +200,15 @@ def main(argv: Optional[list[str]] = None, stdin=None, stdout=None):
     args = _parse_args(argv)
     stdin = stdin or sys.stdin
     stdout = stdout or sys.stdout
+
+    if args.preflight:
+        try:
+            checkpoint_path = _preflight()
+        except (ImportError, RuntimeError) as exc:
+            print(f"AlphaZero preflight failed: {exc}", file=sys.stderr)
+            return 2
+        print(f"AlphaZero preflight passed: {checkpoint_path}*.pt", file=stdout)
+        return 0
 
     # Log to a file (cleared each run) so stdout stays clean for JSON protocol.
     os.makedirs(_LOG_DIR, exist_ok=True)
@@ -207,7 +239,7 @@ def main(argv: Optional[list[str]] = None, stdin=None, stdout=None):
             logger.info("Received command=%s, board=%s", request.get("command", ""), request.get("chessboard", ""))
 
             try:
-                response = _process_request(runtime, _validate_request(request))
+                response = _process_request(runtime, request)
             except ValueError as exc:
                 logger.error("Invalid request: %s", exc)
                 continue
@@ -225,4 +257,4 @@ def main(argv: Optional[list[str]] = None, stdin=None, stdout=None):
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

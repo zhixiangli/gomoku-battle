@@ -26,15 +26,27 @@ Black uses **Alpha-Beta Search** and white uses **AlphaZero**. The animation bel
 
 ## 🚀 Launch Battle Platform
 ```bash
-git clone https://github.com/zhixiangli/gomoku-battle.git
+git clone --recurse-submodules https://github.com/zhixiangli/gomoku-battle.git
 cd gomoku-battle
 ./build.sh
+./battle.sh -p -c battle.properties
 ./battle.sh -c battle.properties
 ```
 
 ### Prerequisites
 - Java **25**
 - Maven **3.9+**
+- Python **3.12** and [`uv`](https://docs.astral.sh/uv/) for AlphaZero
+- An initialized `alphazero-board-games` submodule
+- A trained `.pt` model matching the prefix configured by `GomokuConfig.save_checkpoint_path`
+
+For an existing non-recursive clone, initialize the submodule with:
+
+```bash
+git submodule update --init --recursive
+```
+
+The `-p` preflight runs the configured AlphaZero command without starting a match and reports missing source, dependencies, or checkpoint files.
 
 ## ✅ Run Tests
 The project is a Maven multi-module build. Unit tests live in each module's `src/test/java` directory and are executed by the Maven Surefire plugin during `test`.

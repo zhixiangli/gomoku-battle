@@ -1,7 +1,9 @@
 import importlib.util
 import logging
+import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 
 
 _ADAPTER_PATH = Path(__file__).resolve().parents[1] / "alphazero_adapter.py"
@@ -149,6 +151,36 @@ class AdapterProtocolTests(unittest.TestCase):
                     alphazero_adapter._validate_request(request)
 
 
+class AdapterPreflightTests(unittest.TestCase):
+    def test_preflight_reports_an_uninitialized_submodule(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            original_submodule_dir = alphazero_adapter._SUBMODULE_DIR
+            alphazero_adapter._SUBMODULE_DIR = temp_dir
+            try:
+                with self.assertRaisesRegex(RuntimeError, "submodule update --init"):
+                    alphazero_adapter._preflight()
+            finally:
+                alphazero_adapter._SUBMODULE_DIR = original_submodule_dir
+
+    def test_checkpoint_prefix_must_match_at_least_one_model(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            original_submodule_dir = alphazero_adapter._SUBMODULE_DIR
+            alphazero_adapter._SUBMODULE_DIR = temp_dir
+            config = SimpleNamespace(save_checkpoint_path="checkpoints/model")
+            try:
+                with self.assertRaisesRegex(RuntimeError, "No checkpoint files found"):
+                    alphazero_adapter._find_checkpoint_path(config)
+
+                checkpoint = Path(temp_dir) / "checkpoints" / "model-42.pt"
+                checkpoint.parent.mkdir(parents=True)
+                checkpoint.touch()
+
+                self.assertEqual(
+                    str(Path(temp_dir) / "checkpoints" / "model"),
+                    alphazero_adapter._find_checkpoint_path(config),
+                )
+            finally:
+                alphazero_adapter._SUBMODULE_DIR = original_submodule_dir
 
 if __name__ == "__main__":
     unittest.main()
