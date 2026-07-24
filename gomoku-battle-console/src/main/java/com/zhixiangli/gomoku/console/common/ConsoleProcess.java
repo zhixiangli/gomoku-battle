@@ -148,7 +148,7 @@ public class ConsoleProcess implements AutoCloseable {
                 LOGGER.trace("agent stderr: {}", line);
             }
         } catch (final IOException e) {
-            if (process.isAlive()) {
+            if (!closed.get() && process.isAlive()) {
                 LOGGER.warn("Unable to read agent stderr", e);
             }
         }
