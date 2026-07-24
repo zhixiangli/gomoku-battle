@@ -116,6 +116,18 @@ def _validate_sgf(sgf_board: str) -> None:
         expected_player = "W" if player == "B" else "B"
 
 
+def _to_engine_sgf(sgf_board: str) -> str:
+    """Convert validated protocol moves to AlphaZero's comma-separated format."""
+    engine_moves = []
+    for move in sgf_board.split(";") if sgf_board else []:
+        match = _MOVE_PATTERN.fullmatch(move)
+        if match is None:
+            raise ValueError(f"Invalid SGF move: {move}")
+        player, row_hex, column_hex = match.groups()
+        engine_moves.append(f"{player}[{row_hex},{column_hex}]")
+    return ";".join(engine_moves)
+
+
 def _validate_request(request: Any) -> dict[str, Any]:
     """Validate one Java console protocol request before invoking the MCTS engine."""
     if not isinstance(request, dict):
@@ -187,7 +199,7 @@ def _process_request(runtime: AdapterRuntime, request: dict[str, Any]) -> Option
     command = request.get("command", "")
     sgf_board = request.get("chessboard", "")
     player = _command_to_player(command)
-    action = _pick_ai_action(runtime.mcts, sgf_board, player)
+    action = _pick_ai_action(runtime.mcts, _to_engine_sgf(sgf_board), player)
 
     if action is None:
         return None

@@ -139,6 +139,31 @@ class AdapterIntegrationTests(unittest.TestCase):
 
 
 class AdapterProtocolTests(unittest.TestCase):
+    def test_process_request_converts_protocol_sgf_to_engine_format(self):
+        class RecordingMcts:
+            def __init__(self):
+                self.calls = []
+
+            def simulate(self, board, player):
+                self.calls.append((board, player))
+                return [42], [1]
+
+        mcts = RecordingMcts()
+        runtime = alphazero_adapter.AdapterRuntime(mcts=mcts, columns=15)
+
+        response = alphazero_adapter._process_request(
+            runtime,
+            {
+                "command": "NEXT_BLACK",
+                "rows": 15,
+                "columns": 15,
+                "chessboard": "B[77];W[ae]",
+            },
+        )
+
+        self.assertEqual([("B[7,7];W[a,e]", "B")], mcts.calls)
+        self.assertEqual({"rowIndex": 2, "columnIndex": 12}, response)
+
     def test_request_requires_object_known_command_and_fixed_dimensions(self):
         for request in [
             [],
